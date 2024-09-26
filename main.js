@@ -36,7 +36,7 @@ var spacing = 1.8;
 
 // tile.js
 for (var q = -radius; q <= radius; q++){
-    for (var r = -radius; r <= 4; r++){
+    for (var r = -radius; r <= radius; r++){
         // Keep the radius = 6
         var s = 0 - q - r;
         if (Math.abs(s) > radius) continue;  
