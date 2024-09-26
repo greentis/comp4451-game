@@ -1,0 +1,5 @@
+import {Game} from './main.js';
+import {Board} from './Board.js';
+import {Tile} from './Tilejs';
+import {Character} from './Character.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';

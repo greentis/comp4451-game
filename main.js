@@ -1,68 +1,114 @@
 import * as THREE from 'three';
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-// Animation loop
-renderer.setAnimationLoop( animate );
-document.body.appendChild( renderer.domElement );
 
-//
-// Camera
-//
+import {Board} from './Board.js';
+import {Character} from './Character.js';
+console.log("main.js loaded successfully!")
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-camera.position.z = 20;
-// camera.position.set(x, y, z);
-// camera.up.set(x, y, z);
-// camera.lookAt(x, y, z);
+export class Game{
+	constructor(){
+		this.createScene();
 
-//
-// Light
-//
+		this.board = new Board(this);
+		this.scene.add(this.board.mesh);
+		
+		this.player = [];
+		this.player.push(new Character(1, 0, this));
 
-const light = new THREE.PointLight(0xCC7733, 1000);
-light.position.z = 10;
-scene.add(light);
+		this.activateEventHandler();
+		
+	}
 
+	createScene(){
+		this.scene = new THREE.Scene();
+		this.scene.background = new THREE.Color(0x000000);
+		
+		const light = new THREE.PointLight(0xCC7733, 5000);
+		light.position.z = 30;
+		this.scene.add(light);
 
-//
-// Render map (map.js)
-//
-const map = new THREE.Object3D();
-scene.add(map);
+		this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		this.camera.position.z = 20;
+		// camera.position.set(x, y, z);
+		// camera.up.set(x, y, z);
+		// camera.lookAt(x, y, z);
+		
+		this.renderer = new THREE.WebGLRenderer();
+		this.renderer.setSize( window.innerWidth, window.innerHeight );
+		
+		
+		// Animation loop
+		this.renderer.setAnimationLoop(()=>{
+				// x rolls towards camera
+				this.board.mesh.rotation.x = Math.PI * 0.2;
+				// y turns anticlockwise
+				this.board.mesh.rotation.y += 0.001;
+			
+				this.renderer.render( this.scene, this.camera );
+		});
+		document.body.appendChild( this.renderer.domElement );
+		
+	}
 
-var radius = 8;
-var spacing = 1.8;
-
-// tile.js
-for (var q = -radius; q <= radius; q++){
-    for (var r = -radius; r <= radius; r++){
-        // Keep the radius = 6
-        var s = 0 - q - r;
-        if (Math.abs(s) > radius) continue;  
-
-        // Tile contruction
-        const geometry = new THREE.CylinderGeometry(5,5,2,6);
-        const material = new THREE.MeshPhongMaterial({emissive:0x000000});
-        const tile = new THREE.Mesh(geometry,material);
-        tile.scale.set(0.2, 0.2, 0.2);
-        tile.position.x = q * spacing + r * spacing * Math.cos(Math.PI /3);
-        tile.position.z = r * spacing * Math.cos(Math.PI /6);
-
-        // Add tile to map
-        map.add(tile);
-    }
+	activateEventHandler(){
+		//
+		// Eventhandler: mouseVec selection
+		//
+		
+		// https://www.w3schools.com/jsref/dom_obj_event.asp
+		
+		var raycaster = new THREE.Raycaster();
+		var mouseVec = new THREE.Vector2();
+		
+		window.addEventListener('click', (event)=>{
+			mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
+			mouseVec.y = - (event.clientY / window.innerHeight) * 2 + 1;
+			raycaster.setFromCamera(mouseVec, this.camera);
+		
+			var intersects = raycaster.intersectObjects(this.scene.children);
+			
+			for (var i = 0; i < intersects.length; i++) {
+				try {
+					console.log(intersects[0].object.userData.q, intersects[0].object.userData.r, 'is Clicked!');
+					break;
+				} catch (error) {
+					// If the object have no hovering() function
+				}
+			}
+		}, false);
+		
+		var hoveringList = [];
+		
+		window.addEventListener('mousemove', (event)=>{
+			// Do raycast to find all objects within sight
+			mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
+			mouseVec.y = - (event.clientY / window.innerHeight) * 2 + 1;
+			raycaster.setFromCamera(mouseVec, this.camera);
+			var intersects = raycaster.intersectObjects(this.scene.children);
+			
+			// Deactivate objects that is activated in previous call
+			for (var i = 0; i < hoveringList.length; i++) {
+				hoveringList[i].deHovering();
+			}
+			hoveringList = [];
+		
+			// Try activating the object in ascending order
+			for (var i = 0; i < intersects.length; i++) {
+				try {
+					intersects[i].object.userData.hovering();
+					hoveringList.push(intersects[i].object.userData);
+					break;
+				} catch (error) {
+					// If the object have no hovering() function
+				}
+			}
+		}
+		, false);
+		
+		window.addEventListener('keypress', (event)=>{
+			console.log(event.key);
+		}, false);
+		
+	}
 }
 
-
-
-
-function animate() {
-    // x rolls towards camera
-	map.rotation.x = Math.PI * 0.2;
-    // y turns anticlockwise
-	map.rotation.y += 0.001;
-
-	renderer.render( scene, camera );
-
-}
+const game = new Game();

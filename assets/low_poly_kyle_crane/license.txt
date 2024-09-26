@@ -1,0 +1,11 @@
+Model Information:
+* title:	Low Poly Kyle Crane
+* source:	https://sketchfab.com/3d-models/low-poly-kyle-crane-148cc6af41ec4d10b0e9cd83584c7c06
+* author:	MeD (https://sketchfab.com/medvee)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Low Poly Kyle Crane" (https://sketchfab.com/3d-models/low-poly-kyle-crane-148cc6af41ec4d10b0e9cd83584c7c06) by MeD (https://sketchfab.com/medvee) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Hunter
+* source:	https://sketchfab.com/3d-models/hunter-8bc2872c937b458c822beeed31d7cab8
+* author:	nolanfa (https://sketchfab.com/nolanfa)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Hunter" (https://sketchfab.com/3d-models/hunter-8bc2872c937b458c822beeed31d7cab8) by nolanfa (https://sketchfab.com/nolanfa) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
