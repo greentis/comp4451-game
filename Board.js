@@ -8,6 +8,7 @@ console.log("Board.js loaded successfully!")
 export class Board {
     constructor(game){
         this.game = game;
+
         this.mesh = new THREE.Object3D();
         this.grids = new Map();
         this.generate();
@@ -15,7 +16,7 @@ export class Board {
     }
     
     generate(){
-        var radius = 4;
+        var radius = 8;
         var spacing = 1.8;
         for (var q = -radius; q <= radius; q++){
             for (var r = -radius; r <= radius; r++){
@@ -27,7 +28,7 @@ export class Board {
                 var x = q * spacing + r * spacing * Math.cos(Math.PI /3);
                 var y = 0;
                 var z = r * spacing * Math.cos(Math.PI /6);
-                var tile = new Tile(q, r, x, y, z, 0.2);
+                var tile = new Tile(q, r, x, y, z, 0.2, this.game);
 
                 // Add tile to map
                 this.mesh.add(tile.mesh);

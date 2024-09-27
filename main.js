@@ -15,7 +15,6 @@ export class Game{
 		this.player.push(new Character(1, 0, this));
 
 		this.activateEventHandler();
-		
 	}
 
 	createScene(){
@@ -67,8 +66,6 @@ export class Game{
 			var intersects = raycaster.intersectObjects(this.scene.children);
 			
 			for (var i = 0; i < intersects.length; i++) {
-				console.log(intersects[i].object.userData.onClick());
-					break;
 				try {
 					intersects[i].object.userData.onClick();
 					break;
@@ -106,9 +103,12 @@ export class Game{
 		}
 		, false);
 		
-		window.addEventListener('keypress', (event)=>{
+		window.addEventListener('keypress', 
+		(event)=>{
 			console.log(event.key);
-		}, false);
+		}
+		, false);
+		
 		
 	}
 }
