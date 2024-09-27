@@ -67,8 +67,10 @@ export class Game{
 			var intersects = raycaster.intersectObjects(this.scene.children);
 			
 			for (var i = 0; i < intersects.length; i++) {
+				console.log(intersects[i].object.userData.onClick());
+					break;
 				try {
-					console.log(intersects[0].object.userData.q, intersects[0].object.userData.r, 'is Clicked!');
+					intersects[i].object.userData.onClick();
 					break;
 				} catch (error) {
 					// If the object have no hovering() function

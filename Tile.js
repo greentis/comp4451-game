@@ -26,8 +26,13 @@ export class Tile {
         this.mesh.position.x = this.x;
         this.mesh.position.z = this.z;
 
+        this.mesh.name = 'tile';
         this.mesh.userData = this;
 
+    }
+
+    onClick(){
+        console.log(this.q, this.r, 'is Clicked!');
     }
 
     hovering(){

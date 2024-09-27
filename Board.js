@@ -31,13 +31,12 @@ export class Board {
 
                 // Add tile to map
                 this.mesh.add(tile.mesh);
-                this.grids.set(toString(q)+toString(r), tile);
+                this.grids.set(q.toString()+r.toString(), tile);
             }
         }
     }
 
     getTile(q, r){
-        console.log(q,', ',r);
-        return this.grids.get(toString(q)+toString(r));
+        return this.grids.get(q.toString()+r.toString());
     }
 }
