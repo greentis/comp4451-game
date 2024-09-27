@@ -17,7 +17,7 @@ export class Board {
     
     generate(){
         var radius = 8;
-        var spacing = 1.8;
+        var spacing = 1;
         for (var q = -radius; q <= radius; q++){
             for (var r = -radius; r <= radius; r++){
                 // Keep the radius = 6
@@ -28,7 +28,7 @@ export class Board {
                 var x = q * spacing + r * spacing * Math.cos(Math.PI /3);
                 var y = 0;
                 var z = r * spacing * Math.cos(Math.PI /6);
-                var tile = new Tile(q, r, x, y, z, 0.2, this.game);
+                var tile = new Tile(q, r, x, y, z,this.game);
 
                 // Add tile to map
                 this.mesh.add(tile.mesh);

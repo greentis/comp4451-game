@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { MapControls } from 'three/addons/controls/MapControls.js';
 
 import {Board} from './Board.js';
 import {Character} from './Character.js';
@@ -12,7 +14,7 @@ export class Game{
 		this.scene.add(this.board.mesh);
 		
 		this.player = [];
-		this.player.push(new Character(1, 0, this));
+		this.player.push(new Character(1, 0, 'Curtis', this));
 
 		this.activateEventHandler();
 	}
@@ -21,26 +23,35 @@ export class Game{
 		this.scene = new THREE.Scene();
 		this.scene.background = new THREE.Color(0x000000);
 		
-		const light = new THREE.PointLight(0xCC7733, 5000);
-		light.position.z = 30;
-		this.scene.add(light);
+		this.light = new THREE.PointLight(0xAA5522, 40);
+		this.light.position.y = 1;
+		this.light.decay = 0.5;
+		this.light.distance = 4.5;
+		this.scene.add(this.light);
+
+		this.ambientLight = new THREE.AmbientLight( 0x404050 ); // soft white light
+		this.scene.add( this.ambientLight );
 
 		this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-		this.camera.position.z = 20;
-		// camera.position.set(x, y, z);
+		this.camera.position.set(0, 5, 5);
 		// camera.up.set(x, y, z);
-		// camera.lookAt(x, y, z);
+		this.camera.lookAt(0, 0, 0);
 		
 		this.renderer = new THREE.WebGLRenderer();
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
 		
-		
+		this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+		this.controls.screenSpacePanning = false;
+		this.controls.maxPolarAngle = Math.PI / 4;
+		this.controls.minPolarAngle = Math.PI / 4;
+		this.controls.maxZoom = 10;
+
 		// Animation loop
 		this.renderer.setAnimationLoop(()=>{
 				// x rolls towards camera
-				this.board.mesh.rotation.x = Math.PI * 0.2;
+				this.board.mesh.rotation.x = Math.PI * 0;
 				// y turns anticlockwise
-				this.board.mesh.rotation.y += 0.001;
+				this.board.mesh.rotation.y = 0;
 			
 				this.renderer.render( this.scene, this.camera );
 		});
@@ -58,6 +69,8 @@ export class Game{
 		var raycaster = new THREE.Raycaster();
 		var mouseVec = new THREE.Vector2();
 		
+		var selectingList = [];
+
 		window.addEventListener('click', (event)=>{
 			mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
 			mouseVec.y = - (event.clientY / window.innerHeight) * 2 + 1;
@@ -65,12 +78,23 @@ export class Game{
 		
 			var intersects = raycaster.intersectObjects(this.scene.children);
 			
+			// Deactivate objects that is activated in previous call
+			var previousObject;
+			for (var i = 0; i < selectingList.length; i++) {
+				selectingList[i].deselect();
+				previousObject = selectingList[i];
+			}
+			selectingList = [];
+		
+			// Try activating the object in ascending order
 			for (var i = 0; i < intersects.length; i++) {
 				try {
-					intersects[i].object.userData.onClick();
+					if (intersects[i].object.userData == previousObject) break;
+					intersects[i].object.userData.select();
+					selectingList.push(intersects[i].object.userData);
 					break;
 				} catch (error) {
-					// If the object have no hovering() function
+					// If the object have no select() function
 				}
 			}
 		}, false);
