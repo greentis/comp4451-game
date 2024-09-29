@@ -15,4 +15,6 @@ export class Hunter extends Character{
         console.log(1,2.5,3,'string');
         return 0;
     }
+
+    
 }

@@ -61,6 +61,25 @@ export class Tile {
 
     select(){
         if (this.character) this.character.select();
+
+        // find out the pointer of characters in Game.player
+        // and then move the character to this tile
+        console.log("Tile selected", this.q, this.r);
+        if(this.character)console.log("Character", this.character," with name", this.character.name);
+        
+        console.log("this.game.PlayerMove.length", this.game.playerMove.length);
+        if (!this.character ) {
+            console.log("this.game.PlayerMove[-1]");
+            this.game.playerMove[this.game.playerMove.length-1].moveTo(this.q, this.r);
+            this.game.playerMove.pop();
+            /*this.game.player.forEach((character) => {
+                console.log(character);
+                if (character.moveAble) {
+                    character.moveTo(this.q, this.r);
+                    console.log("Character moved to", this.q, this.r);
+                }
+            });*/
+        }
     }
     deselect(){
         if (this.character) this.character.deselect();

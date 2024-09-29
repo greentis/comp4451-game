@@ -15,6 +15,9 @@ export class Game{
 		
 		this.player = [];
 		this.player.push(new Character(1, 0, 'Curtis', this));
+		this.player.push(new Character(0, 1, 'Kyle', this));
+		this.playerMove = []; // List of characters that choose by player to move
+			                  // should only contain 1 or 0 element
 
 		this.activateEventHandler();
 	}
@@ -89,7 +92,17 @@ export class Game{
 			// Try activating the object in ascending order
 			for (var i = 0; i < intersects.length; i++) {
 				try {
-					if (intersects[i].object.userData == previousObject) break;
+					if (intersects[i].object.userData == previousObject){
+						// if the object is character in the playerMove list
+						// pop the object from the list
+						if (intersects[i].object.userData == this.playerMove[this.playerMove.length-1]){
+							//console.log("playerMove' length: ",this.game.playerMove.length);
+							this.playerMove.pop();
+						}
+						//console.log("Same object selected");
+						//console.log("main: playerMove: ",this.game.playerMove);
+						break;
+					}
 					intersects[i].object.userData.select();
 					selectingList.push(intersects[i].object.userData);
 					break;

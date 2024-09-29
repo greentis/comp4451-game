@@ -11,6 +11,7 @@ export class Character{
         this.r = r;
         this.name = name;
         this.game = game;
+        //this.moveAble = false;
 
         const gltfLoader = new GLTFLoader();
         const url = 'assets/low_poly_kyle_crane/scene.gltf';
@@ -32,12 +33,27 @@ export class Character{
     moveTo(q, r) {
         // Before Updating coordinate
         this.getTile().characterLeave();
+        /*
+        // calulate new facing direction
+        // 1. get current tile
+        var currentTile = this.getTile();
+        // 2. get target tile
+        var targetTile = this.game.board.getTile(q, r);
+        // 3. calculate direction
+        var direction = new THREE.Vector3();
+        direction.subVectors(targetTile.mesh.position, currentTile.mesh.position);
+        direction.y = 0;
+        direction.normalize();
+        // 4. set rotation
+        this.mesh.rotation.y = Math.atan2(direction.x, direction.z);
+        */
 
-
+        // Update coordinate
+        this.q = q; this.r = r;
 
         // After Updating coordinate
-        this.q = q; this.r = r;
         this.getTile().characterEnter(this);
+        
     }
 
     //
@@ -45,10 +61,18 @@ export class Character{
     //
 
     select(){
+        //pop out all playerMove
+        while(this.game.playerMove.length > 0){
+            this.game.playerMove.pop().deselect();
+        }
+        this.game.playerMove.push(this);
+        //console.log("playerMove' length: ",this.game.playerMove.length);
+        console.log("playerMove: ",this.game.playerMove);
         this.getTile().selected();
     }
 
     deselect(){
+        
         this.getTile().deselected();
     }
 
