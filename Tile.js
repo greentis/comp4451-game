@@ -42,12 +42,16 @@ export class Tile {
         else if (this.state == 'highlighted') {
             this.mesh.material.emissive.set(0x0000DD);
         }
+        else if (this.state == 'pathed') {
+            this.mesh.material.emissive.set(0x00ABDD);
+        }
 
     }
 
     characterEnter(character){
         this.character = character;
         this.mesh.add(character.mesh);
+        this.deHovering();
     }
 
     characterLeave(){
@@ -99,12 +103,41 @@ export class Tile {
         if (this.state != 'selected'){
             this.state = 'highlighted';
         }
+
+        //draw the path to this tile, if game.playerMove is not empty
+        //using the last character in the game.playerMove
+        //highlight the path to this tile and change these tile on path into state 'pathed'
+        if (this.game.playerMove.length > 0){
+            var character = this.game.playerMove[this.game.playerMove.length-1];
+            this.game.board.findPath_straight(character.q, character.r, this.q, this.r);
+            var path = this.game.board.path;
+            console.log("path", path);
+            if (path){
+                for (var i = 0; i < path.length; i++){
+                    var tile = path[i];
+                    tile.state = 'pathed';
+                    tile.render();
+                }
+            }
+        }
         this.render();
     }
     deHovering(){
         if (this.state != 'selected'){
             this.state = 'default';
         }
+
+        //clear the path
+        /*var path = this.game.board.path;
+        if (path){
+            for (var i = 0; i < path.length; i++){
+                var tile = path[i];
+                tile.state = 'default';
+                tile.render();
+            }
+        }
+        */
+        this.game.board.clearPath();
         this.render();
     }
 }
