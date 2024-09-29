@@ -10,11 +10,13 @@ console.log("Board.js loaded successfully!");
 // 1: wall tile
 // 2: cover tile
 // 3: water tile
+// 4: rock tile
 const TILE_TYPE = {
 	normal: [0,0x000000],
 	wall: [1,0x0000FF],
 	cover: [2,0x00FF00],
-	water: [3,0x00FFFF]
+	water: [3,0x00FFFF],
+    rock: [4,0xFF0000]
 };
 
 export class Board {
@@ -24,8 +26,14 @@ export class Board {
         this.mesh = new THREE.Object3D();
         this.grids = new Map();
         this.path = [];
-        this.generate();
-        //this.generatePolygonal();
+       
+
+        //below variables are for polygonal generation only
+        this.minq = 10; this.maxq = 10;
+        this.minr = 10; this.maxr = 20;
+        this.mins = 10; this.maxs = 15; 
+        //this.generate();
+        this.generatePolygonal();
     }
     
     generate(){
@@ -57,65 +65,74 @@ export class Board {
         // treat wall tile and water tile as river in the example above
         // treat cover tile as mountain in the example above
         // treat normal tile as grassland in the example above
-        // 1. Create a hexagon
-        // 2. Subdivide the hexagon
-        // 3. Create a hexagon grid
-        // 4. Assign type to each tile
-        // 5. Add tile to map
+        // 1. set the size of the map by 3 radius
+        // 2. generate the continous structure of the map first(i.e. Rock, Water(Pond))
+        // 3. generate the segmented structure of the map(i.e. Wall, Cover, Water(river))
+        // 4. combine the two structure together to get the annotated map
 
-        // 1. Create a hexagon
-        var radius = 8;
-        var spacing = 1;
-        var hexagon = [];
-        for (var i = 0; i < 6; i++){
-            var angle = 2 * Math.PI / 6 * i;
-            var x = Math.cos(angle);
-            var y = Math.sin(angle);
-            hexagon.push([x,y]);
-        }
 
-        // 2. Subdivide the hexagon
-        var hexagon_sub = [];
-        for (var i = 0; i < 6; i++){
-            var x = (hexagon[i][0] + hexagon[(i+1)%6][0]) / 2;
-            var y = (hexagon[i][1] + hexagon[(i+1)%6][1]) / 2;
-            hexagon_sub.push([x,y]);
-        }
-
-        // 3. Create a hexagon grid
-        for (var q = -radius; q <= radius; q++){
-            for (var r = -radius; r <= radius; r++){
-                // Keep the radius = 6
-                var s = 0 - q - r;
-                if (Math.abs(s) > radius) continue;  
+        // 1. set the size of the map by 3 radius
+        //generat random map with hexagon grid
+        //setting random seed
+        var seed = Math.random();
+        console.log(seed);
+        var radius_q = Math.round(this.minq + (this.maxq - this.minq) * seed);
+        var radius_r = Math.round(this.minr + (this.maxr - this.minr) * seed);
+        var radius_s = Math.round(this.mins + (this.maxs - this.mins) * seed);
+        //create a temp array to store all the type of tile in the map temporarily
+        // temp should be 2D array 
+        var LargestRadius = Math.max(radius_q, radius_r, radius_s);
+        var temp = [];
+        for(var i = -LargestRadius; i <= LargestRadius; i++){
+            temp[i] = [];
+            for (var j = -LargestRadius; j <= LargestRadius; j++){
+                temp[i][j] = TILE_TYPE.normal;
         
-                // Tile contruction
-                var x = q * spacing + r * spacing * Math.cos(Math.PI /3);
-                var y = 0;
-                var z = r * spacing * Math.cos(Math.PI /6);
-                var tile = new Tile(q, r, x, y, z,this.game);
-
-                // 4. Assign type to each tile
-                // 5. Add tile to map
-                var type = TILE_TYPE.normal;
-                if (q >= 0 && r >= 0 && s >= 0){
-                    type = TILE_TYPE.wall;
-                }
-                else if (q <= 0 && r <= 0 && s <= 0){
-                    type = TILE_TYPE.cover;
-                }
-                else if (q >= 0 && r <= 0 && s <= 0){
-                    type = TILE_TYPE.water;
-                }
-                tile.type = type;
-                tile.defaultColor = type[1];
-                tile.render();
-
-                // Add tile to map
-                this.mesh.add(tile.mesh);
-                this.grids.set(q.toString()+r.toString(), tile);
             }
         }
+
+       // 2. generate the continous structure of the map first(i.e. Rock, Water(Pond))
+        //the outermost layer must be rock
+        for (var q = -radius_q; q <= radius_q; q++){
+            for (var r = -radius_r; r <= radius_r; r++){
+                for (var s = -radius_s; s <= radius_s; s++){
+                    if( Math.abs(-q -r) > radius_s || Math.abs(-r - s) > radius_q || Math.abs(-s - q) > radius_r){
+                        continue;
+                    }
+
+                    //generate the rock tile
+                    if(Math.random() < 0.1){
+                        temp[q][r] = TILE_TYPE.rock;
+                    }
+                }
+            }
+        }
+
+        // 3. generate the segmented structure of the map(i.e. Wall, Cover, Water(river))
+
+        // 4. combine the two structure together to get the annotated map
+
+        // 5. generate the tile based on the annotated map
+        for (var q = -radius_q; q <= radius_q; q++){
+            for (var r = -radius_r; r <= radius_r; r++){
+                for (var s = -radius_s; s <= radius_s; s++){
+                    if( Math.abs(-q -r) > radius_s || Math.abs(-r - s) > radius_q || Math.abs(-s - q) > radius_r){
+                        continue;
+                    }
+
+                    //tile construction
+                    var x = q  + r  * Math.cos(Math.PI /3);
+                    var y = 0;
+                    var z = r * Math.cos(Math.PI /6);
+                    var tile = new Tile(q, r, x, y, z, this.game, temp[q][r][1], temp[q][r][0]);
+                    
+                    //add tile to map
+                    this.mesh.add(tile.mesh);
+                    this.grids.set(q.toString()+r.toString(), tile);
+                }
+            }
+        }
+        
     }
 
 

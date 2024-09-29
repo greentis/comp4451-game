@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 console.log("Tile.js loaded successfully!")
 
 export class Tile {
-    constructor(q, r, x, y, z, game, defaultColor = 0x000000){
+    constructor(q, r, x, y, z, game, defaultColor = 0x000000,type = 0){
         // constructor
         this.q = q;
         this.r = r;
@@ -14,6 +14,7 @@ export class Tile {
         this.z = z;
         this.game = game;
         this.defaultColor = defaultColor;
+        this.type = type;
 
         // pointer
         this.character = null;
