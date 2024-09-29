@@ -5,7 +5,17 @@ import { round } from 'three/webgpu';
 //import * as math from 'mathjs';
 
 console.log("Board.js loaded successfully!");
-
+//set up a 2D array to store different type of tiles
+// 0: normal tile
+// 1: wall tile
+// 2: cover tile
+// 3: water tile
+const TILE_TYPE = {
+	normal: [0,0x000000],
+	wall: [1,0x0000FF],
+	cover: [2,0x00FF00],
+	water: [3,0x00FFFF]
+};
 
 export class Board {
     constructor(game){
@@ -15,7 +25,7 @@ export class Board {
         this.grids = new Map();
         this.path = [];
         this.generate();
-       
+        //this.generatePolygonal();
     }
     
     generate(){
@@ -40,10 +50,83 @@ export class Board {
         }
     }
 
+    generatePolygonal(){
+        //using Polgonal Generation Algorithm
+        //https://www.redblobgames.com/grids/hexagons/
+        // so that we can have different type of tile
+        // treat wall tile and water tile as river in the example above
+        // treat cover tile as mountain in the example above
+        // treat normal tile as grassland in the example above
+        // 1. Create a hexagon
+        // 2. Subdivide the hexagon
+        // 3. Create a hexagon grid
+        // 4. Assign type to each tile
+        // 5. Add tile to map
+
+        // 1. Create a hexagon
+        var radius = 8;
+        var spacing = 1;
+        var hexagon = [];
+        for (var i = 0; i < 6; i++){
+            var angle = 2 * Math.PI / 6 * i;
+            var x = Math.cos(angle);
+            var y = Math.sin(angle);
+            hexagon.push([x,y]);
+        }
+
+        // 2. Subdivide the hexagon
+        var hexagon_sub = [];
+        for (var i = 0; i < 6; i++){
+            var x = (hexagon[i][0] + hexagon[(i+1)%6][0]) / 2;
+            var y = (hexagon[i][1] + hexagon[(i+1)%6][1]) / 2;
+            hexagon_sub.push([x,y]);
+        }
+
+        // 3. Create a hexagon grid
+        for (var q = -radius; q <= radius; q++){
+            for (var r = -radius; r <= radius; r++){
+                // Keep the radius = 6
+                var s = 0 - q - r;
+                if (Math.abs(s) > radius) continue;  
+        
+                // Tile contruction
+                var x = q * spacing + r * spacing * Math.cos(Math.PI /3);
+                var y = 0;
+                var z = r * spacing * Math.cos(Math.PI /6);
+                var tile = new Tile(q, r, x, y, z,this.game);
+
+                // 4. Assign type to each tile
+                // 5. Add tile to map
+                var type = TILE_TYPE.normal;
+                if (q >= 0 && r >= 0 && s >= 0){
+                    type = TILE_TYPE.wall;
+                }
+                else if (q <= 0 && r <= 0 && s <= 0){
+                    type = TILE_TYPE.cover;
+                }
+                else if (q >= 0 && r <= 0 && s <= 0){
+                    type = TILE_TYPE.water;
+                }
+                tile.type = type;
+                tile.defaultColor = type[1];
+                tile.render();
+
+                // Add tile to map
+                this.mesh.add(tile.mesh);
+                this.grids.set(q.toString()+r.toString(), tile);
+            }
+        }
+    }
+
+
+
     getTile(q, r){
         return this.grids.get(q.toString()+r.toString());
     }
 
+    distance(tile1, tile2){
+        return Math.max(Math.abs(tile1.q - tile2.q), Math.abs(tile1.r - tile2.r),Math.abs(tile1.s - tile2.s));
+    }
 
     lerp(a, b, t){
         //helper function for findPath_straight
@@ -74,7 +157,6 @@ export class Board {
     }
 
     findPath_straight(sq, sr, eq, er){
-    //warning: havent test if this function works
         //sq, sr: start q, r; eq, er: end q, r
         //find straight line path from start to end(not concern the cost and unpasable tile)
         if (sq == eq && sr == er){
@@ -88,10 +170,11 @@ export class Board {
         var temp = currentTile;
         var ss = currentTile.s;
         var se = endTile.s;
-        for (var i = 0.0; i < 100.0; i++){
-            var q = this.lerp(sq, eq, i/100.0);
-            var r = this.lerp(sr, er, i/100.0);
-            var s = this.lerp(ss, se, i/100.0);
+        var N = this.distance(currentTile, endTile);
+        for (var i = 0.0; i < N; i++){
+            var q = this.lerp(sq, eq, i/N);
+            var r = this.lerp(sr, er, i/N);
+            var s = this.lerp(ss, se, i/N);
             var tile = this.cubeRound(q, r,s);    
             if (tile != temp){
                 path.push(tile);
@@ -108,61 +191,13 @@ export class Board {
 
 
     findPath(sq, sr, eq, er){
+    //warning: havent test if this function works
         //sq, sr: start q, r; eq, er: end q, r
         //A* algorithm
         //1. Initialize both open and closed list
-        var openList = [];
-        var closedList = [];
-        var startTile = this.getTile(sq, sr);
-        var endTile = this.getTile(eq, er);
-        openList.push(startTile);
+        
         //2. Loop
-        while (openList.length > 0){
-            //a. find the tile with the least f on the open list, call it "current tile"
-            var currentTile = openList[0];
-            for (var i = 0; i < openList.length; i++){
-                if (openList[i].f < currentTile.f){
-                    currentTile = openList[i];
-                }
-            }
-            //b. pop current off the open list, add it to the closed list
-            var index = openList.indexOf(currentTile);
-            openList.splice(index, 1);
-            closedList.push(currentTile);
-            //c. Found the goal
-            if (currentTile == endTile){
-                var path = [];
-                var temp = currentTile;
-                path.push(temp);
-                while (temp.parent){
-                    path.push(temp.parent);
-                    temp = temp.parent;
-                }
-                return path.reverse();
-            }
-            //d. Generate children
-            var neighbors = this.getNeighbors(currentTile);
-            for (var i = 0; i < neighbors.length; i++){
-                var neighbor = neighbors[i];
-                //if the neighbor is in the closed list, ignore it
-                if (closedList.includes(neighbor)){
-                    continue;
-                }
-                //if the neighbor is not in the open list
-                if (!openList.includes(neighbor)){
-                    //compute its f, g, h
-                    neighbor.g = currentTile.g + 1;
-                    neighbor.h = this.heuristic(neighbor, endTile);
-                    neighbor.f = neighbor.g + neighbor.h;
-                    //set the parent to current tile
-                    neighbor.parent = currentTile;
-                    //add it to the open list
-                    openList.push(neighbor);
-                }
-            }
-        }
-        this.path = path;
-        return path;
+        
     }
 
     clearPath(){

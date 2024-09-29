@@ -4,7 +4,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 console.log("Tile.js loaded successfully!")
 
 export class Tile {
-    constructor(q, r, x, y, z, game){
+    constructor(q, r, x, y, z, game, defaultColor = 0x000000){
         // constructor
         this.q = q;
         this.r = r;
@@ -13,6 +13,7 @@ export class Tile {
         this.y = y;
         this.z = z;
         this.game = game;
+        this.defaultColor = defaultColor;
 
         // pointer
         this.character = null;
@@ -33,7 +34,7 @@ export class Tile {
 
     render(){
         this.mesh.scale.set(0.1, 0.1, 0.1);
-        this.mesh.material.emissive.set(0x000000);
+        this.mesh.material.emissive.set(this.defaultColor);
 
         if (this.state == 'selected') {
             this.mesh.scale.set(0.12, 0.12, 0.12);
@@ -71,18 +72,15 @@ export class Tile {
         console.log("Tile selected", this.q, this.r);
         if(this.character)console.log("Character", this.character," with name", this.character.name);
         
-        console.log("this.game.PlayerMove.length", this.game.playerMove.length);
-        if (!this.character ) {
-            console.log("this.game.PlayerMove[-1]");
-            this.game.playerMove[this.game.playerMove.length-1].moveTo(this.q, this.r);
-            this.game.playerMove.pop();
-            /*this.game.player.forEach((character) => {
-                console.log(character);
-                if (character.moveAble) {
-                    character.moveTo(this.q, this.r);
-                    console.log("Character moved to", this.q, this.r);
-                }
-            });*/
+        //console.log("this.game.PlayerMove.length", this.game.playerMove.length);
+        if (!this.character  && this.game.playerMove.length > 0){
+            //console.log("this.game.PlayerMove[-1]");
+            var character = this.game.playerMove[this.game.playerMove.length-1];
+            if(character.moveRange >= this.game.board.distance(character.getTile(), this)){
+                character.moveTo(this.q, this.r);
+                this.game.playerMove.pop();
+            }
+
         }
     }
     deselect(){
@@ -111,14 +109,16 @@ export class Tile {
             var character = this.game.playerMove[this.game.playerMove.length-1];
             this.game.board.findPath_straight(character.q, character.r, this.q, this.r);
             var path = this.game.board.path;
-            console.log("path", path);
+            //console.log("path", path);
             if (path){
                 for (var i = 0; i < path.length; i++){
+                    if(i > character.moveRange) break;
                     var tile = path[i];
                     tile.state = 'pathed';
                     tile.render();
                 }
             }
+            
         }
         this.render();
     }
@@ -128,15 +128,6 @@ export class Tile {
         }
 
         //clear the path
-        /*var path = this.game.board.path;
-        if (path){
-            for (var i = 0; i < path.length; i++){
-                var tile = path[i];
-                tile.state = 'default';
-                tile.render();
-            }
-        }
-        */
         this.game.board.clearPath();
         this.render();
     }

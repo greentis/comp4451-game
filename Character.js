@@ -12,6 +12,7 @@ export class Character{
         this.name = name;
         this.game = game;
         //this.moveAble = false;
+        this.moveRange = 5;
 
         const gltfLoader = new GLTFLoader();
         const url = 'assets/low_poly_kyle_crane/scene.gltf';
@@ -27,6 +28,8 @@ export class Character{
             this.mesh = model;
             this.getTile().characterEnter(this);
         });
+
+        //this.updateLight(this.getTile().x, this.getTile().z);
         
     }
 
@@ -53,6 +56,7 @@ export class Character{
 
         // After Updating coordinate
         this.getTile().characterEnter(this);
+        this.updateLight(targetTile.x, targetTile.z); //update light position
         
     }
 
@@ -79,4 +83,11 @@ export class Character{
     getTile(){
         return this.game.board.getTile(this.q, this.r);
     }
+
+    //helper function (todo: better open a new file for render related helper function)
+    updateLight(x,z){
+        this.game.lightPlayerList[this.game.player.indexOf(this)].position.set(x,1,z);
+        console.log("light position: ",this.game.lightPlayerList[this.game.player.indexOf(this)].position);
+    }
+
 }

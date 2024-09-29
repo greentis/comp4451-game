@@ -6,6 +6,10 @@ import {Board} from './Board.js';
 import {Character} from './Character.js';
 console.log("main.js loaded successfully!")
 
+//global variables
+const PLAYER_NUM = 2;
+
+
 export class Game{
 	constructor(){
 		this.createScene();
@@ -18,6 +22,10 @@ export class Game{
 		this.player.push(new Character(0, 1, 'Kyle', this));
 		this.playerMove = []; // List of characters that choose by player to move
 			                  // should only contain 1 or 0 element
+		//update light position
+		for(var i = 0; i < PLAYER_NUM; i++){
+			this.player[i].updateLight(this.board.getTile(this.player[i].q, this.player[i].r).x, this.board.getTile(this.player[i].q, this.player[i].r).z);
+		}
 
 		this.activateEventHandler();
 	}
@@ -26,11 +34,22 @@ export class Game{
 		this.scene = new THREE.Scene();
 		this.scene.background = new THREE.Color(0x000000);
 		
-		this.light = new THREE.PointLight(0xAA5522, 40);
+		/*this.light = new THREE.PointLight(0xAA5522, 40);
 		this.light.position.y = 1;
 		this.light.decay = 0.5;
 		this.light.distance = 4.5;
 		this.scene.add(this.light);
+		*/
+		//create a list of light with number of light = number of player
+		this.lightPlayerList = [];
+		for(var i = 0; i < PLAYER_NUM; i++){
+			this.lightPlayerList.push(new THREE.PointLight(0xAA5522, 40));
+			this.lightPlayerList[i].position.y = 1;
+			this.lightPlayerList[i].decay = 0.5;
+			this.lightPlayerList[i].distance = 4.5;
+			this.scene.add(this.lightPlayerList[i]);
+		}
+
 
 		this.ambientLight = new THREE.AmbientLight( 0x404050 ); // soft white light
 		this.scene.add( this.ambientLight );
