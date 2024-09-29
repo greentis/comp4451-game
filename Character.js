@@ -33,7 +33,7 @@ export class Character{
     moveTo(q, r) {
         // Before Updating coordinate
         this.getTile().characterLeave();
-        /*
+        
         // calulate new facing direction
         // 1. get current tile
         var currentTile = this.getTile();
@@ -46,7 +46,7 @@ export class Character{
         direction.normalize();
         // 4. set rotation
         this.mesh.rotation.y = Math.atan2(direction.x, direction.z);
-        */
+        
 
         // Update coordinate
         this.q = q; this.r = r;

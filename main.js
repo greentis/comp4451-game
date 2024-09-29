@@ -140,9 +140,67 @@ export class Game{
 		}
 		, false);
 		
+		/*
 		window.addEventListener('keypress', 
 		(event)=>{
 			console.log(event.key);
+		}
+		, false);*/
+
+		// using Q and E to set camera rotation by calculating the new position of camera
+		// so that it is like the plane is rotating, but not the camera
+		// using the mousemove function as reference
+		window.addEventListener('keypress',
+		(event)=>{
+			switch (event.key){
+				case 'q':
+					// get the current position of camera
+					var currentPosition = new THREE.Vector3();
+					currentPosition.copy(this.camera.position);
+					// get the current lookAt position of camera
+					var currentLookAt = new THREE.Vector3();
+					currentLookAt.copy(this.controls.target);
+					// calculate the new position of camera by using lookAt as the center of rotation
+					// then rotate the current position by 5 degree
+					currentPosition.sub(currentLookAt);
+					currentPosition.applyAxisAngle(new THREE.Vector3(0,1,0), -Math.PI/36);
+					currentPosition.add(currentLookAt);
+					this.camera.position.copy(currentPosition);
+					this.camera.lookAt(currentLookAt);
+					break;
+				case 'e':
+					// get the current position of camera
+					var currentPosition = new THREE.Vector3();
+					currentPosition.copy(this.camera.position);
+					// get the current lookAt position of camera
+					var currentLookAt = new THREE.Vector3();
+					currentLookAt.copy(this.controls.target);
+					// calculate the new position of camera by using lookAt as the center of rotation
+					// then rotate the current position by 5 degree
+					currentPosition.sub(currentLookAt);
+					currentPosition.applyAxisAngle(new THREE.Vector3(0,1,0), Math.PI/36);
+					currentPosition.add(currentLookAt);
+					this.camera.position.copy(currentPosition);
+					this.camera.lookAt(currentLookAt);
+					break;
+				//using WASD to move the camera
+				case 'w':
+					this.camera.position.z -= 0.1;
+					break;
+				case 's':
+					this.camera.position.z += 0.1;
+					break;
+				case 'a':
+					this.camera.position.x -= 0.1;
+					break;
+				case 'd':
+					this.camera.position.x += 0.1;
+					break;
+				default:
+					console.log(event.key);
+					break;
+			}
+			this.renderer.render( this.scene, this.camera );
 		}
 		, false);
 		
