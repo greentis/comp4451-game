@@ -66,7 +66,6 @@ export class Game{
 		this.controls.screenSpacePanning = false;
 		this.controls.maxPolarAngle = Math.PI / 4;
 		this.controls.minPolarAngle = Math.PI / 4;
-		this.controls.maxZoom = 10;
 
 		// Animation loop
 		this.renderer.setAnimationLoop(()=>{

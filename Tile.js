@@ -70,7 +70,7 @@ export class Tile {
 
         // find out the pointer of characters in Game.player
         // and then move the character to this tile
-        console.log("Tile selected", this.q, this.r);
+        console.log("Tile selected", this.q, this.r, 'with type', this.type);
         if(this.character)console.log("Character", this.character," with name", this.character.name);
         
         //console.log("this.game.PlayerMove.length", this.game.playerMove.length);

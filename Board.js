@@ -16,7 +16,7 @@ const TILE_TYPE = {
 	wall: [1,0x0000FF],
 	cover: [2,0x00FF00],
 	water: [3,0x00FFFF],
-    rock: [4,0xFF0000]
+    rock: [4,0x777777]
 };
 
 export class Board {
