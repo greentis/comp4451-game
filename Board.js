@@ -32,23 +32,24 @@ export class Board {
         this.minq = 10; this.maxq = 10;
         this.minr = 10; this.maxr = 20;
         this.mins = 10; this.maxs = 15; 
-        //this.generate();
-        this.generatePolygonal();
+        this.generate();
+        //this.generatePolygonal();
     }
     
     generate(){
-        var radius = 8;
-        var spacing = 1;
+        var radius = 6;
+        var length = 20;
+        var offset = 2;
         for (var q = -radius; q <= radius; q++){
-            for (var r = -radius; r <= radius; r++){
+            for (var r = -length; r <= offset; r++){
                 // Keep the radius = 6
                 var s = 0 - q - r;
-                if (Math.abs(s) > radius) continue;  
+                if (s < -offset || s > length) continue;  
         
                 // Tile contruction
-                var x = q * spacing + r * spacing * Math.cos(Math.PI /3);
+                var x = q * Math.cos(Math.PI / 6);
                 var y = 0;
-                var z = r * spacing * Math.cos(Math.PI /6);
+                var z = r + q * Math.cos(Math.PI / 3);
                 var tile = new Tile(q, r, x, y, z,this.game);
 
                 // Add tile to map
@@ -94,16 +95,15 @@ export class Board {
        // 2. generate the continous structure of the map first(i.e. Rock, Water(Pond))
         //the outermost layer must be rock
         for (var q = -radius_q; q <= radius_q; q++){
-            for (var r = -radius_r; r <= radius_r; r++){
-                for (var s = -radius_s; s <= radius_s; s++){
-                    if( Math.abs(-q -r) > radius_s || Math.abs(-r - s) > radius_q || Math.abs(-s - q) > radius_r){
-                        continue;
-                    }
+            for (var r = 0; r <= radius_q; r++){
+                var s = 0 - q - r;
+                if( Math.abs(-q -r) > radius_s || Math.abs(-r - s) > radius_q || Math.abs(-s - q) > radius_r){
+                    continue;
+                }
 
-                    //generate the rock tile
-                    if(Math.random() < 0.1){
-                        temp[q][r] = TILE_TYPE.rock;
-                    }
+                //generate the rock tile
+                if(Math.random() < 0.05){
+                    temp[q][r] = TILE_TYPE.rock;
                 }
             }
         }
@@ -114,22 +114,21 @@ export class Board {
 
         // 5. generate the tile based on the annotated map
         for (var q = -radius_q; q <= radius_q; q++){
-            for (var r = -radius_r; r <= radius_r; r++){
-                for (var s = -radius_s; s <= radius_s; s++){
-                    if( Math.abs(-q -r) > radius_s || Math.abs(-r - s) > radius_q || Math.abs(-s - q) > radius_r){
-                        continue;
-                    }
-
-                    //tile construction
-                    var x = q  + r  * Math.cos(Math.PI /3);
-                    var y = 0;
-                    var z = r * Math.cos(Math.PI /6);
-                    var tile = new Tile(q, r, x, y, z, this.game, temp[q][r][1], temp[q][r][0]);
-                    
-                    //add tile to map
-                    this.mesh.add(tile.mesh);
-                    this.grids.set(q.toString()+r.toString(), tile);
+            for (var r = 0; r <= radius_q; r++){
+                var s = 0 - q - r;
+                if ( s > 0){
+                    continue;
                 }
+
+                //tile construction
+                var x = q * Math.cos(Math.PI / 6);
+                var y = 0;
+                var z = r + q * Math.cos(Math.PI / 3);
+                var tile = new Tile(q, r, x, y, -z, this.game, temp[q][r][1], temp[q][r][0]);
+                
+                //add tile to map
+                this.mesh.add(tile.mesh);
+                this.grids.set(q.toString()+r.toString(), tile);
             }
         }
         
@@ -149,9 +148,9 @@ export class Board {
         //helper function for findPath_straight
         a = a +0.0; b = b + 0.0; //convert to float
         return a + (b - a) * t;
-    }
+    }playermove
 
-    cubeRound(q, r, s){
+    hexRound(q, r, s){
         //helper function for findPath_straight
         var nq = Math.round(q);
         var nr = Math.round(r);
@@ -173,26 +172,26 @@ export class Board {
         return this.getTile(nq, nr);
     }
 
-    findPath_straight(sq, sr, eq, er){
-        //sq, sr: start q, r; eq, er: end q, r
+    findPath_straight(q1, r1, q2, r2){
+        //q1, r1: start q, r; q2,r2: end q, r
         //find straight line path from start to end(not concern the cost and unpasable tile)
-        if (sq == eq && sr == er){
+        if (q1 == q2 && r1 == r2){
             return [];
         }
         var path = [];
-        var currentTile = this.getTile(sq, sr);
-        var endTile = this.getTile(eq, er);
+        var currentTile = this.getTile(q1, r1);
+        var endTile = this.getTile(q2, r2);
         path.push(currentTile);
         
         var temp = currentTile;
-        var ss = currentTile.s;
-        var se = endTile.s;
+        var s1 = currentTile.s;
+        var s2 = endTile.s;
         var N = this.distance(currentTile, endTile);
         for (var i = 0.0; i < N; i++){
-            var q = this.lerp(sq, eq, i/N);
-            var r = this.lerp(sr, er, i/N);
-            var s = this.lerp(ss, se, i/N);
-            var tile = this.cubeRound(q, r,s);    
+            var q = this.lerp(q1, q2, i/N);
+            var r = this.lerp(r1, r2, i/N);
+            var s = this.lerp(s1, s2, i/N);
+            var tile = this.hexRound(q, r, s);    
             if (tile != temp){
                 path.push(tile);
                 temp = tile;
@@ -207,9 +206,9 @@ export class Board {
         
 
 
-    findPath(sq, sr, eq, er){
+    findPath(q1, sr, q2, r2){
     //warning: havent test if this function works
-        //sq, sr: start q, r; eq, er: end q, r
+        //q1, r1: start q, r; q2, r2: end q, r
         //A* algorithm
         //1. Initialize both open and closed list
         

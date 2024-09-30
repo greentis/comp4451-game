@@ -28,6 +28,7 @@ export class Tile {
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.position.x = this.x;
         this.mesh.position.z = this.z;
+        this.mesh.rotateY(Math.PI/6);
         this.mesh.name = 'tile';
         this.mesh.userData = this;
         this.render();
@@ -66,23 +67,30 @@ export class Tile {
     //
 
     select(){
-        if (this.character) this.character.select();
-
-        // find out the pointer of characters in Game.player
-        // and then move the character to this tile
-        console.log("Tile selected", this.q, this.r, 'with type', this.type);
-        if(this.character)console.log("Character", this.character," with name", this.character.name);
+        console.log("Tile selected", this.q, this.r, 0-this.q-this.r, 'with type', this.type);
         
-        //console.log("this.game.PlayerMove.length", this.game.playerMove.length);
-        if (!this.character  && this.game.playerMove.length > 0){
-            //console.log("this.game.PlayerMove[-1]");
-            var character = this.game.playerMove[this.game.playerMove.length-1];
-            if(character.moveRange >= this.game.board.distance(character.getTile(), this)){
-                character.moveTo(this.q, this.r);
-                this.game.playerMove.pop();
-            }
-
+        if (this.character) {
+            this.character.select();
+            console.log("Character", this.character," with name", this.character.name);
         }
+        else{
+            // find out the pointer of characters in Game.player
+            // and then move the character to this tile
+            
+            
+            //console.log("this.game.PlayerMove.length", this.game.playerMove.length);
+            if (this.game.playerMove.length > 0){
+                //console.log("this.game.PlayerMove[-1]");
+                var character = this.game.playerMove[this.game.playerMove.length-1];
+                if(character.moveRange >= this.game.board.distance(character.getTile(), this)){
+                    character.moveTo(this.q, this.r);
+                    this.game.playerMove.pop();
+                }
+
+            }
+        }
+
+
     }
     deselect(){
         if (this.character) this.character.deselect();
@@ -123,6 +131,7 @@ export class Tile {
         }
         this.render();
     }
+
     deHovering(){
         if (this.state != 'selected'){
             this.state = 'default';

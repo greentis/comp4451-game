@@ -80,6 +80,14 @@ export class Character{
         this.getTile().deselected();
     }
 
+    hovering(){
+        this.getTile().hovering();
+    }
+    
+    deHovering(){
+        this.getTile().deHovering();
+    }
+
     getTile(){
         return this.game.board.getTile(this.q, this.r);
     }

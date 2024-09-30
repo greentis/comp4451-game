@@ -7,23 +7,24 @@ import {Character} from './Character.js';
 console.log("main.js loaded successfully!")
 
 //global variables
-const PLAYER_NUM = 2;
 
 
 export class Game{
 	constructor(){
+		this.player = [];
+		this.player.push(new Character(0, 0, 'Curtis', this));
+
 		this.createScene();
 
 		this.board = new Board(this);
 		this.scene.add(this.board.mesh);
 		
-		this.player = [];
-		this.player.push(new Character(1, 0, 'Curtis', this));
-		this.player.push(new Character(0, 1, 'Kyle', this));
+		
+		//this.player.push(new Character(0, 1, 'Kyle', this));
 		this.playerMove = []; // List of characters that choose by player to move
 			                  // should only contain 1 or 0 element
 		//update light position
-		for(var i = 0; i < PLAYER_NUM; i++){
+		for(var i = 0; i < this.player.length; i++){
 			this.player[i].updateLight(this.board.getTile(this.player[i].q, this.player[i].r).x, this.board.getTile(this.player[i].q, this.player[i].r).z);
 		}
 
@@ -42,7 +43,7 @@ export class Game{
 		*/
 		//create a list of light with number of light = number of player
 		this.lightPlayerList = [];
-		for(var i = 0; i < PLAYER_NUM; i++){
+		for(var i = 0; i < this.player.length; i++){
 			this.lightPlayerList.push(new THREE.PointLight(0xAA5522, 40));
 			this.lightPlayerList[i].position.y = 1;
 			this.lightPlayerList[i].decay = 0.5;
