@@ -3,15 +3,15 @@ import * as THREE from 'three';
 import {Character} from './Character.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
-export class Hunter extends Character{
+export class Animal extends Character{
     constructor(q, r, game, name){
         super(q, r, game, name);
 
         const gltfLoader = new GLTFLoader();
-        const url = 'assets/low_poly_kyle_crane/scene.gltf';
+        const url = 'assets/monkey/scene.gltf';
         gltfLoader.load(url, (gltf) => {
             var model = gltf.scene;
-            model.scale.set(1.2,1.2,1.2);
+            model.scale.set(0.008,0.008,0.008);
             model.userData = this;
             model.traverse((child) => {
                 if (child.isMesh) {
@@ -19,11 +19,6 @@ export class Hunter extends Character{
                 }
             });
             this.mesh = model;
-            this.light = new THREE.PointLight(0xAA5522, 40);
-            this.light.position.y = 1;
-            this.light.decay = 0.5;
-            this.light.distance = this.sightRange - 0.5;
-            this.mesh.add(this.light);
             this.getTile().characterEnter(this);
         });
     }

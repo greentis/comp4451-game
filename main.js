@@ -1,33 +1,36 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { MapControls } from 'three/addons/controls/MapControls.js';
+import { Hunter } from './Hunter.js';
+import {Animal} from './Animal.js';
 
 import {Board} from './Board.js';
 import {Character} from './Character.js';
-console.log("main.js loaded successfully!")
 
 //global variables
 
 
 export class Game{
 	constructor(){
-		this.player = [];
-		this.player.push(new Character(0, 0, 'Curtis', this));
+		
 
 		this.createScene();
 
 		this.board = new Board(this);
-		this.scene.add(this.board.mesh);
+		this.scene.add(this.board.body);
 		
-		
-		//this.player.push(new Character(0, 1, 'Kyle', this));
-		this.playerMove = []; // List of characters that choose by player to move
-			                  // should only contain 1 or 0 element
-		//update light position
-		for(var i = 0; i < this.player.length; i++){
-			this.player[i].updateLight(this.board.getTile(this.player[i].q, this.player[i].r).x, this.board.getTile(this.player[i].q, this.player[i].r).z);
-		}
+		this.player = new Array(
+			new Hunter(0, 0, this, 'Curtis'),
+		);
 
+		this.enemy = new Array(
+			new Animal(0, 5, this, 'Monkey')
+		);
+		
+		this.movingPlayer = null; // List of characters that choose by player to move
+		
+		// Event Handler
+		this.selectedObject = null;
 		this.activateEventHandler();
 	}
 
@@ -42,17 +45,10 @@ export class Game{
 		this.scene.add(this.light);
 		*/
 		//create a list of light with number of light = number of player
-		this.lightPlayerList = [];
-		for(var i = 0; i < this.player.length; i++){
-			this.lightPlayerList.push(new THREE.PointLight(0xAA5522, 40));
-			this.lightPlayerList[i].position.y = 1;
-			this.lightPlayerList[i].decay = 0.5;
-			this.lightPlayerList[i].distance = 4.5;
-			this.scene.add(this.lightPlayerList[i]);
-		}
+		
 
 
-		this.ambientLight = new THREE.AmbientLight( 0x404050 ); // soft white light
+		this.ambientLight = new THREE.AmbientLight( 0x000000 ); // soft white light
 		this.scene.add( this.ambientLight );
 
 		this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -71,9 +67,9 @@ export class Game{
 		// Animation loop
 		this.renderer.setAnimationLoop(()=>{
 				// x rolls towards camera
-				this.board.mesh.rotation.x = Math.PI * 0;
+				this.board.body.rotation.x = Math.PI * 0;
 				// y turns anticlockwise
-				this.board.mesh.rotation.y = 0;
+				this.board.body.rotation.y = 0;
 			
 				this.renderer.render( this.scene, this.camera );
 		});
@@ -91,7 +87,7 @@ export class Game{
 		var raycaster = new THREE.Raycaster();
 		var mouseVec = new THREE.Vector2();
 		
-		var selectingList = [];
+		
 
 		window.addEventListener('click', (event)=>{
 			mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -101,37 +97,22 @@ export class Game{
 			var intersects = raycaster.intersectObjects(this.scene.children);
 			
 			// Deactivate objects that is activated in previous call
-			var previousObject;
-			for (var i = 0; i < selectingList.length; i++) {
-				selectingList[i].deselect();
-				previousObject = selectingList[i];
-			}
-			selectingList = [];
+			var previousObject = this.selectedObject;
+			this.selectedObject = null;
 		
 			// Try activating the object in ascending order
 			for (var i = 0; i < intersects.length; i++) {
-				try {
-					if (intersects[i].object.userData == previousObject){
-						// if the object is character in the playerMove list
-						// pop the object from the list
-						if (intersects[i].object.userData == this.playerMove[this.playerMove.length-1]){
-							//console.log("playerMove' length: ",this.game.playerMove.length);
-							this.playerMove.pop();
-						}
-						//console.log("Same object selected");
-						//console.log("main: playerMove: ",this.game.playerMove);
-						break;
-					}
-					intersects[i].object.userData.select();
-					selectingList.push(intersects[i].object.userData);
-					break;
-				} catch (error) {
-					// If the object have no select() function
-				}
+				var newObject = intersects[i].object.userData;
+				if (!newObject.select) continue;
+				if (previousObject != newObject) this.selectedObject = newObject;
+				newObject.select();
+				break;
 			}
+			if (previousObject) previousObject.deselect();
+			//console.log(this.selectedObject);
 		}, false);
 		
-		var hoveringList = [];
+		var hoveringObject = null;
 		
 		window.addEventListener('mousemove', (event)=>{
 			// Do raycast to find all objects within sight
@@ -141,20 +122,15 @@ export class Game{
 			var intersects = raycaster.intersectObjects(this.scene.children);
 			
 			// Deactivate objects that is activated in previous call
-			for (var i = 0; i < hoveringList.length; i++) {
-				hoveringList[i].deHovering();
-			}
-			hoveringList = [];
-		
+			if (hoveringObject) hoveringObject.deHovering();
+			hoveringObject = null;
 			// Try activating the object in ascending order
 			for (var i = 0; i < intersects.length; i++) {
-				try {
-					intersects[i].object.userData.hovering();
-					hoveringList.push(intersects[i].object.userData);
-					break;
-				} catch (error) {
-					// If the object have no hovering() function
-				}
+				var newObject = intersects[i].object.userData;
+				if (!newObject.hovering) continue;
+				newObject.hovering();
+				hoveringObject = newObject;
+				break;
 			}
 		}
 		, false);

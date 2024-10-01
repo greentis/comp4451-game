@@ -1,62 +1,63 @@
 import * as THREE from 'three';
 import {Tile} from './Tile.js';
+import { TileProperties } from './TileProperties.js';
 import {Game} from './main.js';
-import { round } from 'three/webgpu';
 //import * as math from 'mathjs';
 
-console.log("Board.js loaded successfully!");
-//set up a 2D array to store different type of tiles
-// 0: normal tile
-// 1: wall tile
-// 2: cover tile
-// 3: water tile
-// 4: rock tile
 const TILE_TYPE = {
-	normal: [0,0x000000],
-	wall: [1,0x0000FF],
-	cover: [2,0x00FF00],
-	water: [3,0x00FFFF],
-    rock: [4,0x777777]
+    'Default': new TileProperties(0),
+    'Wall': new TileProperties(1),
+    'Rock': new TileProperties(2),
+    'Cover': new TileProperties(3),
+    'Water': new TileProperties(4),
 };
+
+var lerp = (a, b, t) => {return a + (b - a) * t;}
+var distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
 
 export class Board {
     constructor(game){
         this.game = game;
 
-        this.mesh = new THREE.Object3D();
+        this.body = new THREE.Object3D();
+        var geometry = new THREE.PlaneGeometry( 100, 100 );
+        var material = new THREE.MeshPhongMaterial( {color: 0x404050 ,side: THREE.DoubleSide} );
+        this.mesh = new THREE.Mesh( geometry, material );
+        this.body.add(this.mesh);
+        this.mesh.rotateX(Math.PI/2);
+        this.mesh.userData = this;
+        
+
         this.grids = new Map();
         this.path = [];
-       
+        this.lightedGrid = new Array();
 
         //below variables are for polygonal generation only
         this.minq = 10; this.maxq = 10;
         this.minr = 10; this.maxr = 20;
         this.mins = 10; this.maxs = 15; 
-        this.generate();
-        //this.generatePolygonal();
+        //this.generate();
+        this.generatePolygonal();
     }
     
     generate(){
-        var radius = 6;
+        var width = 6;
         var length = 20;
-        var offset = 2;
-        for (var q = -radius; q <= radius; q++){
-            for (var r = -length; r <= offset; r++){
-                // Keep the radius = 6
-                var s = 0 - q - r;
-                if (s < -offset || s > length) continue;  
-        
-                // Tile contruction
-                var x = q * Math.cos(Math.PI / 6);
-                var y = 0;
-                var z = r + q * Math.cos(Math.PI / 3);
-                var tile = new Tile(q, r, x, y, z,this.game);
-
-                // Add tile to map
-                this.mesh.add(tile.mesh);
-                this.grids.set(q.toString()+r.toString(), tile);
-            }
-        }
+        var boundary = 2;
+        this.qmin = -width, this.qmax = width;
+        this.rmin = -length, this.rmax = boundary;
+        this.smin = -boundary, this.smax = length;
+        this.forEachGrid((q, r)=>{
+            var x = q * Math.cos(Math.PI / 6);
+            var y = 0;
+            var z = r + q * Math.cos(Math.PI / 3);
+            var tile = new Tile(q, r, x, y, z,this.game, TILE_TYPE['Default']);
+            
+            // Add tile to map
+            this.body.add(tile.body);
+            this.grids.set(q.toString()+r.toString(), tile);
+        });
+                
     }
 
     generatePolygonal(){
@@ -75,62 +76,48 @@ export class Board {
         // 1. set the size of the map by 3 radius
         //generat random map with hexagon grid
         //setting random seed
-        var seed = Math.random();
-        console.log(seed);
-        var radius_q = Math.round(this.minq + (this.maxq - this.minq) * seed);
-        var radius_r = Math.round(this.minr + (this.maxr - this.minr) * seed);
-        var radius_s = Math.round(this.mins + (this.maxs - this.mins) * seed);
-        //create a temp array to store all the type of tile in the map temporarily
-        // temp should be 2D array 
-        var LargestRadius = Math.max(radius_q, radius_r, radius_s);
-        var temp = [];
-        for(var i = -LargestRadius; i <= LargestRadius; i++){
-            temp[i] = [];
-            for (var j = -LargestRadius; j <= LargestRadius; j++){
-                temp[i][j] = TILE_TYPE.normal;
+        var seed = Math.round(Math.random()* 900000 + 100000);
+        console.log('This board have seed ', seed);
         
-            }
-        }
+        var width = 6;
+        var length = 20;
+        var boundary = 2;
+        this.qmin = -width, this.qmax = width;
+        this.rmin = -boundary, this.rmax = length;// create a temp array to store all the type of tile in the map temporarily
+        this.smin = -length, this.smax = boundary;
+        // temp should be 2D array 
+        this.forEachGrid((q, r)=>{
+            var x = q * Math.cos(Math.PI / 6);
+            var y = 0;
+            var z = r + q * Math.cos(Math.PI / 3);
+            var tile = new Tile(q, r, x, y, -z,this.game, TILE_TYPE['Default']);
+            
+            // Add tile to map
+            this.body.add(tile.body);
+            this.grids.set(q.toString()+r.toString(), tile);
+        });
 
        // 2. generate the continous structure of the map first(i.e. Rock, Water(Pond))
         //the outermost layer must be rock
-        for (var q = -radius_q; q <= radius_q; q++){
-            for (var r = 0; r <= radius_q; r++){
-                var s = 0 - q - r;
-                if( Math.abs(-q -r) > radius_s || Math.abs(-r - s) > radius_q || Math.abs(-s - q) > radius_r){
-                    continue;
-                }
-
-                //generate the rock tile
-                if(Math.random() < 0.05){
-                    temp[q][r] = TILE_TYPE.rock;
-                }
+        this.forEachGrid((q, r)=>{
+            if(Math.random() < 0.05){
+                this.getTile(q, r).properties = TILE_TYPE['Wall'];
+                this.getTile(q, r).render();
             }
-        }
+        });
+        this.forEachGrid((q, r)=>{
+            if(Math.random() < 0.05){
+                this.getTile(q, r).properties = TILE_TYPE['Rock'];
+                this.getTile(q, r).render();
+            }
+        });
 
         // 3. generate the segmented structure of the map(i.e. Wall, Cover, Water(river))
 
         // 4. combine the two structure together to get the annotated map
 
         // 5. generate the tile based on the annotated map
-        for (var q = -radius_q; q <= radius_q; q++){
-            for (var r = 0; r <= radius_q; r++){
-                var s = 0 - q - r;
-                if ( s > 0){
-                    continue;
-                }
-
-                //tile construction
-                var x = q * Math.cos(Math.PI / 6);
-                var y = 0;
-                var z = r + q * Math.cos(Math.PI / 3);
-                var tile = new Tile(q, r, x, y, -z, this.game, temp[q][r][1], temp[q][r][0]);
-                
-                //add tile to map
-                this.mesh.add(tile.mesh);
-                this.grids.set(q.toString()+r.toString(), tile);
-            }
-        }
+        
         
     }
 
@@ -140,35 +127,13 @@ export class Board {
         return this.grids.get(q.toString()+r.toString());
     }
 
-    distance(tile1, tile2){
-        return Math.max(Math.abs(tile1.q - tile2.q), Math.abs(tile1.r - tile2.r),Math.abs(tile1.s - tile2.s));
-    }
-
-    lerp(a, b, t){
-        //helper function for findPath_straight
-        a = a +0.0; b = b + 0.0; //convert to float
-        return a + (b - a) * t;
-    }playermove
-
     hexRound(q, r, s){
-        //helper function for findPath_straight
-        var nq = Math.round(q);
-        var nr = Math.round(r);
-        var ns = Math.round(s);
-        
-        var q_diff = Math.abs(nq - q);
-        var r_diff = Math.abs(nr - r);
-        var s_diff = Math.abs(ns - s);
+        var nq = Math.round(q), nr = Math.round(r), ns = Math.round(r);
+        var dq = Math.abs(nq-q), dr = Math.abs(nr-r), ds = Math.abs(ns-s);
 
-        if (q_diff > r_diff && q_diff > s_diff){
-            nq = -nr - ns;
-        }
-        else if (r_diff > s_diff){
-            nr = -nq - ns;
-        }
-        else{
-            ns = -nq - nr;
-        }
+        if (dq > dr && dq > ds) nq = -nr - ns;
+        else if (dr > ds) nr = -nq - ns;
+        else ns = -nq - nr;
         return this.getTile(nq, nr);
     }
 
@@ -186,11 +151,11 @@ export class Board {
         var temp = currentTile;
         var s1 = currentTile.s;
         var s2 = endTile.s;
-        var N = this.distance(currentTile, endTile);
+        var N = distance(currentTile, endTile);
         for (var i = 0.0; i < N; i++){
-            var q = this.lerp(q1, q2, i/N);
-            var r = this.lerp(r1, r2, i/N);
-            var s = this.lerp(s1, s2, i/N);
+            var q = lerp(q1, q2, i/N);
+            var r = lerp(r1, r2, i/N);
+            var s = lerp(s1, s2, i/N);
             var tile = this.hexRound(q, r, s);    
             if (tile != temp){
                 path.push(tile);
@@ -216,7 +181,7 @@ export class Board {
         
     }
 
-    clearPath(){
+    erasePath(){
         if (this.path){
             for (var i = 0; i < this.path.length; i++){
                 var tile = this.path[i];
@@ -225,7 +190,34 @@ export class Board {
                 
             }
         }
+        this.lightedGrid.forEach((t)=>{
+            t.state = 'default';
+            t.render();
+        });
         this.path = [];
 
     }
+
+    //
+    // Private Helper Function
+    // 
+    forEachGrid(func){
+        var vaildGrid = [];
+        for (let q = this.qmin; q <= this.qmax; q++){
+            for (let r = this.rmin; r <= this.rmax; r++){
+                let s = 0 - q - r;
+                if (s < this.smin || s > this.smax) continue;  
+                func(q, r, s);
+            }
+        }
+    }
+
+    //
+    // Event Handling
+    //
+
+    select(){}
+    deselect(){}
+    hovering(){}
+    deHovering(){}
 }

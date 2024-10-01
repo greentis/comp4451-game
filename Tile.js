@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import {Game} from './main.js';
+import { TileProperties } from './TileProperties.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-console.log("Tile.js loaded successfully!")
 
 export class Tile {
-    constructor(q, r, x, y, z, game, defaultColor = 0x000000,type = 0){
+    constructor(q, r, x, y, z, game, properties){
         // constructor
         this.q = q;
         this.r = r;
@@ -13,8 +13,9 @@ export class Tile {
         this.y = y;
         this.z = z;
         this.game = game;
-        this.defaultColor = defaultColor;
-        this.type = type;
+        this.board = game.board;
+
+        this.properties = properties;
 
         // pointer
         this.character = null;
@@ -23,23 +24,32 @@ export class Tile {
         this.gap = 0.5;
 
         // this.mesh constructed here
-        this.geometry = new THREE.CylinderGeometry(5.8- this.gap, 5.8 - this.gap,2,6);
+        this.body = new THREE.Object3D();
+        this.geometry = new THREE.CylinderGeometry(5.8- this.gap, 5.8 - this.gap,100,6);
         this.material = new THREE.MeshPhongMaterial({emissive:0x000000});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.position.x = this.x;
-        this.mesh.position.z = this.z;
+        this.body.add(this.mesh);
+        this.body.position.x = this.x;
+        this.body.position.y = this.y;
+        this.body.position.z = this.z;
         this.mesh.rotateY(Math.PI/6);
-        this.mesh.name = 'tile';
+        this.mesh.name = this.properties.name + ' Tile at ' + q.toString() + ', ' + r.toString();
         this.mesh.userData = this;
+
+        // render
+        this.state = 'default';
         this.render();
     }
 
     render(){
         this.mesh.scale.set(0.1, 0.1, 0.1);
-        this.mesh.material.emissive.set(this.defaultColor);
-
+        this.mesh.material.emissive.set(this.properties.emissive);
+        this.mesh.material.color.set(this.properties.color);
+        this.body.position.y = this.y + this.properties.offsetY;
+        this.mesh.position.y = this.y - 5;
+        if (!this.properties.pathfindable && !this.properties.hittable) return;
         if (this.state == 'selected') {
-            this.mesh.scale.set(0.12, 0.12, 0.12);
+            this.body.position.y += 0.1;
             this.mesh.material.emissive.set(0x44FF44);
         }
         else if (this.state == 'highlighted') {
@@ -53,41 +63,44 @@ export class Tile {
 
     characterEnter(character){
         this.character = character;
-        this.mesh.add(character.mesh);
+        this.body.add(character.mesh);
         this.deHovering();
     }
 
     characterLeave(){
-        this.mesh.remove(this.character.mesh);
+        this.body.remove(this.character.mesh);
         this.character = null;
     }
 
+    isVisible(){
+        for (var player of this.game.player){
+            var sight = player.lineOfSight(this,false);
+            if(!sight) continue;
+            if (sight.has(this)) return true;
+        }
+        return false;
+    }
     //
     // Event Handling
     //
 
     select(){
-        console.log("Tile selected", this.q, this.r, 0-this.q-this.r, 'with type', this.type);
-        
+        if (!this.isVisible()) return;
         if (this.character) {
             this.character.select();
-            console.log("Character", this.character," with name", this.character.name);
+            console.log(this.character.name);
         }
-        else{
-            // find out the pointer of characters in Game.player
-            // and then move the character to this tile
-            
-            
-            //console.log("this.game.PlayerMove.length", this.game.playerMove.length);
-            if (this.game.playerMove.length > 0){
-                //console.log("this.game.PlayerMove[-1]");
-                var character = this.game.playerMove[this.game.playerMove.length-1];
-                if(character.moveRange >= this.game.board.distance(character.getTile(), this)){
-                    character.moveTo(this.q, this.r);
-                    this.game.playerMove.pop();
-                }
-
+        else if (this.game.movingPlayer){
+            var char = this.game.movingPlayer;
+            char.deselect();
+            if(char.moveTo(this)){
+                this.game.movingPlayer = null;
             }
+            this.game.selectedObject = null;
+            this.game.board.erasePath();
+        }
+        else {
+            console.log(this.mesh.name);
         }
 
 
@@ -107,38 +120,30 @@ export class Tile {
     }
 
     hovering(){
-        if (this.state != 'selected'){
-            this.state = 'highlighted';
+        if (this.state == 'selected') return;
+        if (!this.isVisible()) return;
+        if (this.game.movingPlayer){
+            var path = this.game.movingPlayer.findValidPath(this);
+            if (!path) return;
+            path.forEach((t)=>{
+                t.state = 'pathed';
+                t.render();
+            });
+            this.game.board.lightedGrid = path;
+            this.game.movingPlayer.facing(this.q, this.r);
         }
-
-        //draw the path to this tile, if game.playerMove is not empty
-        //using the last character in the game.playerMove
-        //highlight the path to this tile and change these tile on path into state 'pathed'
-        if (this.game.playerMove.length > 0){
-            var character = this.game.playerMove[this.game.playerMove.length-1];
-            this.game.board.findPath_straight(character.q, character.r, this.q, this.r);
-            var path = this.game.board.path;
-            //console.log("path", path);
-            if (path){
-                for (var i = 0; i < path.length; i++){
-                    if(i > character.moveRange) break;
-                    var tile = path[i];
-                    tile.state = 'pathed';
-                    tile.render();
-                }
-            }
-            
-        }
+        this.state = 'highlighted';
         this.render();
     }
 
     deHovering(){
-        if (this.state != 'selected'){
-            this.state = 'default';
-        }
+        if (this.state == 'selected') return;
+        this.state = 'default';
 
         //clear the path
-        this.game.board.clearPath();
+        if (this.game.movingPlayer){
+            this.game.board.erasePath();
+        }
         this.render();
     }
 }
