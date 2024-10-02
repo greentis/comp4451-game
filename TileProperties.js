@@ -8,7 +8,7 @@ export class TileProperties {
         this.name = 'Default'
 
         this.emissive = 0x000000;
-        this.color = 0xFFFFFF;
+        this.color = 0x054509;
         this.mesh = new THREE.Object3D();
         this.offsetY = 0.1;
 
@@ -21,8 +21,7 @@ export class TileProperties {
             case 1:
                 this.id = 1;
                 this.name = 'Wall'
-                this.emissive = 0x000000;
-                this.color = 0x888888;
+                this.color = 0x775533;
                 this.offsetY = 1;
 
                 this.pathfindable = false;
@@ -33,8 +32,7 @@ export class TileProperties {
                 this.id = 2;
                 this.name = 'Rock'
                 this.offsetY = 0.2;
-                this.emissive = 0x000000;
-                this.color = 0x0000FF;
+                this.color = 0x666666;
 
                 this.pathfindable = false;
                 break;

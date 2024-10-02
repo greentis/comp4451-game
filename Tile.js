@@ -53,7 +53,7 @@ export class Tile {
             this.mesh.material.emissive.set(0x44FF44);
         }
         else if (this.state == 'highlighted') {
-            this.mesh.material.emissive.set(0x0000DD);
+            this.mesh.material.emissive.set(0x0000BB);
         }
         else if (this.state == 'pathed') {
             this.mesh.material.emissive.set(0x00ABDD);
@@ -85,7 +85,7 @@ export class Tile {
     //
 
     select(){
-        if (!this.isVisible()) return;
+        if (!this.isVisible() && this.character == null) return;
         if (this.character) {
             this.character.select();
             console.log(this.character.name);

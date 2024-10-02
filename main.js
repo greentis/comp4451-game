@@ -109,7 +109,7 @@ export class Game{
 				break;
 			}
 			if (previousObject) previousObject.deselect();
-			//console.log(this.selectedObject);
+			console.log(this.selectedObject);
 		}, false);
 		
 		var hoveringObject = null;

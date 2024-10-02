@@ -21,10 +21,11 @@ export class Board {
 
         this.body = new THREE.Object3D();
         var geometry = new THREE.PlaneGeometry( 100, 100 );
-        var material = new THREE.MeshPhongMaterial( {color: 0x404050 ,side: THREE.DoubleSide} );
+        var material = new THREE.MeshPhongMaterial( {color: 0x052010 ,side: THREE.DoubleSide} );
         this.mesh = new THREE.Mesh( geometry, material );
         this.body.add(this.mesh);
         this.mesh.rotateX(Math.PI/2);
+
         this.mesh.userData = this;
         
 
