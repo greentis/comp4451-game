@@ -22,6 +22,7 @@ export class Game{
 		// Players (Development phase)
 			this.player = new Array(
 				new Hunter(0, 0, this, 'Curtis'),
+				new Hunter(1, 0, this, 'Timothy'),
 			);
 			this.enemy = new Array(
 				new Animal(0, 5, this, 'Monkey')
@@ -111,7 +112,7 @@ export class Game{
 				break;
 			}
 			if (previousObject) previousObject.deselect();
-			//console.log(this.selectedObject);
+			console.log(this.selectedObject);
 		}, false);
 		
 		var hoveringObject = null;

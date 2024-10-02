@@ -174,17 +174,9 @@ export class Board {
         
     }
 
-    eraseMarkings(){
-        if (this.path){
-            for (var i = 0; i < this.path.length; i++){
-                var tile = this.path[i];
-                tile.state = 'default';
-                tile.render();
-                
-            }
-        }
+    clearMarkings(){
         this.lightedGrid.forEach((t)=>{
-            t.state = 'default';
+            if (t.state != 'selected') t.state = 'default';
             t.render();
         });
         this.path = [];

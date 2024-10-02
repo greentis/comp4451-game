@@ -18,9 +18,12 @@ class userInterface{
     constructor(obj){
         var gui = new GUI();
 
-        gui.add(obj, 'i', 0, 2 );
+        var display = gui.addFolder('Character');
+        display.add(obj, 'i', 0, 2 );
+        display.open();
         gui.add(obj, 'attackPhase');
         gui.open();
+        gui.hide();
 
         gui.__controllers[0].domElement.hidden = false;
     }

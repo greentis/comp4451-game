@@ -28,4 +28,27 @@ export class Hunter extends Character{
             this.getTile().characterEnter(this);
         });
     }
+
+    //
+    // EventHandler (Overwrite)
+    //
+        select(){
+            //pop out all playerMove
+            this.game.movingPlayer = this;
+            this.game.selectedObject = this;
+            this.getTile().selected();
+        }
+        deselect(){
+            this.game.movingPlayer = null;
+            if (this.game.selectedObject == this) this.game.selectedObject = null;
+            this.board.clearMarkings()
+            this.getTile().deselected();
+        }
+
+        hovering(){
+            this.getTile().hovering();
+        }
+        deHovering(){
+            this.getTile().deHovering();
+        }
 }

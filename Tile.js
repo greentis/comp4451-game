@@ -102,10 +102,10 @@ export class Tile {
                 this.game.movingPlayer = null;
             }
             this.game.selectedObject = null;
-            this.game.board.eraseMarkings();
         }
         else {
             console.log(this.mesh.name);
+            this.game.selectedObject = null;
         }
 
 
@@ -147,7 +147,7 @@ export class Tile {
 
         //clear the path
         if (this.game.movingPlayer){
-            this.game.board.eraseMarkings();
+            this.game.board.clearMarkings();
         }
         this.render();
     }

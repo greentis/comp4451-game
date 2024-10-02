@@ -8,6 +8,17 @@ import { TileProperties } from './TileProperties.js';
 // private method
 var lerp = (a, b, t) => {return a + (b - a) * t;}
 var distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
+var findNeighboringTile = (tile, game) => {
+    q = tile.q; r = tile.r;
+    var tiles = [];
+    for (let i = -1; i <= 1; i++){
+        for (let j = -1; j <= 1; j++){
+            if (i + j == 2 || i + j == 0) continue;
+            tiles.push(game.board.getTile(q + i, r + j));
+        }
+    }
+    return tiles;
+}
 
 export class Character{
     constructor(q, r, game, name = 'Steve'){
@@ -73,7 +84,29 @@ export class Character{
     }
 
     findValidPath(tile){
+        function weightedDist(tile){
+            return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));
+        }
         return this.lineOfSight(tile);
+        var choice = new Set();
+        var nextTile
+        while (!choice.includes(tile)) {
+            
+            choice.
+            var temp = findNeighboringTile(nextTile, this.game);
+            temp.forEach((t)=>{choice.add(t)});
+            var minDist = 100;
+            var nextTile = null;
+            choice.forEach((t)=>{
+                if (weightedDist(t, tile) < minDist){
+                    minDist = weightedDist(t, tile);
+                    nextTile = t;
+                }
+            })
+            if (nextTile = null) continue;
+        }
+        
+        
     }
 
     moveTo(tile) {
@@ -111,14 +144,11 @@ export class Character{
     //
 
     select(){
-        //pop out all playerMove
-        this.game.movingPlayer = this;
         this.game.selectedObject = this;
         this.getTile().selected();
     }
 
     deselect(){
-        this.game.movingPlayer = null;
         if (this.game.selectedObject == this) this.game.selectedObject = null;
         this.getTile().deselected();
     }
