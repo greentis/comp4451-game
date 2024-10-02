@@ -35,6 +35,7 @@ export class Tile {
         this.mesh.rotateY(Math.PI/6);
         this.mesh.name = this.properties.name + ' Tile at ' + q.toString() + ', ' + r.toString();
         this.mesh.userData = this;
+        this.mesh.add(this.properties.mesh);
 
         // render
         this.state = 'default';
