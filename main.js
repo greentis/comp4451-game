@@ -5,33 +5,35 @@ import { Hunter } from './Hunter.js';
 import {Animal} from './Animal.js';
 
 import {Board} from './Board.js';
+import { TileProperties } from './TileProperties.js';
 import {Character} from './Character.js';
-
+import { userInput } from './userInput.js';
 //global variables
-
 
 export class Game{
 	constructor(){
-		
-
 		this.createScene();
+		
+		// Board & Tiles (Development phase)
+			this.board = new Board(this);
+			this.scene.add(this.board.body);
+			this.movingPlayer = null;
 
-		this.board = new Board(this);
-		this.scene.add(this.board.body);
-		
-		this.player = new Array(
-			new Hunter(0, 0, this, 'Curtis'),
-		);
+		// Players (Development phase)
+			this.player = new Array(
+				new Hunter(0, 0, this, 'Curtis'),
+			);
+			this.enemy = new Array(
+				new Animal(0, 5, this, 'Monkey')
+			);
+	
+		// UI
+			this.ui = new userInput(this);
+			this.ui.makeInterface();
 
-		this.enemy = new Array(
-			new Animal(0, 5, this, 'Monkey')
-		);
-		
-		this.movingPlayer = null; // List of characters that choose by player to move
-		
 		// Event Handler
-		this.selectedObject = null;
-		this.activateEventHandler();
+			this.selectedObject = null;
+			this.activateEventHandler();
 	}
 
 	createScene(){
@@ -109,7 +111,7 @@ export class Game{
 				break;
 			}
 			if (previousObject) previousObject.deselect();
-			console.log(this.selectedObject);
+			//console.log(this.selectedObject);
 		}, false);
 		
 		var hoveringObject = null;

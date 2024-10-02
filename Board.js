@@ -4,14 +4,6 @@ import { TileProperties } from './TileProperties.js';
 import {Game} from './main.js';
 //import * as math from 'mathjs';
 
-const TILE_TYPE = {
-    'Default': new TileProperties(0),
-    'Wall': new TileProperties(1),
-    'Rock': new TileProperties(2),
-    'Cover': new TileProperties(3),
-    'Water': new TileProperties(4),
-};
-
 var lerp = (a, b, t) => {return a + (b - a) * t;}
 var distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
 
@@ -52,7 +44,7 @@ export class Board {
             var x = q * Math.cos(Math.PI / 6);
             var y = 0;
             var z = r + q * Math.cos(Math.PI / 3);
-            var tile = new Tile(q, r, x, y, z,this.game, TILE_TYPE['Default']);
+            var tile = new Tile(q, r, x, y, z,this.game, TileProperties.TYPE['Default']);
             
             // Add tile to map
             this.body.add(tile.body);
@@ -91,7 +83,7 @@ export class Board {
             var x = q * Math.cos(Math.PI / 6);
             var y = 0;
             var z = r + q * Math.cos(Math.PI / 3);
-            var tile = new Tile(q, r, x, y, -z,this.game, TILE_TYPE['Default']);
+            var tile = new Tile(q, r, x, y, -z,this.game, TileProperties.TYPE['Default']);
             
             // Add tile to map
             this.body.add(tile.body);
@@ -102,13 +94,13 @@ export class Board {
         //the outermost layer must be rock
         this.forEachGrid((q, r)=>{
             if(Math.random() < 0.05){
-                this.getTile(q, r).properties = TILE_TYPE['Wall'];
+                this.getTile(q, r).setType(TileProperties.TYPE['Wall']);
                 this.getTile(q, r).render();
             }
         });
         this.forEachGrid((q, r)=>{
             if(Math.random() < 0.05){
-                this.getTile(q, r).properties = TILE_TYPE['Rock'];
+                this.getTile(q, r).setType(TileProperties.TYPE['Rock']);
                 this.getTile(q, r).render();
             }
         });
@@ -182,7 +174,7 @@ export class Board {
         
     }
 
-    erasePath(){
+    eraseMarkings(){
         if (this.path){
             for (var i = 0; i < this.path.length; i++){
                 var tile = this.path[i];

@@ -3,8 +3,10 @@ import {Tile} from './Tile.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
 export class TileProperties {
-    constructor(type){
-        this.id = 0;
+    constructor(tile, typeID){
+        this.id = typeID;
+        this.tile = tile;
+
         this.name = 'Default'
 
         this.emissive = 0x000000;
@@ -18,9 +20,8 @@ export class TileProperties {
         
         
 
-        switch (type) {
-            case 1:
-                this.id = 1;
+        switch (typeID) {
+            case TileProperties.TYPE['Wall']:
                 this.name = 'Wall'
                 this.color = 0x775533;
                 this.offsetY = 1;
@@ -29,36 +30,47 @@ export class TileProperties {
                 this.seeThroughable = false; 
                 this.hittable = false;
                 break;
-            case 2:
-                this.id = 2;
+            case TileProperties.TYPE['Rock']:
                 this.name = 'Rock'
-                this.offsetY = 0.2;
                 this.color = 0x666666;
 
                 this.pathfindable = false;
 
                 // Mesh Loading
                 const gltfLoader = new GLTFLoader();
-                const url = 'assets/monkey/scene.gltf';
+                const url = 'assets/rock_-_rock/scene.gltf';
                 gltfLoader.load(url, (gltf) => {
                     var model = gltf.scene;
-                    model.scale.set(0.008,0.008,0.008);
-                    model.userData = this;
+                    model.scale.set(0.8,0.8,0.8);
                     model.traverse((child) => {
                         if (child.isMesh) {
-                            child.userData = this;
+                            child.userData = this.tile;
                         }
                     });
                     this.mesh = model;
-
+                    this.tile.body.add(this.mesh);
                 });
                 break;
-            case 3:
-            case 0:
+            case TileProperties.TYPE['Cover']:
+            case TileProperties.TYPE['Default']:
             default:
                 // Mesh loading
                 this.mesh = new THREE.Object3D();
+                this.tile.mesh.add(this.mesh);
                 break;
         }
     }
 }
+
+TileProperties.TYPE = {
+    'Default': 0,
+    'Wall': 1,
+    'Rock': 2,
+    'Cover': 3,
+    'Water': 4
+}
+
+// Make TileProperties.TYPE Bidirectional
+Object.keys(TileProperties.TYPE).forEach(e => {
+    TileProperties.TYPE[TileProperties.TYPE[e]] = e;
+});

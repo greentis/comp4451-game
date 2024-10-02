@@ -8,8 +8,20 @@
 			body { margin: 0; }
 		</style>
 	</head>
-	<body>
+	<body><!--
+			var GUI = new lil.GUI;
+			var gui = new GUI();
+
+			var controls;
+			var light, light2, light3, params;	// add this
+			params = {intensity: 1};
+			gui.add( params, 'intensity', 0, 2 );
+			gui.open();
+		-->
+		
 		<script type="module" src="/main.js"></script>
+		<script type="module" src="/userInput.js"></script>
+		
 		<script type="module" src="/Tile.js"></script>
 		<script type="module" src="/TileProperties.js"></script>
 		<script type="module" src="/Board.js"></script>
