@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {Tile} from './Tile.js';
 import { TileProperties } from './TileProperties.js';
 import {Game} from './main.js';
+import { cover } from 'three/src/extras/TextureUtils.js';
 //import * as math from 'mathjs';
 
 var lerp = (a, b, t) => {return a + (b - a) * t;}
@@ -31,6 +32,10 @@ export class Board {
         this.roomWidth = 8; //control the Width of the map
         this.roomSizeRange = 0; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = 0.7; //control around how many percentage of rock tile in the map will be turned into default tile
+        this.wallThreshold = 0.4; //control the threshold of the wall tile conversion from rock tile
+        this.coverThreshold = 0.3; //control the threshold of the cover tile conversion from rock tile
+                                   //not that cover threshold should be smaller than wall threshold
+            if(this.coverThreshold >= this.wallThreshold) this.coverThreshold = this.wallThreshold;
         //this.generate();
         this.generatePolygonal();
     }
@@ -155,7 +160,7 @@ export class Board {
                         //checkValues will increase as the iteration increase
                         //to have a lenient check on the tile to be turned into default tile
                         //so that avoid too few default tile in the map
-                        var checkingValues = (expandIteration - 1) / 250.0 + perlinNoise2D(seed, a.q, a.r);
+                        var checkingValues = ((expandIteration - 1) / 250.0 + perlinNoise2D(seed, a.q, a.r) + 1.0)/2.0;
                         //console.log('q', a.q, 'r', a.r, 'checkingValues', checkingValues);
 
                         if (temp[a.q][a.r] != TileProperties.TYPE['Default'] && checkingValues > (1-this.roomPercentage)){
@@ -193,6 +198,48 @@ export class Board {
         
 
         // 3. generate the segmented structure of the map(i.e. Wall, Cover, Water(river))
+        // 3.1 convert some of the rock tile to wall tile and cover tile
+        //doing iteration in the wallTile list
+        //for each tile in the wallTile list
+        // it turn into wall tile if checkValues is greater than wallThreshold
+        console.log('wallTile size(before 3.1):', wallTile.size);
+        var totalWallTile = wallTile.size;
+        var rockTile = new Set();
+        var rockIteration = 1.0;
+        while ( rockTile.size < totalWallTile * (1 - this.wallThreshold) - (seed %3) / 100.0){
+            wallTile.forEach((t)=>{
+                var checkingValues = ((rockIteration - 1) / 250.0 + perlinNoise2D(seed, t.q, t.r)+1.0)/2.0;
+                if (checkingValues > this.wallThreshold){
+                    rockTile.add(t);
+                    wallTile.delete(t);
+                    temp[t.q][t.r] = TileProperties.TYPE['Rock'];
+                    //console.log('Rock Tile: q', t.q, 'r', t.r);
+                }
+            });
+            rockIteration++;
+        }   
+        console.log('wallTile size(after 3.1):', wallTile.size);
+        console.log('rockTile size:', rockTile.size);
+        console.log('rockTile', rockTile);
+        
+        // 3.2 convert some of the rock tile to cover tile
+        //doing iteration in the rockTile list
+        //for each tile in the rockTile list
+        // it turn into cover tile if checkValues is smaller than coverThreshold
+        var totalRockTile = rockTile.size;
+        var coverTile = new Set();
+        var coverIteration = 1.0;
+        while ( coverTile.size < totalRockTile * this.coverThreshold - (seed % 3) / 100.0){
+            rockTile.forEach((t)=>{
+                var checkingValues = -1.0 * ((coverIteration - 1) / 250.0 + perlinNoise2D(seed, t.q, t.r)+1.0)/2.0;
+                if (checkingValues < this.coverThreshold){
+                    coverTile.add(t);
+                    rockTile.delete(t);
+                    temp[t.q][t.r] = TileProperties.TYPE['Cover'];
+                }
+            });
+            coverIteration++;
+        }
 
         // 4. combine the two structure together to get the annotated map
 

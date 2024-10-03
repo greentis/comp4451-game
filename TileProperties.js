@@ -57,7 +57,7 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE['Cover']:
                 this.name = 'Cover'
-                this.color = 0x005500;
+                this.color = 0x665533;
                 this.offsetY = 0.5;
 
                 this.pathfindable = false;
