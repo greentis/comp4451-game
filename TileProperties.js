@@ -17,6 +17,7 @@ export class TileProperties {
         this.pathfindable = true;   // Can we walk on it?
         this.seeThroughable = true;  // Can we see through it?
         this.hittable = true;       // Can explosions explode on it?
+        this.slowable = 1.0;      // How much does it slow character down?
         
         
 
@@ -29,6 +30,7 @@ export class TileProperties {
                 this.pathfindable = false;
                 this.seeThroughable = false; 
                 this.hittable = false;
+                this.slowable = 0.0;
                 break;
             case TileProperties.TYPE['Rock']:
                 this.name = 'Rock'

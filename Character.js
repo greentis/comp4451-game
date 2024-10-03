@@ -89,10 +89,10 @@ export class Character{
         }
         return this.lineOfSight(tile);
         var choice = new Set();
-        var nextTile
+        var nextTile = this.getTile();
         while (!choice.includes(tile)) {
             
-            choice.
+            choice.includes(nextTile);
             var temp = findNeighboringTile(nextTile, this.game);
             temp.forEach((t)=>{choice.add(t)});
             var minDist = 100;
