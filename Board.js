@@ -27,9 +27,9 @@ export class Board {
         this.adjacentTiles = [[1, 0], [0, 1], [-1, 1], [-1, 0], [0, -1], [1, -1]]; // pre-calculated adjacent tiles coordinates change
 
         //below variables are for polygonal generation only
-        this.roomLength = 20; //control the Length of the map
-        this.roomWidth = 12; //control the Width of the map
-        this.roomSizeRange = 3; //control the variation of the size of the room(+/- roomSizeRange)
+        this.roomLength = 8; //control the Length of the map
+        this.roomWidth = 8; //control the Width of the map
+        this.roomSizeRange = 0; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = 0.7; //control around how many percentage of rock tile in the map will be turned into default tile
         //this.generate();
         this.generatePolygonal();
@@ -75,9 +75,13 @@ export class Board {
         // cover all the map with rock first
         var seed = 401018;//Math.round(Math.random()* 900000 + 100000);
         console.log('This board have seed ', seed);
-        
-        var width = this.roomWidth + Math.round((seed % this.roomSizeRange) * perlinNoise2D(seed, 37, 13));
-        var length = this.roomLength + Math.round( (seed % this.roomSizeRange) * perlinNoise2D(seed, 13, 37));
+        if (this.roomSizeRange == 0) {
+            var width = this.roomWidth;
+            var length = this.roomLength;
+        }else{
+            var width = this.roomWidth + Math.round((seed % this.roomSizeRange) * perlinNoise2D(seed, 37, 13));
+            var length = this.roomLength + Math.round( (seed % this.roomSizeRange) * perlinNoise2D(seed, 13, 37));
+        }
         //var boundary = 20;
         console.log('width', width, 'length', length);
         this.qmin = -width, this.qmax = width;
