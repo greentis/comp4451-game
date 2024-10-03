@@ -69,7 +69,7 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE['Water']:
                 this.name = 'Water'
-                this.color = 0x0000FF;
+                this.color = 0x4CBEE4;
                 this.offsetY = -0.1;
 
                 this.pathfindable = true;
