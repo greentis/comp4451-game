@@ -8,13 +8,14 @@ import { TileProperties } from './TileProperties.js';
 // private method
 var lerp = (a, b, t) => {return a + (b - a) * t;}
 var distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
-var findNeighboringTile = (tile, game) => {
+var neighboringTile = (tile, game) => {
     q = tile.q; r = tile.r;
     var tiles = [];
     for (let i = -1; i <= 1; i++){
         for (let j = -1; j <= 1; j++){
             if (i + j == 2 || i + j == 0) continue;
-            tiles.push(game.board.getTile(q + i, r + j));
+            var t = game.board.getTile(q + i, r + j); 
+            if (t) tiles.push(t);
         }
     }
     return tiles;
@@ -84,29 +85,62 @@ export class Character{
     }
 
     findValidPath(tile){
-        function weightedDist(tile){
+        function weightedDist(t1, t2){
             return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));
         }
-        return this.lineOfSight(tile);
-        var choice = new Set();
-        var nextTile
-        while (!choice.includes(tile)) {
-            
-            choice.
-            var temp = findNeighboringTile(nextTile, this.game);
-            temp.forEach((t)=>{choice.add(t)});
-            var minDist = 100;
-            var nextTile = null;
-            choice.forEach((t)=>{
-                if (weightedDist(t, tile) < minDist){
-                    minDist = weightedDist(t, tile);
-                    nextTile = t;
+        //return this.lineOfSight(tile);
+
+        // Queue
+        
+        var start = this.getTile();
+
+        var choice = [];         choice.push[start];
+        var came_from = {};      came_from[start] = null;
+        var path_cost = {};      cost_so_far[start] = 0;
+        var heuristic_cost = {}; heuristic_cost[start] = 0;
+
+        var current;
+        var cost;
+        while (choice.length > 0) {
+            // Pop the element with least heuristic cost from the array
+                current = choice.shift();
+
+            if (current == tile) break;
+
+
+            for (let next of neighboringTile(current, this.game)) {
+                // To reach the tile next, the cost needed:
+                cost = path_cost[current] + weightedDist(current, next);
+
+                // Add or Update the path cost of the next if: 
+                if (!Object.keys(path_cost).includes(next) || cost < path_cost[next]) {
+                    // The tile next now have cost = cost
+                        cost_so_far[next] = cost;
+                    // Heuristic guess of the cost of the tile next
+                        heuristic_cost[next] = cost + weightedDist(next, tile);
+                        choice.push(next);
+                    // For backward propagation
+                        came_from[next] = current;
                 }
-            })
-            if (nextTile = null) continue;
+            }
+
+            // Keep arrray choice as priority queue
+                choice.sort((t1, t2)=>{
+                    return heuristic_cost[t1] - heuristic_cost[t2];
+                });
         }
         
-        
+        // Back traverse
+        current = tile;
+        var path = []
+        while (current != start) {
+            path.push(current);
+            current = came_from[current];
+        }
+        //path.push(start);
+        path.reverse();
+
+        return path;
     }
 
     moveTo(tile) {
