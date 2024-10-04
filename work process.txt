@@ -16,6 +16,7 @@ first weapon type
 turn processing
 action point/mechanics
 show basic information of a character
+map generation (2)
 
 week 4:
 enemy AI

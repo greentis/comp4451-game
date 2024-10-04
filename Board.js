@@ -7,6 +7,7 @@ import { cover } from 'three/src/extras/TextureUtils.js';
 
 var lerp = (a, b, t) => {return a + (b - a) * t;}
 var distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
+var sigmoid = (x) => {return 1 / (1 + Math.exp(-x));}
 
 export class Board {
     constructor(game){
@@ -32,7 +33,7 @@ export class Board {
         this.roomWidth = 8; //control the Width of the map
         this.roomSizeRange = 0; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = 0.7; //control around how many percentage of rock tile in the map will be turned into default tile
-        this.wallThreshold = 0.4; //control the threshold of the wall tile conversion from rock tile
+        this.wallThreshold = 0.8; //control the threshold of the wall tile conversion from rock tile
         this.coverThreshold = 0.3; //control the threshold of the cover tile conversion from rock tile
                                    //not that cover threshold should be smaller than wall threshold
             if(this.coverThreshold >= this.wallThreshold) this.coverThreshold = this.wallThreshold;
@@ -62,23 +63,19 @@ export class Board {
     }
 
     generatePolygonal(){
-        //using Polgonal Generation Algorithm
-        //https://www.redblobgames.com/grids/hexagons/
-        // so that we can have different type of tile
-        // treat wall tile and water tile as river in the example above
-        // treat cover tile as mountain in the example above
-        // treat normal tile as grassland in the example above
-        // 1. set the size of the map by 3 radius
-        // 2. generate the continous structure of the map first(i.e. Rock, Water(Pond))
-        // 3. generate the segmented structure of the map(i.e. Wall, Cover, Water(river))
-        // 4. combine the two structure together to get the annotated map
+        //generate the map with polygonal grid
+        //1. set the size of the map by 3 radius
+        //2. make the shape of map become irregular by changing some of the tile to void tile, while keeping remaining tile as rock tile
+        //3. generate the default tile first
+        //4. generate other type of tile(wall, cover, water e.t.c) based on the default tile
+        //5. generate the tile based on the annotated map
 
 
         // 1. set the size of the map by 3 radius
         //generat random map with hexagon grid
         //setting random seed
         // cover all the map with rock first
-        var seed = 401018;//Math.round(Math.random()* 900000 + 100000);
+        var seed = 235710;//401018;//Math.round(Math.random()* 900000 + 100000);
         console.log('This board have seed ', seed);
         if (this.roomSizeRange == 0) {
             var width = this.roomWidth;
@@ -95,8 +92,8 @@ export class Board {
         var temp = {};
         var totalArea = 0;
 
-        //1.1 initialize the temp array
-        //change the type of all the tile to rock
+        //2.1 initialize the temp array
+        //change the type of all the non-void tile to rock
         for (let q = -width; q <= width; q++){
             temp[q] = {};
             for (let r = -length; r <= length; r++){
@@ -105,7 +102,7 @@ export class Board {
             }
         }
 
-       // 2. generate the continous structure of the map first(i.e. Rock, Water(Pond))
+       // 3. generate the default tile first
         //the outermost layer must be rock
         // select a random tile as the starting expanding point
         // when expanding, the rock tile near the expanding point have chance to be add into the expanding point list
@@ -123,7 +120,7 @@ export class Board {
         defaultTile.add(startingTile);
         console.log('Starting Tile is ', startingTile.q, startingTile.r);
         
-        // 2.1 expand the map
+        // 3.1 expand the map
         // get the number of tile in defaultTile
         // if the number of tile in defaultTile is less than room percentage of the total number of tile in the map
         // then continue the expansion
@@ -131,7 +128,7 @@ export class Board {
         // the expansion will stop when the number of tile in defaultTile is greater than percentage of the total number of tile in the map
         // or the expandedTile list is empty
         var expandIteration = 1.0;
-        while( defaultTile.size < (this.roomPercentage - (seed % 7)/100.0) * totalArea){ //bug1
+        while( defaultTile.size < (this.roomPercentage - (seed % 67)/1000.0) * totalArea){ //bug1
             // keep the expandedTile list as defaultTile list
             // clear the wallTile list
             //console.log('Iteration: ', expandIteration);
@@ -146,8 +143,15 @@ export class Board {
 
 
             while (expandedTile.size > 0 && defaultTile.size < (this.roomPercentage + (seed % 7)/100.0) * totalArea){ //bug1
+                
+                //console.log('default tile', defaultTile.size, 'expanded tile', expandedTile.size);
                 expandedTile.forEach((t)=>{
-
+                    if (defaultTile.size >= (this.roomPercentage + (seed % 67)/1000.0) * totalArea){
+                        //console.log('default tile', defaultTile.size, 'expanded tile', expandedTile.size);
+                        expandedTile.clear();
+                        return;
+                    } 
+                    
                     var adjacent = this.findAdjacent(t.q, t.r, width, length);
                     adjacent.forEach((a)=>{
                         if (this.checkBoardBoundaries(a.q, a.r, width, length)) return; //skip the tile if it is at the boundary of the board
@@ -160,7 +164,7 @@ export class Board {
                         //checkValues will increase as the iteration increase
                         //to have a lenient check on the tile to be turned into default tile
                         //so that avoid too few default tile in the map
-                        var checkingValues = ((expandIteration - 1) / 250.0 + perlinNoise2D(seed, a.q, a.r) + 1.0)/2.0;
+                        var checkingValues = (expandIteration - 1) / 250.0 + perlinNoise2D(seed, a.q, a.r);
                         //console.log('q', a.q, 'r', a.r, 'checkingValues', checkingValues);
 
                         if (temp[a.q][a.r] != TileProperties.TYPE['Default'] && checkingValues > (1-this.roomPercentage)){
@@ -181,34 +185,46 @@ export class Board {
         }
         
         console.log('iteration', expandIteration);
-        console.log('room percentage', this.roomPercentage, "total area", totalArea, "range", (seed % 7)/100.0);
+        console.log('room percentage', this.roomPercentage, "total area", totalArea, "range", (seed % 67)/1000.0);
         console.log('default tile', defaultTile.size);
-        console.log('target area', (this.roomPercentage + (seed % 7)/100.0) * totalArea);
-        console.log('min area', (this.roomPercentage - (seed % 7)/100.0) * totalArea);
+        console.log('target area', (this.roomPercentage + (seed % 67)/1000.0) * totalArea);
+        console.log('min area', (this.roomPercentage - (seed % 67)/1000.0) * totalArea);
         
-        /*var test = {};
+        /*
+        //testing perlin noise
+        var test1 = {};
         for(let q = -width; q <= width; q++){
-            test[q] = {};
+            test1[q] = {};
             for(let r = -length; r <= length; r++){
-                test[q][r] = perlinNoise2D(seed, q, r);
+                test1[q][r] = perlinNoise2D(seed, q, r);
             }
         }
-        console.log('perlinNoise2D', test);
-        */      
+        console.log('perlinNoise2D', test1);
+        //testomg perlin noise in wallTile
+        var test = {};
+        var seedWall = perlinNoise2D(123456, wallTile.size, defaultTile.size) * 1000000.0;
+        console.log('seedWall', seedWall);
+        wallTile.forEach((t)=>{
+            if (test[t.q] == undefined) test[t.q] = {};
+            test[t.q][t.r] = perlinNoise2D(seedWall, t.q, t.r);
+        });
+        console.log('perlinNoise2D in wallTile', test);
+        */
         
-
-        // 3. generate the segmented structure of the map(i.e. Wall, Cover, Water(river))
-        // 3.1 convert some of the rock tile to wall tile and cover tile
+        // 4. generate other type of tile(wall, cover, water e.t.c) based on the default tile
+        // 4.1 convert some of the rock tile to wall tile
         //doing iteration in the wallTile list
         //for each tile in the wallTile list
         // it turn into wall tile if checkValues is greater than wallThreshold
+        var seedWall = perlinNoise2D(seed, wallTile.size, defaultTile.size) * 1000000.0;
         console.log('wallTile size(before 3.1):', wallTile.size);
         var totalWallTile = wallTile.size;
         var rockTile = new Set();
         var rockIteration = 1.0;
-        while ( rockTile.size < totalWallTile * (1 - this.wallThreshold) - (seed %3) / 100.0){
+        while ( rockTile.size < totalWallTile * (1 - this.wallThreshold) - (seedWall %37) / 1000.0){
             wallTile.forEach((t)=>{
-                var checkingValues = ((rockIteration - 1) / 250.0 + perlinNoise2D(seed, t.q, t.r)+1.0)/2.0;
+                //console.log('perlinNoise2D', perlinNoise2D(seedWall, t.q, t.r));
+                var checkingValues = (rockIteration - 1) / 250.0 + perlinNoise2D(seedWall, t.q, t.r);
                 if (checkingValues > this.wallThreshold){
                     rockTile.add(t);
                     wallTile.delete(t);
@@ -218,30 +234,40 @@ export class Board {
             });
             rockIteration++;
         }   
-        console.log('wallTile size(after 3.1):', wallTile.size);
+        /*console.log('wallTile size(after 3.1):', wallTile.size);
         console.log('rockTile size:', rockTile.size);
-        console.log('rockTile', rockTile);
+        console.log('rockTile', rockTile);*/
         
-        // 3.2 convert some of the rock tile to cover tile
+        // 4.2 convert some of the rock tile to cover tile
         //doing iteration in the rockTile list
         //for each tile in the rockTile list
         // it turn into cover tile if checkValues is smaller than coverThreshold
-        var totalRockTile = rockTile.size;
+        //var totalRockTile = rockTile.size;
         var coverTile = new Set();
         var coverIteration = 1.0;
-        while ( coverTile.size < totalRockTile * this.coverThreshold - (seed % 3) / 100.0){
-            rockTile.forEach((t)=>{
-                var checkingValues = -1.0 * ((coverIteration - 1) / 250.0 + perlinNoise2D(seed, t.q, t.r)+1.0)/2.0;
+        while ( coverTile.size < totalWallTile * (this.coverThreshold) - (seedWall % 37) / 1000.0){
+            wallTile.forEach((t)=>{
+                var checkingValues = -1.0 * (coverIteration - 1) / 250.0 + perlinNoise2D(seedWall, t.q, t.r);
+                //console.log('perlinNoise2D', perlinNoise2D(seed, t.q, t.r));
+                //console.log('t.q', t.q, 't.r', t.r, 'checkingValues', checkingValues);
                 if (checkingValues < this.coverThreshold){
                     coverTile.add(t);
-                    rockTile.delete(t);
+                    wallTile.delete(t);
                     temp[t.q][t.r] = TileProperties.TYPE['Cover'];
                 }
             });
             coverIteration++;
         }
+        /*console.log('coverIteration', coverIteration);
+        console.log('wallTile size(after 3.2):', wallTile.size);
+        console.log('coverTile size:', coverTile.size);
+        console.log('coverTile', coverTile);*/
+        
+        // 4.3.1 generate the water(pond) tile
+        // 4.3.2 generate the water(river) tile
 
-        // 4. combine the two structure together to get the annotated map
+        // 4.4 
+       
 
         // 5. generate the tile based on the annotated map
         this.forEachGrid((q, r)=>{
@@ -377,7 +403,8 @@ var perlinNoise2D = (seed, x, y) => {
     //https://gist.github.com/banksean/304522
     //warning: this function is not perlind noise, but a random number generator instead
 
-    var n = x + y * 57;
-    n = (n<<13) ^ n;
-    return ( 1.0 - ( (n * (n * n * 15731 + 789221) + seed) & 0x7fffffff) / 1073741824.0);
+    let h = seed + x * 374761393 + y * 668265263;
+    h = (h ^ (h >>> 13)) * 1274126177;
+    h = h ^ (h >>> 16);
+    return Math.abs(h) / 2147483648.0;
 };
