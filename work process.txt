@@ -9,22 +9,24 @@ week 2:
 pathfind
 class weapon
 character.attack
-map generation (1)
+map generation (1) T
 
 week 3:
 first weapon type
 turn processing
 action point/mechanics
 show basic information of a character
-map generation (2)
+map generation (2) T
+enemy AI(1) T
 
 week 4:
-enemy AI
+enemy AI(2) T
 
 ---------- Demonstration ----------
 week 5:
 more weapons type
 upgrade system (1)
+enemy AI(3) T
 
 week 6:
 upgrade system(2)
@@ -34,6 +36,7 @@ mission progression
 
 week 8:
 visuals (particles)
+sound effect(?)
 backdrop
 game testing
 
