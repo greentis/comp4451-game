@@ -1,0 +1,40 @@
+week 1:
+base game
+class character
+class board
+class tile
+character.move
+
+week 2:
+pathfind
+class weapon
+character.attack
+map generation (1)
+
+week 3:
+first weapon type
+turn processing
+action point/mechanics
+show basic information of a character
+
+week 4:
+enemy AI
+
+---------- Demonstration ----------
+week 5:
+more weapons type
+upgrade system (1)
+
+week 6:
+upgrade system(2)
+
+week 7:
+mission progression
+
+week 8:
+visuals (particles)
+backdrop
+game testing
+
+
+upgrade
