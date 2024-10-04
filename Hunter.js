@@ -3,9 +3,17 @@ import * as THREE from 'three';
 import {Character} from './Character.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
+const ACTION = {
+    'idle' : 0,
+    'move' : 1,
+    'attack' : 2
+}
+
 export class Hunter extends Character{
     constructor(q, r, game, name){
         super(q, r, game, name);
+
+        this.actionstate = ACTION['idle'];
 
         const gltfLoader = new GLTFLoader();
         const url = 'assets/low_poly_kyle_crane/scene.gltf';
@@ -34,15 +42,30 @@ export class Hunter extends Character{
     //
         select(){
             //pop out all playerMove
+            super.select();
             this.game.movingPlayer = this;
-            this.game.selectedObject = this;
-            this.getTile().selected();
+            this.actionstate = ACTION['move'];
         }
         deselect(){
-            this.game.movingPlayer = null;
-            if (this.game.selectedObject == this) this.game.selectedObject = null;
-            this.board.clearMarkings()
-            this.getTile().deselected();
+            console.log(this.actionstate);
+            switch (this.actionstate) {
+                case ACTION['idle']:
+                    super.deselect();
+                    this.board.clearMarkings();
+                    this.game.movingPlayer = null;
+                    this.actionstate = ACTION['idle'];
+                    break;
+                case ACTION['move']:
+                    this.getTile().setState('aggressive');
+                    this.actionstate = ACTION['attack'];
+                    return this;
+                case ACTION['attack']:
+                    super.deselect();
+                    this.board.clearMarkings();
+                    this.game.movingPlayer = null;
+                    this.actionstate = ACTION['idle'];
+                    return
+            }
         }
 
         hovering(){

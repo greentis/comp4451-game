@@ -64,6 +64,10 @@ export class Tile {
         else if (this.state == 'pathed') {
             this.mesh.material.emissive.set(0x00ABDD);
         }
+        else if (this.state == 'aggressive') {
+            this.body.position.y += 0.1;
+            this.mesh.material.emissive.set(0xCC2222);
+        }
 
     }
 
@@ -91,13 +95,15 @@ export class Tile {
     //
 
     select(){
+        
         if (!this.isVisible() && this.character == null) return;
         if (this.character) {
+            this.game.selectedObject = this.character;
             this.character.select();
-            console.log(this.character.name);
         }
         else if (this.game.movingPlayer){
             var char = this.game.movingPlayer;
+            char.actionstate = 0;
             char.deselect();
             if(char.moveTo(this)){
                 this.game.movingPlayer = null;
@@ -108,8 +114,6 @@ export class Tile {
             console.log(this.mesh.name);
             this.game.selectedObject = null;
         }
-
-
     }
     deselect(){
         if (this.character) this.character.deselect();
@@ -125,25 +129,42 @@ export class Tile {
         this.render();
     }
 
+    setState(state){
+        this.state = state;
+        this.render();
+    }
+
     hovering(){
-        if (this.state == 'selected') return;
-        if (!this.isVisible()) return;
+        if (this.state == 'selected' || this.state == 'aggressive') return;
+        //if (!this.isVisible()) return;
         if (this.game.movingPlayer){
-            var path = this.game.movingPlayer.findValidPath(this);
-            if (!path) return;
-            path.forEach((t)=>{
-                t.state = 'pathed';
-                t.render();
-            });
-            this.game.board.lightedGrid = path;
-            this.game.movingPlayer.facing(this.q, this.r);
+            if (this.game.movingPlayer.actionstate == 1){
+                var path = this.game.movingPlayer.findValidPath(this);
+                if (!path) return;
+                path.forEach((t)=>{
+                    t.state = 'pathed';
+                    t.render();
+                });
+                this.game.board.lightedGrid = path;
+                this.game.movingPlayer.facing(this.q, this.r);
+            }
+            else if (this.game.movingPlayer.actionstate == 2){
+                var path = this.game.movingPlayer.lineOfSight(this);
+                if (!path) return;
+                path.forEach((t)=>{
+                    t.state = 'pathed';
+                    t.render();
+                });
+                this.game.board.lightedGrid = path;
+                this.game.movingPlayer.facing(this.q, this.r);
+            }
         }
         this.state = 'highlighted';
         this.render();
     }
 
     deHovering(){
-        if (this.state == 'selected') return;
+        if (this.state == 'selected' || this.state == 'aggressive') return;
         this.state = 'default';
 
         //clear the path
@@ -152,4 +173,12 @@ export class Tile {
         }
         this.render();
     }
+}
+
+Tile.STATE = {
+    'default' : 'default',
+    'selected' : 'selected',
+    'highlighted' : 'highlighted',
+    'pathed' : 'pathed',
+    'aggressive' : 'aggressive',
 }

@@ -105,13 +105,20 @@ export class Game{
 		
 			// Try activating the object in ascending order
 			for (var i = 0; i < intersects.length; i++) {
-				var newObject = intersects[i].object.userData;
-				if (!newObject.select) continue;
-				if (previousObject != newObject) this.selectedObject = newObject;
-				newObject.select();
+				this.selectedObject = intersects[i].object.userData;
+				if (!this.selectedObject.select) continue;
+				if (this.selectedObject == previousObject) {
+					if (previousObject) this.selectedObject = previousObject.deselect();
+					break;
+				}
+				this.selectedObject.select();
+				if (this.selectedObject != null && this.selectedObject == previousObject) {
+					console.log('2nd deselect');
+					this.selectedObject = this.selectedObject.deselect();
+				}
+				if (previousObject) previousObject.deselect();
 				break;
 			}
-			if (previousObject) previousObject.deselect();
 			console.log(this.selectedObject);
 		}, false);
 		
@@ -131,8 +138,8 @@ export class Game{
 			for (var i = 0; i < intersects.length; i++) {
 				var newObject = intersects[i].object.userData;
 				if (!newObject.hovering) continue;
-				newObject.hovering();
 				hoveringObject = newObject;
+				newObject.hovering();
 				break;
 			}
 		}

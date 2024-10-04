@@ -25,7 +25,6 @@ export class TileProperties {
             case TileProperties.TYPE['Wall']:
                 this.name = 'Wall'
                 this.color = 0x775533;
-                this.offsetY = 1;
 
                 this.pathfindable = false;
                 this.seeThroughable = false; 
@@ -33,13 +32,6 @@ export class TileProperties {
                 this.passCost = 1000.0;
                 this.hitRateCost = 1000.0;
                 
-                break;
-            case TileProperties.TYPE['Rock']:
-                this.name = 'Rock'
-                this.color = 0x666666;
-
-                this.pathfindable = false;
-
                 // Mesh Loading
                 const gltfLoader = new GLTFLoader();
                 const url = 'assets/rock_-_rock/scene.gltf';
@@ -54,6 +46,15 @@ export class TileProperties {
                     this.mesh = model;
                     this.tile.body.add(this.mesh);
                 });
+                break;
+            case TileProperties.TYPE['Rock']:
+                this.name = 'Rock'
+                this.color = 0x666666;
+
+                this.pathfindable = false;
+                
+                this.offsetY = 1;
+                
                 break;
             case TileProperties.TYPE['Cover']:
                 this.name = 'Cover'
