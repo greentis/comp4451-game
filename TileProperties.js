@@ -17,8 +17,9 @@ export class TileProperties {
         this.pathfindable = true;   // Can we walk on it?
         this.seeThroughable = true;  // Can we see through it?
         this.hittable = true;       // Can explosions explode on it?
-        
-        
+        this.passCost = 1.0;       // How much does it cost to pass through? (1.0 = normal)
+        this.hitRateCost = 5.0;      // How much hitRate point it will reduce if bullet pass throught this tile? (5.0 = normal)
+                                    // for starting bullet aim cost value: 100
 
         switch (typeID) {
             case TileProperties.TYPE['Wall']:
@@ -29,6 +30,9 @@ export class TileProperties {
                 this.pathfindable = false;
                 this.seeThroughable = false; 
                 this.hittable = false;
+                this.passCost = 1000.0;
+                this.hitRateCost = 1000.0;
+                
                 break;
             case TileProperties.TYPE['Rock']:
                 this.name = 'Rock'
@@ -52,6 +56,29 @@ export class TileProperties {
                 });
                 break;
             case TileProperties.TYPE['Cover']:
+                this.name = 'Cover'
+                this.color = 0x665533;
+                this.offsetY = 0.5;
+
+                this.pathfindable = false;
+                this.hittable = true;
+                this.seeThroughable = true;
+                this.passCost = 1000.0;
+                this.hitRateCost = 25.0;
+
+                break;
+            case TileProperties.TYPE['Water']:
+                this.name = 'Water'
+                this.color = 0x4CBEE4;
+                this.offsetY = -0.1;
+
+                this.pathfindable = true;
+                this.seeThroughable = true;
+                this.hittable = false;
+                this.passCost = 2.0;
+                this.hitRateCost = 5.0;
+
+                break;
             case TileProperties.TYPE['Default']:
             default:
                 // Mesh loading

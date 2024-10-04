@@ -44,6 +44,7 @@ export class Tile {
     setType(typeID){
         this.properties = new TileProperties(this, typeID);
         this.mesh.name = this.properties.name + ' Tile (' + this.q.toString() + ', ' + this.r.toString() + ')';
+        //this.render();
     }
 
     render(){
