@@ -22,6 +22,18 @@ export class TileProperties {
                                     // for starting bullet aim cost value: 100
 
         switch (typeID) {
+            case TileProperties.TYPE['Void']:
+                this.name = 'Void'
+                this.color = 0x000000;
+                this.offsetY = 0.0;
+
+                this.pathfindable = false;
+                this.seeThroughable = false;
+                this.hittable = false;
+                this.passCost = 1000.0;
+                this.hitRateCost = 1000.0;
+
+                break;
             case TileProperties.TYPE['Wall']:
                 this.name = 'Wall'
                 this.color = 0x775533;
@@ -39,6 +51,10 @@ export class TileProperties {
                 this.color = 0x666666;
 
                 this.pathfindable = false;
+                this.seeThroughable = false;
+                this.hittable = false;
+                this.passCost = 1000.0;
+                this.hitRateCost = 1000.0;
 
                 // Mesh Loading
                 const gltfLoader = new GLTFLoader();
@@ -79,6 +95,46 @@ export class TileProperties {
                 this.hitRateCost = 5.0;
 
                 break;
+            case TileProperties.TYPE['Bush']:
+                this.name = 'bush';
+                this.color = 0x00FF00;
+                this.offsetY = 0.9;
+
+                this.pathfindable = true;
+                this.seeThroughable = false;
+                this.hittable = true;
+                this.passCost = 3.0;
+                this.hitRateCost = 25.0;
+
+                break;
+            case TileProperties.TYPE['Tree']:
+                this.name = 'tree';
+                this.color = 0x00FF00;
+                //this.offsetY = 1.2;
+
+                this.pathfindable = false;
+                this.seeThroughable = false;
+                this.hittable = true;
+                this.passCost = 1000.0;
+                this.hitRateCost = 500.0;
+
+                /*
+                // Mesh Loading
+                const gltfLoader2 = new GLTFLoader();
+                const url2 = 'assets/tree_-_tree/scene.gltf';
+                gltfLoader2.load(url2, (gltf) => {
+                    var model = gltf.scene;
+                    model.scale.set(0.8,0.8,0.8);
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            child.userData = this.tile;
+                        }
+                    });
+                    this.mesh = model;
+                    this.tile.body.add(this.mesh);
+                });
+                */
+                break;
             case TileProperties.TYPE['Default']:
             default:
                 // Mesh loading
@@ -90,11 +146,15 @@ export class TileProperties {
 }
 
 TileProperties.TYPE = {
+    'Hold': -2, 
+    'Void': -1,
     'Default': 0,
     'Wall': 1,
     'Rock': 2,
     'Cover': 3,
-    'Water': 4
+    'Water': 4,
+    'Bush': 5,
+    'Tree': 6,
 }
 
 // Make TileProperties.TYPE Bidirectional
