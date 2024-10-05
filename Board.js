@@ -87,12 +87,13 @@ export class Board {
         this.rainFall = 0.1; //control the rain fall of the map, tile with height below rain fall will be turned into water tile
         this.riverSource = 0.85; //control the source of the river, tile with height higher than river source will start the river tracing 
         this.vegetationCoverage = 0.1; //control the coverage of the vegetation in the map
+        this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
 
         // 1. set the size of the map by 3 radius
         //generat random map with hexagon grid
         //setting random seed
         // cover all the map with rock first
-        var seed = 710;//Math.round(Math.random()* 900000 + 100000);
+        var seed = 710; 71045;//Math.round(Math.random()* 900000 + 100000);
         seed = seed % 65536; //make sure the seed is within 0 - 65536, so that noise.seed() can accept it
         console.log('This board have seed ', seed);
         var perlinNoise = new noise();
@@ -146,7 +147,7 @@ export class Board {
         var k4 = 0.4; //factor of hash noise value
         var target = //(width * 2 + 1) * (length * 2 + 1); 
                     Math.round((0.2 + 0.6 * this.roomPercentage + 0.2 * (seed % 80) / 100.0) * (width * 2 + 1) * (length * 2 + 1));
-        console.log('target', target);
+        //console.log('target', target);
 
         //generate a void value map based on perlin noise for later used in k3 component of the probability
         var voidMap = {};
@@ -219,7 +220,7 @@ export class Board {
             }
             iteration++;
         }
-        console.log('Iteration of step 2.2: ', iteration);
+        //console.log('Iteration of step 2.2: ', iteration);
         
         //change all hold tile to void tile
         holdTile.forEach((t)=>{
@@ -316,18 +317,17 @@ export class Board {
                 });
             }
             expandIteration++;
-            console.log('wallTile size(before 4.1):', wallTile.size);
         }
         if(lastWallTile.size != 0){
             wallTile = new Set([...lastWallTile]);
         }
 
-        console.log('iteration', expandIteration);
-        console.log('room percentage', this.roomPercentage, "total area", this.totalArea, "range", (seed % 67)/1000.0);
-        console.log('default tile', defaultTile.size);
-        console.log('target area', (this.roomPercentage + (seed % 67)/1000.0) * this.totalArea);
-        console.log('min area', (this.roomPercentage - (seed % 67)/1000.0) * this.totalArea);
-        console.log('wallTile size(before 4.1):', wallTile.size);
+        //console.log('iteration at step 3.1', expandIteration);
+        //console.log('room percentage', this.roomPercentage, "total area", this.totalArea, "range", (seed % 67)/1000.0);
+        //console.log('default tile', defaultTile.size);
+        //console.log('target area', (this.roomPercentage + (seed % 67)/1000.0) * this.totalArea);
+        //console.log('min area', (this.roomPercentage - (seed % 67)/1000.0) * this.totalArea);
+        //console.log('wallTile size(before 4.1):', wallTile.size);
         
         // 4. generate other type of tile(wall, cover, water e.t.c) based on the default tile
         // 4.1 convert some of the rock tile to wall tile
@@ -353,9 +353,9 @@ export class Board {
             });
             rockIteration++;
         }   
-        console.log('wallTile size(after 4.1):', wallTile.size);
-        console.log('rockTile size:', rockTile.size);
-        console.log('rockTile', rockTile);
+        //console.log('wallTile size(after 4.1):', wallTile.size);
+        //console.log('rockTile size:', rockTile.size);
+        //console.log('rockTile', rockTile);
         
         // 4.2 convert some of the rock tile to cover tile
         //doing iteration in the rockTile list
@@ -378,10 +378,10 @@ export class Board {
             });
             coverIteration++;
         }
-        console.log('coverIteration', coverIteration);
-        console.log('wallTile size(after 4.2):', wallTile.size);
-        console.log('coverTile size:', coverTile.size);
-        console.log('coverTile', coverTile);
+        //console.log('coverIteration', coverIteration);
+        //console.log('wallTile size(after 4.2):', wallTile.size);
+        //console.log('coverTile size:', coverTile.size);
+        //console.log('coverTile', coverTile);
         
         // 4.3.0 generate the height map of the tile
         // the height of the tile is based on the perlin noise
@@ -408,7 +408,7 @@ export class Board {
                 }
             }
         }
-        console.log('waterTile size:', waterTile.size);
+        //console.log('waterTile size:', waterTile.size);
 
         // 4.3.2 generate the water(river) tile
         // the river tile is based on the height of the tile
@@ -458,7 +458,7 @@ export class Board {
                 }
             }
         });
-        console.log('riverTile size:', riverTile.size);
+        //console.log('riverTile size:', riverTile.size);
 
         // 4.4 generate the vegetation tile
         // vegetation tile can be tree tile or bush tile
@@ -567,14 +567,15 @@ export class Board {
         //5.1 find the spawn point for player 0
         var iteration = 0;
         var spawnPlayerDone = false;
-        while(!spawnPlayerDone){
+        this.playerSpawnPoints[0] = {q: startingTile.q, r: startingTile.r};
+        while(!spawnPlayerDone && distanceToBoundary(this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r, width, length) < this.playerToBoard){
             if (iteration > 1000){
                 //set the spawn point to the starting tile as the last resort
                 this.playerSpawnPoints[0] = {q: startingTile.q, r: startingTile.r};
                 break;
             }
-            var q = Math.round(xxhash((seed +  iteration* 73) *163, q, r) * 2 * this.qmax - this.qmax + 1);
-            var r = Math.round(xxhash((seed + iteration * 73) * 163, q, r) * 2 * this.rmax - this.rmax + 1);
+            var q = Math.round(xxhash((seed +  iteration* 73) *163, this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r) * 2 * this.rmax - this.rmax + 1);
+            var r = Math.round(xxhash((seed + iteration * 73) * 163, this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r) * 2 * this.rmax - this.rmax + 1);
 
 
             if (this.temp[q][r] == TileProperties.TYPE['Default']){
