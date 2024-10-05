@@ -9,11 +9,11 @@ import { TileProperties } from './TileProperties.js';
 var lerp = (a, b, t) => {return a + (b - a) * t;}
 var distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
 var neighboringTile = (tile, game) => {
-    q = tile.q; r = tile.r;
+    var q = tile.q; var r = tile.r;
     var tiles = [];
     for (let i = -1; i <= 1; i++){
         for (let j = -1; j <= 1; j++){
-            if (i + j == 2 || i + j == 0) continue;
+            if (Math.abs(i + j) == 2 || (i == 0 && j == 0)) continue;
             var t = game.board.getTile(q + i, r + j); 
             if (t) tiles.push(t);
         }
@@ -32,7 +32,7 @@ export class Character{
         this.game = game;
         this.board = game.board;
         //this.moveAble = false;
-        this.moveRange = 5;
+        this.moveRange = 8;
         this.sightRange = 8;
     }
 
@@ -85,8 +85,9 @@ export class Character{
     }
 
     findValidPath(tile){
+        console.log('\nNew Run\n\n');
         function weightedDist(t1, t2){
-            return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));
+            return t2.properties.passCost;
         }
         //return this.lineOfSight(tile);
 
@@ -94,52 +95,60 @@ export class Character{
         
         var start = this.getTile();
 
-        var choice = [];         choice.push[start];
-        var came_from = {};      came_from[start] = null;
-        var path_cost = {};      cost_so_far[start] = 0;
-        var heuristic_cost = {}; heuristic_cost[start] = 0;
+        var choice = [start];
+        var came_from = {};      came_from[start.mesh.name] = null;
+        var path_cost = {};      path_cost[start.mesh.name] = 0;
+        var heuristic_cost = {}; heuristic_cost[start.mesh.name] = weightedDist(start, tile);
 
         var current;
         var cost;
-        while (choice.length > 0) {
+        var timeout = 0;
+        while (choice.length > 0 && timeout < 100) {
+            
+            timeout++;
             // Pop the element with least heuristic cost from the array
                 current = choice.shift();
-
+            
             if (current == tile) break;
 
 
             for (let next of neighboringTile(current, this.game)) {
                 // To reach the tile next, the cost needed:
-                cost = path_cost[current] + weightedDist(current, next);
-
+                cost = path_cost[current.mesh.name] + weightedDist(current, next);
+                if (cost > this.moveRange) continue;
                 // Add or Update the path cost of the next if: 
-                if (!Object.keys(path_cost).includes(next) || cost < path_cost[next]) {
+                if (!Object.keys(path_cost).includes(next.mesh.name) || cost < path_cost[next.mesh.name]) {
                     // The tile next now have cost = cost
-                        cost_so_far[next] = cost;
+                        path_cost[next.mesh.name] = cost;
                     // Heuristic guess of the cost of the tile next
-                        heuristic_cost[next] = cost + weightedDist(next, tile);
+                        heuristic_cost[next.mesh.name] = cost + weightedDist(next, tile);
                         choice.push(next);
                     // For backward propagation
-                        came_from[next] = current;
+                        came_from[next.mesh.name] = current;
+                        //console.log(timeout , next.mesh.name, came_from[next.mesh.name]);
                 }
             }
 
             // Keep arrray choice as priority queue
                 choice.sort((t1, t2)=>{
-                    return heuristic_cost[t1] - heuristic_cost[t2];
+                    return heuristic_cost[t1.mesh.name] - heuristic_cost[t2.mesh.name];
                 });
+                
         }
         
         // Back traverse
         current = tile;
         var path = []
-        while (current != start) {
+        timeout = 0;
+        while (current != null && timeout < 100) {
+            timeout++;
+            
             path.push(current);
-            current = came_from[current];
+            current = came_from[current.mesh.name];
         }
         //path.push(start);
         path.reverse();
-
+        path.shift();
         return path;
     }
 
@@ -178,12 +187,10 @@ export class Character{
     //
 
     select(){
-        this.game.selectedObject = this;
         this.getTile().selected();
     }
 
     deselect(){
-        if (this.game.selectedObject == this) this.game.selectedObject = null;
         this.getTile().deselected();
     }
 
