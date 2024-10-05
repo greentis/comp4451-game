@@ -12,7 +12,7 @@ export class TileProperties {
         this.emissive = 0x000000;
         this.color = 0x054509;
         
-        this.offsetY = 0.1;
+        this.offsetY = 0.25;
 
         this.pathfindable = true;   // Can we walk on it?
         this.seeThroughable = true;  // Can we see through it?
@@ -58,8 +58,8 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE['Cover']:
                 this.name = 'Cover'
-                this.color = 0x665533;
-                this.offsetY = 0.5;
+                this.color = 0x664543;
+                this.offsetY = 0.9;
 
                 this.pathfindable = false;
                 this.hittable = true;
@@ -71,7 +71,7 @@ export class TileProperties {
             case TileProperties.TYPE['Water']:
                 this.name = 'Water'
                 this.color = 0x4CBEE4;
-                this.offsetY = -0.1;
+                this.offsetY = 0.1;
 
                 this.pathfindable = true;
                 this.seeThroughable = true;
