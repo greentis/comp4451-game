@@ -568,7 +568,7 @@ export class Board {
         var iteration = 0;
         var spawnPlayerDone = false;
         this.playerSpawnPoints[0] = {q: startingTile.q, r: startingTile.r};
-        while(!spawnPlayerDone && distanceToBoundary(this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r, width, length) < this.playerToBoard){
+        while(!spawnPlayerDone && distanceToBoundary(this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r, width, length) >= this.playerToBoard){
             if (iteration > 1000){
                 //set the spawn point to the starting tile as the last resort
                 this.playerSpawnPoints[0] = {q: startingTile.q, r: startingTile.r};
