@@ -76,8 +76,8 @@ export class Board {
 
         
         //below variables are for polygonal generation only
-        this.roomLength = 10; //control the Length of the map
-        this.roomWidth = 10; //control the Width of the map
+        this.roomLength = 18; //control the Length of the map
+        this.roomWidth = 18; //control the Width of the map
         this.roomSizeRange = 0; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = 0.7; //control around how many percentage of rock tile in the map will be turned into default tile
         this.wallThreshold = 0.7; //control the threshold of the wall tile conversion from rock tile
