@@ -5,17 +5,13 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { Weapon } from './Weapon.js';
 import { WeaponProperties } from './WeaponProperties.js';
 
-const ACTION = {
-    'idle' : 0,
-    'move' : 1,
-    'attack' : 2
-}
+
 
 export class Hunter extends Character{
     constructor(q, r, health, game, name){
         super(q, r, health, game, name);
 
-        this.actionstate = ACTION['idle'];
+        this.actionstate = Hunter.ACTION['idle'];
         this.body = new THREE.Object3D();
 
         this.weapon = new Weapon(this, WeaponProperties.TYPE.Bomb, 5);
@@ -52,34 +48,41 @@ export class Hunter extends Character{
             //pop out all playerMove
             super.select();
             this.game.movingPlayer = this;
-            if (this.actionstate == ACTION['idle']) {
-                this.actionstate = ACTION['move'];
+            if (this.actionstate == Hunter.ACTION['idle']) {
+                this.actionstate = Hunter.ACTION['move'];
                 console.log('move');
             }
         }
         deselect(){
             
             switch (this.actionstate) {
-                case ACTION['idle']:
+                case Hunter.ACTION.idle:
                     super.deselect();
                     this.board.clearMarkings();
                     this.game.movingPlayer = null;
-                    this.actionstate = ACTION['idle'];
+                    this.actionstate = Hunter.ACTION.idle;
                     console.log('idle');
                     break;
-                case ACTION['move']:
+                case Hunter.ACTION.move:
                     this.getTile().setState('aggressive');
-                    this.actionstate = ACTION['attack'];
+                    this.actionstate = Hunter.ACTION.attack;
                     console.log('attack');
                     return this;
-                case ACTION['attack']:
+                case Hunter.ACTION.attack:
                     super.deselect();
                     this.board.clearMarkings();
                     this.game.movingPlayer = null;
-                    this.actionstate = ACTION['idle'];
+                    this.actionstate = Hunter.ACTION.idle;
                     console.log('idle');
                     return;
             }
+        }
+        deselect_forced(){
+            super.deselect();
+            this.board.clearMarkings();
+            this.game.movingPlayer = null;
+            this.actionstate = Hunter.ACTION.idle;
+            console.log('idle');
         }
 
         hovering(){
@@ -88,4 +91,10 @@ export class Hunter extends Character{
         deHovering(){
             this.getTile().deHovering();
         }
+}
+
+Hunter.ACTION = {
+    idle : 0,
+    move : 1,
+    attack : 2
 }

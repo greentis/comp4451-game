@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import {Game} from './main.js';
 import { TileProperties } from './TileProperties.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import { Character } from './Character.js';
+import { Hunter } from './Hunter.js';
 
 export class Tile {
     constructor(q, r, x, y, z, game, typeID = TileProperties.TYPE.Default){
@@ -64,7 +66,7 @@ export class Tile {
         else if (this.state == 'pathed') {
             this.mesh.material.emissive.set(0x00ABDD);
         }
-        else if (this.state == 'aggressive') {
+        else if (this.state == 'aggressive' || this.state == 'aimed') {
             this.body.position.y += 0.1;
             this.mesh.material.emissive.set(0xCC2222);
         }
@@ -80,6 +82,7 @@ export class Tile {
 
     characterLeave(){
         this.body.remove(this.character.mesh);
+        this.state = 'default';
         this.character = null;
     }
 
@@ -107,15 +110,35 @@ export class Tile {
             return;
         }
         if (this.character) {
+            // This tile has a character on it
+            // Select that character instead
             this.game.selectedObject = this.character;
             this.character.select();
         }
         else if (this.game.movingPlayer){
-            var char = this.game.movingPlayer;
-            char.actionstate = 0;
-            if(char.moveTo(this)){
-                this.game.movingPlayer = null;
+            // A player is already selecter
+            // Here Determines the next action of the character
+            // Move / Attack / Deselect
+            var hunter = this.game.movingPlayer;
+            switch(hunter.actionstate){
+                case Hunter.ACTION.move:
+                    if(hunter.moveTo(this)){
+                        // This grid will be pathfindable &&
+                        // not the grid the original character is standing
+                        this.game.movingPlayer = null;
+                    }
+                    break;
+                case Hunter.ACTION.attack:
+                    if(true){
+
+                    }
+                    break;
+                default: throw new Error("game.movingPlayer is in idle state!");
             }
+            console.log(hunter.actionstate);
+            hunter.deselect_forced();
+            
+            
             this.game.selectedObject = null;
         }
         else {
@@ -146,7 +169,7 @@ export class Tile {
         if (this.state == 'selected' || this.state == 'aggressive') return;
         //if (!this.isVisible()) return;
         if (this.game.movingPlayer){
-            if (this.game.movingPlayer.actionstate == 1){
+            if (this.game.movingPlayer.actionstate == Hunter.ACTION.move){
                 var path = this.game.movingPlayer.findValidPath(this);
                 if (!path) return;
                 path.forEach((t)=>{
@@ -156,7 +179,7 @@ export class Tile {
                 this.game.board.lightedGrid = path;
                 this.game.movingPlayer.facing(this.q, this.r);
             }
-            else if (this.game.movingPlayer.actionstate == 2){
+            else if (this.game.movingPlayer.actionstate == Hunter.ACTION.attack){
                 var path = this.game.movingPlayer.lineOfSight(this);
                 if (!path) return;
                 path.forEach((t)=>{
@@ -165,6 +188,9 @@ export class Tile {
                 });
                 this.game.board.lightedGrid = path;
                 this.game.movingPlayer.facing(this.q, this.r);
+                this.state = 'aimed';
+                this.render();
+                return;
             }
         }
         this.state = 'highlighted';
