@@ -194,15 +194,15 @@ export class TileProperties {
 }
 
 TileProperties.TYPE = {
-    'Hold': -2, 
-    'Void': -1,
-    'Default': 0,
-    'Wall': 1,
-    'Rock': 2,
-    'Cover': 3,
-    'Water': 4,
-    'Bush': 5,
-    'Tree': 6,
+    Hold: -2, 
+    Void: -1,
+    Default: 0,
+    Wall: 1,
+    Rock: 2,
+    Cover: 3,
+    Water: 4,
+    Bush: 5,
+    Tree: 6,
 }
 
 // Make TileProperties.TYPE Bidirectional
