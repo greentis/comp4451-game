@@ -4,6 +4,8 @@ import {Game} from './main.js';
 import { Tile } from './Tile.js';
 import {Board} from './Board.js';
 import { TileProperties } from './TileProperties.js';
+import { Weapon } from './Weapon.js';
+import { WeaponProperties } from './WeaponProperties.js';
 
 // private method
 var lerp = (a, b, t) => {return a + (b - a) * t;}
@@ -22,7 +24,7 @@ var neighboringTile = (tile, game) => {
 }
 
 export class Character{
-    constructor(q, r, game, name = 'Steve'){
+    constructor(q, r, health, game, name = 'Steve'){
         // This is an ABSTRACT CLASS now
         if (this.constructor == Character) throw new Error("Abstract classes can't be instantiated.");
         
@@ -34,6 +36,8 @@ export class Character{
         //this.moveAble = false;
         this.moveRange = 8;
         this.sightRange = 8;
+
+        this.health = health;
     }
 
     lineOfSight(tile, isSolid = true){
@@ -85,7 +89,6 @@ export class Character{
     }
 
     findValidPath(tile){
-        console.log('\nNew Run\n\n');
         function weightedDist(t1, t2){
             return t2.properties.passCost;
         }
@@ -171,6 +174,19 @@ export class Character{
             this.getTile().characterEnter(this);
         });
         return true;
+    }
+
+    attack(tile){
+        path = this.lineOfSight(tile, true);
+        // TODO: calculate the hit rate
+        this.weapon.dealsDamage(tile, this);
+    }
+
+    takeDamage(damage){
+        this.health -= damage;
+        if (this.health <= 0) {
+            delete this;
+        }
     }
 
     facing(q, r){

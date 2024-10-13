@@ -1,0 +1,11 @@
+Model Information:
+* title:	Grenade MK2
+* source:	https://sketchfab.com/3d-models/grenade-mk2-79bb22bde40a40a0a2a74b26c0c0a04d
+* author:	MehraN (https://sketchfab.com/mehran1500)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Grenade MK2" (https://sketchfab.com/3d-models/grenade-mk2-79bb22bde40a40a0a2a74b26c0c0a04d) by MehraN (https://sketchfab.com/mehran1500) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

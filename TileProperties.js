@@ -20,9 +20,9 @@ export class TileProperties {
         this.passCost = 1.0;       // How much does it cost to pass through? (1.0 = normal)
         this.hitRateCost = 5.0;      // How much hitRate point it will reduce if bullet pass throught this tile? (5.0 = normal)
                                     // for starting bullet aim cost value: 100
-
+        var url;
         switch (typeID) {
-            case TileProperties.TYPE['Wall']:
+            case TileProperties.TYPE.Wall:
                 this.name = 'Wall'
                 this.color = 0x775533;
 
@@ -32,22 +32,10 @@ export class TileProperties {
                 this.passCost = 1000.0;
                 this.hitRateCost = 1000.0;
                 
-                // Mesh Loading
-                const gltfLoader = new GLTFLoader();
-                const url = 'assets/rock_-_rock/scene.gltf';
-                gltfLoader.load(url, (gltf) => {
-                    var model = gltf.scene;
-                    model.scale.set(0.8,0.8,0.8);
-                    model.traverse((child) => {
-                        if (child.isMesh) {
-                            child.userData = this.tile;
-                        }
-                    });
-                    this.mesh = model;
-                    this.tile.body.add(this.mesh);
-                });
+                url = 'assets/high-rock/scene.gltf';
+                
                 break;
-            case TileProperties.TYPE['Rock']:
+            case TileProperties.TYPE.Rock:
                 this.name = 'Rock'
                 this.color = 0x666666;
 
@@ -56,7 +44,7 @@ export class TileProperties {
                 this.offsetY = 1;
                 
                 break;
-            case TileProperties.TYPE['Cover']:
+            case TileProperties.TYPE.Cover:
                 this.name = 'Cover'
                 this.color = 0x664543;
                 this.offsetY = 0.9;
@@ -68,7 +56,7 @@ export class TileProperties {
                 this.hitRateCost = 25.0;
 
                 break;
-            case TileProperties.TYPE['Water']:
+            case TileProperties.TYPE.Water:
                 this.name = 'Water'
                 this.color = 0x4CBEE4;
                 this.offsetY = 0.1;
@@ -80,22 +68,34 @@ export class TileProperties {
                 this.hitRateCost = 5.0;
 
                 break;
-            case TileProperties.TYPE['Default']:
+            case TileProperties.TYPE.Default:
             default:
-                // Mesh loading
                 this.mesh = new THREE.Object3D();
                 this.tile.mesh.add(this.mesh);
                 break;
         }
+        if(!url) return;
+        const gltfLoader = new GLTFLoader();
+        gltfLoader.load(url, (gltf) => {
+            var model = gltf.scene;
+            model.scale.set(0.8,0.8,0.8);
+            model.traverse((child) => {
+                if (child.isMesh) {
+                    child.userData = this.tile;
+                }
+            });
+            this.mesh = model;
+            this.tile.body.add(this.mesh);
+        });
     }
 }
 
 TileProperties.TYPE = {
-    'Default': 0,
-    'Wall': 1,
-    'Rock': 2,
-    'Cover': 3,
-    'Water': 4
+    Default: 0,
+    Wall: 1,
+    Rock: 2,
+    Cover: 3,
+    Water: 4
 }
 
 // Make TileProperties.TYPE Bidirectional

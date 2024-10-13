@@ -21,11 +21,11 @@ export class Game{
 
 		// Players (Development phase)
 			this.player = new Array(
-				new Hunter(0, 0, this, 'Curtis'),
-				new Hunter(1, 0, this, 'Timothy'),
+				new Hunter(0, 0, 1, this, 'Curtis'),
+				new Hunter(1, 0, 1, this, 'Timothy'),
 			);
 			this.enemy = new Array(
-				new Animal(0, 5, this, 'Monkey')
+				new Animal(0, 5, 1, this, 'Monkey')
 			);
 	
 		// UI
@@ -113,8 +113,8 @@ export class Game{
 				}
 				this.selectedObject.select();
 				if (this.selectedObject != null && this.selectedObject == previousObject) {
-					console.log('2nd deselect');
 					this.selectedObject = this.selectedObject.deselect();
+					break;
 				}
 				if (previousObject) previousObject.deselect();
 				break;

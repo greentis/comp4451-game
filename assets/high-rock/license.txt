@@ -1,0 +1,11 @@
+Model Information:
+* title:	Rock - Rock
+* source:	https://sketchfab.com/3d-models/rock-rock-b2f701e46e494762b781d6e6a5d616b2
+* author:	chrlog (https://sketchfab.com/chrlog)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Rock - Rock" (https://sketchfab.com/3d-models/rock-rock-b2f701e46e494762b781d6e6a5d616b2) by chrlog (https://sketchfab.com/chrlog) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

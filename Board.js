@@ -53,7 +53,7 @@ export class Board {
             var x = q * Math.cos(Math.PI / 6);
             var y = 0;
             var z = r + q * Math.cos(Math.PI / 3);
-            var tile = new Tile(q, r, x, y, z,this.game, TileProperties.TYPE['Default']);
+            var tile = new Tile(q, r, x, y, z,this.game, TileProperties.TYPE.Default);
             
             // Add tile to map
             this.body.add(tile.body);
@@ -85,7 +85,7 @@ export class Board {
             var length = this.roomLength + Math.round( (seed % this.roomSizeRange) * perlinNoise2D(seed, 13, 37));
         }
         //var boundary = 20;
-        console.log('width', width, 'length', length);
+        //console.log('width', width, 'length', length);
         this.qmin = -width, this.qmax = width;
         this.rmin = -length, this.rmax = length;
         //this.smin = -length, this.smax = boundary;
@@ -97,7 +97,7 @@ export class Board {
         for (let q = -width; q <= width; q++){
             temp[q] = {};
             for (let r = -length; r <= length; r++){
-                temp[q][r] = TileProperties.TYPE['Rock'];
+                temp[q][r] = TileProperties.TYPE.Rock;
                 if(!this.checkBoardBoundaries(q, r, width, length)) totalArea++;
             }
         }
@@ -115,10 +115,10 @@ export class Board {
         var wallTile = new Set();
         var startingTile ={q: Math.round(seed % (2 * width - 1) - width + 1), r:
                             Math.round(seed % (2* length - 1) - length + 1)}; 
-        temp[startingTile.q][startingTile.r] = TileProperties.TYPE['Default']; 
+        temp[startingTile.q][startingTile.r] = TileProperties.TYPE.Default; 
         expandedTile.add(startingTile);
         defaultTile.add(startingTile);
-        console.log('Starting Tile is ', startingTile.q, startingTile.r);
+        //console.log('Starting Tile is ', startingTile.q, startingTile.r);
         
         // 3.1 expand the map
         // get the number of tile in defaultTile
@@ -137,7 +137,7 @@ export class Board {
             expandedTile = new Set(defaultTile);
             //set all of the tile in wallTile list to rock tile
             wallTile.forEach((t)=>{
-                temp[t.q][t.r] = TileProperties.TYPE['Rock'];
+                temp[t.q][t.r] = TileProperties.TYPE.Rock;
             });
             wallTile = new Set();
 
@@ -156,8 +156,8 @@ export class Board {
                     adjacent.forEach((a)=>{
                         if (this.checkBoardBoundaries(a.q, a.r, width, length)) return; //skip the tile if it is at the boundary of the board
                         //console.log('a',a);
-                        if (temp[a.q][a.r] == TileProperties.TYPE['Wall']) return;
-                        if (temp[a.q][a.r] == TileProperties.TYPE['Default']) return;
+                        if (temp[a.q][a.r] == TileProperties.TYPE.Wall) return;
+                        if (temp[a.q][a.r] == TileProperties.TYPE.Default) return;
 
                         //checkValues should based on the seed, but not math.random()
                         //so that the map is generated same every time if same seed
@@ -167,12 +167,12 @@ export class Board {
                         var checkingValues = (expandIteration - 1) / 250.0 + perlinNoise2D(seed, a.q, a.r);
                         //console.log('q', a.q, 'r', a.r, 'checkingValues', checkingValues);
 
-                        if (temp[a.q][a.r] != TileProperties.TYPE['Default'] && checkingValues > (1-this.roomPercentage)){
-                            temp[a.q][a.r] = TileProperties.TYPE['Default'];
+                        if (temp[a.q][a.r] != TileProperties.TYPE.Default && checkingValues > (1-this.roomPercentage)){
+                            temp[a.q][a.r] = TileProperties.TYPE.Default;
                             defaultTile.add(a);
                             expandedTile.add(a);
                         }else{
-                            temp[a.q][a.r] = TileProperties.TYPE['Wall'];
+                            temp[a.q][a.r] = TileProperties.TYPE.Wall;
                             //console.log('Wall Tile: q', a.q, 'r', a.r);
                             wallTile.add(a);
                         }
@@ -184,12 +184,12 @@ export class Board {
             
         }
         
-        console.log('iteration', expandIteration);
+        /* console.log('iteration', expandIteration);
         console.log('room percentage', this.roomPercentage, "total area", totalArea, "range", (seed % 67)/1000.0);
         console.log('default tile', defaultTile.size);
         console.log('target area', (this.roomPercentage + (seed % 67)/1000.0) * totalArea);
         console.log('min area', (this.roomPercentage - (seed % 67)/1000.0) * totalArea);
-        
+         */
         /*
         //testing perlin noise
         var test1 = {};
@@ -217,7 +217,7 @@ export class Board {
         //for each tile in the wallTile list
         // it turn into wall tile if checkValues is greater than wallThreshold
         var seedWall = perlinNoise2D(seed, wallTile.size, defaultTile.size) * 1000000.0;
-        console.log('wallTile size(before 3.1):', wallTile.size);
+        //console.log('wallTile size(before 3.1):', wallTile.size);
         var totalWallTile = wallTile.size;
         var rockTile = new Set();
         var rockIteration = 1.0;
@@ -228,7 +228,7 @@ export class Board {
                 if (checkingValues > this.wallThreshold){
                     rockTile.add(t);
                     wallTile.delete(t);
-                    temp[t.q][t.r] = TileProperties.TYPE['Rock'];
+                    temp[t.q][t.r] = TileProperties.TYPE.Rock;
                     //console.log('Rock Tile: q', t.q, 'r', t.r);
                 }
             });
@@ -253,7 +253,7 @@ export class Board {
                 if (checkingValues < this.coverThreshold){
                     coverTile.add(t);
                     wallTile.delete(t);
-                    temp[t.q][t.r] = TileProperties.TYPE['Cover'];
+                    temp[t.q][t.r] = TileProperties.TYPE.Cover;
                 }
             });
             coverIteration++;

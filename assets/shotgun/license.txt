@@ -1,0 +1,11 @@
+Model Information:
+* title:	Sawed-off Shotgun
+* source:	https://sketchfab.com/3d-models/sawed-off-shotgun-955a7d1a195848b990bd8362396375bd
+* author:	Matthew-David (https://sketchfab.com/Matthew-David)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Sawed-off Shotgun" (https://sketchfab.com/3d-models/sawed-off-shotgun-955a7d1a195848b990bd8362396375bd) by Matthew-David (https://sketchfab.com/Matthew-David) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

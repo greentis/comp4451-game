@@ -4,7 +4,7 @@ import { TileProperties } from './TileProperties.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
 export class Tile {
-    constructor(q, r, x, y, z, game, typeID = TileProperties.TYPE['Default']){
+    constructor(q, r, x, y, z, game, typeID = TileProperties.TYPE.Default){
         // constructor
         this.q = q;
         this.r = r;
@@ -73,6 +73,7 @@ export class Tile {
 
     characterEnter(character){
         this.character = character;
+        console.log(character.mesh.name);
         this.body.add(character.mesh);
         this.deHovering();
     }
@@ -80,6 +81,10 @@ export class Tile {
     characterLeave(){
         this.body.remove(this.character.mesh);
         this.character = null;
+    }
+
+    acceptDamage(){
+
     }
 
     isVisible(){
@@ -104,7 +109,6 @@ export class Tile {
         else if (this.game.movingPlayer){
             var char = this.game.movingPlayer;
             char.actionstate = 0;
-            char.deselect();
             if(char.moveTo(this)){
                 this.game.movingPlayer = null;
             }
