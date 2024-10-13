@@ -18,17 +18,17 @@ var distanceToBoundary = (q, r, width, length) => {
 
 var getHeights = (a) => {
     switch (a){
-        case TileProperties.TYPE['Void']:
+        case TileProperties.TYPE.Void:
             return 10.0;
-        case TileProperties.TYPE['Rock']:
+        case TileProperties.TYPE.Rock:
             return 0.6;
-        case TileProperties.TYPE['Default']:
+        case TileProperties.TYPE.Default:
             return 0.0;
-        case TileProperties.TYPE['Wall']:
+        case TileProperties.TYPE.Wall:
             return 0.4;
-        case TileProperties.TYPE['Cover']:
+        case TileProperties.TYPE.Cover:
             return 0.3;
-        case TileProperties.TYPE['Water']:
+        case TileProperties.TYPE.Water:
             return 0.0;
         default:
             return 0.0;
@@ -144,10 +144,10 @@ export class Board {
         for (let q = -width; q <= width; q++){
             this.temp[q] = {};
             for (let r = -length; r <= length; r++){
-                this.temp[q][r] = TileProperties.TYPE['Void'];
+                this.temp[q][r] = TileProperties.TYPE.Void;
             }
         }
-        this.temp[startingTile.q][startingTile.r] = TileProperties.TYPE['Rock'];
+        this.temp[startingTile.q][startingTile.r] = TileProperties.TYPE.Rock;
 
         //2.2 change the type of all the non-void tile to rock
         // we using expansion method to expand the rock tile from the starting tile
@@ -193,7 +193,7 @@ export class Board {
 
             expandedTile = new Set(nonVoidTile);
             holdTile.forEach((t)=>{
-                this.temp[t.q][t.r] = TileProperties.TYPE['Void'];
+                this.temp[t.q][t.r] = TileProperties.TYPE.Void;
             });
             holdTile = new Set();
 
@@ -206,19 +206,19 @@ export class Board {
                     
                     var adjacent = this.findAdjacent(t.q, t.r, width, length, false);
                     adjacent.forEach((a)=>{
-                        if (this.temp[a.q][a.r] == TileProperties.TYPE['Hold']) return;
-                        if (this.temp[a.q][a.r] == TileProperties.TYPE['Rock']) return;
+                        if (this.temp[a.q][a.r] == TileProperties.TYPE.Hold) return;
+                        if (this.temp[a.q][a.r] == TileProperties.TYPE.Rock) return;
 
                         //console.log('a',a);
                         var checkingValues = voidMap[a.q][a.r] - 1;
                         var neighborNonVoid = 0;
                         var adjacent1 = this.findAdjacent(a.q, a.r, width, length);
                         adjacent1.forEach((a1)=>{
-                            if (this.temp[a1.q][a1.r] == TileProperties.TYPE['Rock']) neighborNonVoid++;
+                            if (this.temp[a1.q][a1.r] == TileProperties.TYPE.Rock) neighborNonVoid++;
                         });
 
 
-                        if (this.temp[a.q][a.r] == TileProperties.TYPE['Void']){
+                        if (this.temp[a.q][a.r] == TileProperties.TYPE.Void){
                             var p = k1 * (1 - countNonVoid / ((width * 2 + 1) * (length * 2 + 1))) 
                                     + k2 * neighborNonVoid
                                     + k3 * checkingValues
@@ -226,11 +226,11 @@ export class Board {
                                     + 0.01 * iteration;
                             //console.log('p', p);
                             if (p > 0.5){
-                                this.temp[a.q][a.r] = TileProperties.TYPE['Rock'];
+                                this.temp[a.q][a.r] = TileProperties.TYPE.Rock;
                                 nonVoidTile.add(a);
                                 countNonVoid++;
                             }else{
-                                this.temp[a.q][a.r] = TileProperties.TYPE['Hold'];
+                                this.temp[a.q][a.r] = TileProperties.TYPE.Hold;
                                 holdTile.add(a);
                             }
                         }
@@ -244,14 +244,14 @@ export class Board {
         
         //change all hold tile to void tile
         holdTile.forEach((t)=>{
-            this.temp[t.q][t.r] = TileProperties.TYPE['Void'];
+            this.temp[t.q][t.r] = TileProperties.TYPE.Void;
         });
         holdTile.clear();
         
 
         for (let q = -width; q <= width; q++){
             for (let r = -length; r <= length; r++){
-                if(this.temp[q][r] == TileProperties.TYPE['Void']) continue;
+                if(this.temp[q][r] == TileProperties.TYPE.Void) continue;
                 if(!this.checkBoardBoundaries(q, r, width, length, this.temp)) this.totalArea++;
             }
         }
@@ -270,7 +270,7 @@ export class Board {
 
         expandedTile.add(startingTile);
         defaultTile.add(startingTile);
-        this.temp[startingTile.q][startingTile.r] = TileProperties.TYPE['Default'];
+        this.temp[startingTile.q][startingTile.r] = TileProperties.TYPE.Default;
         
         // 3.1 expand the map
         // get the number of tile in defaultTile
@@ -292,7 +292,7 @@ export class Board {
             //set all of the tile in wallTile list to rock tile
             lastWallTile = new Set([...wallTile]);
             wallTile.forEach((t)=>{
-                this.temp[t.q][t.r] = TileProperties.TYPE['Rock'];
+                this.temp[t.q][t.r] = TileProperties.TYPE.Rock;
             });
             wallTile = new Set();
 
@@ -311,8 +311,8 @@ export class Board {
                     adjacent.forEach((a)=>{
                         if (this.checkBoardBoundaries(a.q, a.r, width, length,this.temp)) return; //skip the tile if it is at the boundary of the board
                         //console.log('a',a);
-                        if (this.temp[a.q][a.r] == TileProperties.TYPE['Wall']) return;
-                        if (this.temp[a.q][a.r] == TileProperties.TYPE['Default']) return;
+                        if (this.temp[a.q][a.r] == TileProperties.TYPE.Wall) return;
+                        if (this.temp[a.q][a.r] == TileProperties.TYPE.Default) return;
 
                         //checkValues should based on the seed, but not math.random()
                         //so that the map is generated same every time if same seed
@@ -322,13 +322,13 @@ export class Board {
                         var checkingValues = (expandIteration - 1) / 250.0 + xxhash(seed, a.q, a.r);
                         //console.log('q', a.q, 'r', a.r, 'checkingValues', checkingValues);
 
-                        if (this.temp[a.q][a.r] != TileProperties.TYPE['Default'] && checkingValues > (1-this.roomPercentage)){
-                            this.temp[a.q][a.r] = TileProperties.TYPE['Default'];
+                        if (this.temp[a.q][a.r] != TileProperties.TYPE.Default && checkingValues > (1-this.roomPercentage)){
+                            this.temp[a.q][a.r] = TileProperties.TYPE.Default;
                             defaultTile.add(a);
                             expandedTile.add(a);
                             lastWallTile.delete(a);
                         }else{
-                            this.temp[a.q][a.r] = TileProperties.TYPE['Wall'];
+                            this.temp[a.q][a.r] = TileProperties.TYPE.Wall;
                             //console.log('Wall Tile: q', a.q, 'r', a.r);
                             wallTile.add(a);
                         }
@@ -367,7 +367,7 @@ export class Board {
                 if (checkingValues > this.wallThreshold){
                     rockTile.add(t);
                     wallTile.delete(t);
-                    this.temp[t.q][t.r] = TileProperties.TYPE['Rock'];
+                    this.temp[t.q][t.r] = TileProperties.TYPE.Rock;
                     //console.log('Rock Tile: q', t.q, 'r', t.r);
                 }
             });
@@ -393,7 +393,7 @@ export class Board {
                 if (checkingValues < this.coverThreshold){
                     coverTile.add(t);
                     wallTile.delete(t);
-                    this.temp[t.q][t.r] = TileProperties.TYPE['Cover'];
+                    this.temp[t.q][t.r] = TileProperties.TYPE.Cover;
                 }
             });
             coverIteration++;
@@ -423,7 +423,7 @@ export class Board {
         for (let q = -width; q <= width; q++){
             for (let r = -length; r <= length; r++){
                 if (heightMap[q][r] < this.rainFall){
-                    this.temp[q][r] = TileProperties.TYPE['Water'];
+                    this.temp[q][r] = TileProperties.TYPE.Water;
                     waterTile.add({q: q, r: r});
                 }
             }
@@ -442,10 +442,10 @@ export class Board {
         for (let q = -width; q <= width; q++){
             for (let r = -length; r <= length; r++){
                 //avoid the void tile & boundary tile
-                if (this.temp[q][r] == TileProperties.TYPE['Void']) continue;
+                if (this.temp[q][r] == TileProperties.TYPE.Void) continue;
                 if(this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
                 if (heightMap[q][r] > this.riverSource){
-                    this.temp[q][r] = TileProperties.TYPE['Water'];
+                    this.temp[q][r] = TileProperties.TYPE.Water;
                     riverSource.add({q: q, r: r});
                     riverTile.add({q: q, r: r});
                 }
@@ -472,7 +472,7 @@ export class Board {
                 if (source.q == temp.q && source.r == temp.r){
                     riverEnd = true;
                 }else{
-                    this.temp[temp.q][temp.r] = TileProperties.TYPE['Water'];
+                    this.temp[temp.q][temp.r] = TileProperties.TYPE.Water;
                     riverTile.add(temp);
                     source = temp;
                 }
@@ -490,7 +490,7 @@ export class Board {
             vegetationMap[q] = {};
             for (let r = -length; r <= length; r++){
                 vegetationMap[q][r] = xxhash(seed * this.vegetationCoverage * 137.0, q, r);
-                if (this.temp[q][r] == TileProperties.TYPE['Void']) vegetationMap[q][r] = 10.0;
+                if (this.temp[q][r] == TileProperties.TYPE.Void) vegetationMap[q][r] = 10.0;
                 if (this.checkBoardBoundaries(q, r, width, length, this.temp)) vegetationMap[q][r] = 10.0; 
 
                 if (vegetationMap[q][r] < this.vegetationCoverage){
@@ -504,17 +504,17 @@ export class Board {
         // 4.4.2 generate the bush tile
         // we consider turning the vegetation tile into tree tile or bush tile based on the tree value and bush value
         var treeHashTable = {
-            [TileProperties.TYPE['Rock']]: 0.2,
-            [TileProperties.TYPE['Default']]: 0.35,
-            [TileProperties.TYPE['Cover']]: 0.15,
-            [TileProperties.TYPE['Water']]: 0.15,
-            [TileProperties.TYPE['Wall']]: 0.15,
+            [TileProperties.TYPE.Rock]: 0.2,
+            [TileProperties.TYPE.Default]: 0.35,
+            [TileProperties.TYPE.Cover]: 0.15,
+            [TileProperties.TYPE.Water]: 0.15,
+            [TileProperties.TYPE.Wall]: 0.15,
         };
         var bushHashTable = {
-            [TileProperties.TYPE['Rock']]: 0.0,
-            [TileProperties.TYPE['Default']]: 0.3,
-            [TileProperties.TYPE['Cover']]: 0.2,
-            [TileProperties.TYPE['Water']]: 0.5
+            [TileProperties.TYPE.Rock]: 0.0,
+            [TileProperties.TYPE.Default]: 0.3,
+            [TileProperties.TYPE.Cover]: 0.2,
+            [TileProperties.TYPE.Water]: 0.5
         };
         
         
@@ -546,18 +546,18 @@ export class Board {
             bushValue += perlinNoise.perlin2(seed * 137, t.q/width, t.r/length) * k3;
 
             if(treeValue>bushValue){
-                this.temp[t.q][t.r] = TileProperties.TYPE['Tree'];
+                this.temp[t.q][t.r] = TileProperties.TYPE.Tree;
             }
             else{
-                this.temp[t.q][t.r] = TileProperties.TYPE['Bush'];
+                this.temp[t.q][t.r] = TileProperties.TYPE.Bush;
             }
         });
 
         // 4.4.3 convert the vegetation tile back to river tile if it is in the river tile originally
         // the vegetation tile in the river tile will be turned back to river tile
         riverTile.forEach((t)=>{
-            if(this.temp[t.q][t.r] == TileProperties.TYPE['Tree'] || this.temp[t.q][t.r] == TileProperties.TYPE['Bush']){
-                this.temp[t.q][t.r] = TileProperties.TYPE['Water'];
+            if(this.temp[t.q][t.r] == TileProperties.TYPE.Tree || this.temp[t.q][t.r] == TileProperties.TYPE.Bush){
+                this.temp[t.q][t.r] = TileProperties.TYPE.Water;
             }
         });
        
@@ -598,10 +598,10 @@ export class Board {
             var r = Math.round(xxhash((seed + iteration * 73) * 163, this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r) * 2 * this.rmax - this.rmax + 1);
 
 
-            if (this.temp[q][r] == TileProperties.TYPE['Default']){
+            if (this.temp[q][r] == TileProperties.TYPE.Default){
                 this.playerSpawnPoints[0] = {q: q, r: r};
                 spawnPlayerDone = true;
-            }else if (this.temp[q][r] == TileProperties.TYPE['Water'] && iteration > 250){
+            }else if (this.temp[q][r] == TileProperties.TYPE.Water && iteration > 250){
                 this.playerSpawnPoints[0] = {q: q, r: r};
                 spawnPlayerDone = true;
             }
@@ -628,7 +628,7 @@ export class Board {
                     var q = ringTiles[j].q;
                     var r = ringTiles[j].r;
                     if(this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
-                    if (this.temp[q][r] == TileProperties.TYPE['Default'] || this.temp[q][r] == TileProperties.TYPE['Water']){
+                    if (this.temp[q][r] == TileProperties.TYPE.Default || this.temp[q][r] == TileProperties.TYPE.Water){
                         //check if that tile occupied by other player already
                         var occupied = false;
                         for (let k = 0; k < i; k++){
@@ -649,7 +649,7 @@ export class Board {
                     //set the spawn point to the starting tile nearby as the last resort
                     //force turning that tile into default tile
                     this.playerSpawnPoints[i] = {q: startingTile.q-i, r: startingTile.r+i};
-                    this.temp[startingTile.q-i][startingTile.r+i] = TileProperties.TYPE['Default'];
+                    this.temp[startingTile.q-i][startingTile.r+i] = TileProperties.TYPE.Default;
                     break;
                 }
             }
@@ -663,7 +663,7 @@ export class Board {
         // 6. generate the tile based on the annotated map
         this.forEachGrid((q, r)=>{
             //skip the tile if it is void tile
-            if (this.temp[q][r] == TileProperties.TYPE['Void'] || this.temp[q][r] == TileProperties.TYPE['Hold'] ) return;
+            if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold ) return;
 
             var x = q * Math.cos(Math.PI / 6);
             var y = 0;
@@ -740,7 +740,7 @@ export class Board {
         //return true if one of the neighbor of the tile is void tile
         var adjacent = this.findAdjacent(q, r, width, length, false);
         for (let i = 0; i < adjacent.length; i++){
-            if (temp[adjacent[i].q][adjacent[i].r] == TileProperties.TYPE['Void']) return true;
+            if (temp[adjacent[i].q][adjacent[i].r] == TileProperties.TYPE.Void) return true;
         }
         return false;
     }
@@ -752,7 +752,7 @@ export class Board {
             var r1 = r + this.adjacentTiles[i][1];
             //cant use getTile here
             if (q1 < -width || q1 > width || r1 < -length || r1 > length) continue;
-            if(checkVoid && this.temp[q1][r1] == TileProperties.TYPE['Void']) continue;
+            if(checkVoid && this.temp[q1][r1] == TileProperties.TYPE.Void) continue;
             adjacent.push({q: q1, r: r1});
             
         }
@@ -830,7 +830,7 @@ export class Board {
             var x = q * Math.cos(Math.PI / 6);
             var y = 0;
             var z = r + q * Math.cos(Math.PI / 3);
-            var tile = new Tile(q, r, x, y, z,this.game, TileProperties.TYPE['Default']);
+            var tile = new Tile(q, r, x, y, z,this.game, TileProperties.TYPE.Default);
             
             // Add tile to map
             this.body.add(tile.body);

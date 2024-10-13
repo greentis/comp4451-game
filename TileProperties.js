@@ -22,7 +22,7 @@ export class TileProperties {
                                     // for starting bullet aim cost value: 100
         var url;
         switch (typeID) {
-            case TileProperties.TYPE['Void']:
+            case TileProperties.TYPE.Void:
                 this.name = 'Void'
                 this.color = 0x000000;
                 this.offsetY = 0.0;
@@ -34,7 +34,7 @@ export class TileProperties {
                 this.hitRateCost = 1000.0;
 
                 break;
-            case TileProperties.TYPE['Wall']:
+            case TileProperties.TYPE.Wall:
                 this.name = 'Wall'
                 this.color = 0x775533;
 
@@ -45,7 +45,7 @@ export class TileProperties {
                 this.hitRateCost = 1000.0;
                 
                 break;
-            case TileProperties.TYPE['Rock']:
+            case TileProperties.TYPE.Rock:
                 this.name = 'Rock'
                 this.color = 0x666666;
 
@@ -91,7 +91,7 @@ export class TileProperties {
                 this.hitRateCost = 5.0;
 
                 break;
-            case TileProperties.TYPE['Bush']:
+            case TileProperties.TYPE.Bush:
                 this.name = 'bush';
                 this.color = 0x00EE99;
                 this.offsetY = 0.9;
@@ -103,7 +103,7 @@ export class TileProperties {
                 this.hitRateCost = 25.0;
 
                 break;
-            case TileProperties.TYPE['Tree']:
+            case TileProperties.TYPE.Tree:
                 this.name = 'tree';
                 this.color = 0x00EE33;
                 //this.offsetY = 1.2;
@@ -131,7 +131,7 @@ export class TileProperties {
                 });
                 */
                 break;
-            case TileProperties.TYPE['Bush']:
+            case TileProperties.TYPE.Bush:
                 this.name = 'bush';
                 this.color = 0x00EE99;
                 this.offsetY = 0.9;
@@ -143,7 +143,7 @@ export class TileProperties {
                 this.hitRateCost = 25.0;
 
                 break;
-            case TileProperties.TYPE['Tree']:
+            case TileProperties.TYPE.Tree:
                 this.name = 'tree';
                 this.color = 0x00EE33;
                 //this.offsetY = 1.2;

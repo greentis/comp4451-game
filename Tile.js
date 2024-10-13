@@ -101,7 +101,11 @@ export class Tile {
 
     select(){
         
-        if (!this.isVisible() && this.character == null) return;
+        if (!this.isVisible() && this.character == null) {
+            console.log(this.mesh.name);
+            this.game.selectedObject = null;
+            return;
+        }
         if (this.character) {
             this.game.selectedObject = this.character;
             this.character.select();
