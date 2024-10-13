@@ -19,15 +19,19 @@ export class Game{
 			this.scene.add(this.board.body);
 			this.movingPlayer = null;
 
+			
+			var playerSpawnPoints = this.board.getPlayerSpawnPoint();
 		// Players (Development phase)
 			this.player = new Array(
-				new Hunter(0, 0, 1, this, 'Curtis'),
-				new Hunter(1, 0, 1, this, 'Timothy'),
+				new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, this, 'Player 1'),
+				new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, this, 'Player 2'),
+				new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, this, 'Player 3')
 			);
 			this.enemy = new Array(
 				new Animal(0, 5, 1, this, 'Monkey')
 			);
-	
+		
+
 		// UI
 			this.ui = new userInput(this);
 			this.ui.makeInterface();
