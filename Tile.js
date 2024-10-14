@@ -86,10 +86,6 @@ export class Tile {
         this.character = null;
     }
 
-    acceptDamage(){
-
-    }
-
     isVisible(){
         for (var player of this.game.player){
             var sight = player.lineOfSight(this,false);
@@ -109,12 +105,23 @@ export class Tile {
 
     select(){
         
-        if (!this.isVisible() && this.character == null) {
+        if (!this.isVisible()) {
             console.log(this.mesh.name);
             this.game.selectedObject = null;
             return;
         }
         if (this.character) {
+            // Attempt to attack this grid
+            if(this.game.movingPlayer && 
+                this.game.movingPlayer.actionstate == Hunter.ACTION.attack) {
+                let hunter = this.game.movingPlayer;
+                if(hunter.lineOfSight(this, true)){
+                    hunter.attack(this);
+                    this.game.movingPlayer = null;
+                }
+                hunter.deselect_forced();
+                return;
+            }
             // This tile has a character on it
             // Select that character instead
             this.game.selectedObject = this.character;
@@ -134,13 +141,13 @@ export class Tile {
                     }
                     break;
                 case Hunter.ACTION.attack:
-                    if(true){
-
+                    if(hunter.lineOfSight(this, true)){
+                        hunter.attack(this);
+                        this.game.movingPlayer = null;
                     }
                     break;
                 default: throw new Error("game.movingPlayer is in idle state!");
             }
-            console.log(hunter.actionstate);
             hunter.deselect_forced();
             
             
@@ -185,7 +192,7 @@ export class Tile {
                 this.game.movingPlayer.facing(this.q, this.r);
             }
             else if (this.game.movingPlayer.actionstate == Hunter.ACTION.attack){
-                var path = this.game.movingPlayer.lineOfSight(this);
+                var path = this.game.movingPlayer.lineOfSight(this, true);
                 if (!path) return;
                 path.forEach((t)=>{
                     t.state = 'pathed';

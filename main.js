@@ -22,14 +22,14 @@ export class Game{
 			
 			var playerSpawnPoints = this.board.getPlayerSpawnPoint();
 		// Players (Development phase)
-			this.player = new Array(
+			this.player = new Set([
 				new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 1, this, 'Player 1'),
 				new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 1, this, 'Player 2'),
 				new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 1, this, 'Player 3')
-			);
-			this.enemy = new Array(
+			]);
+			this.enemy = new Set([
 				new Animal(0, 5, 1, this, 'Monkey')
-			);
+			]);
 		
 
 		// UI

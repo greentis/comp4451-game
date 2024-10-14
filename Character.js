@@ -38,6 +38,9 @@ export class Character{
         this.sightRange = 8;
 
         this.health = health;
+
+        // abstract variable
+        this.body;
     }
 
     lineOfSight(tile, isSolid = true){
@@ -88,12 +91,13 @@ export class Character{
 
     findValidPath(tile){
         function weightedDist(t1, t2){
+            if (t2.character) return 100;
             return t2.properties.passCost;
         }
         //return this.lineOfSight(tile);
 
+
         // Queue
-        
         var start = this.getTile();
 
         var choice = [start];
@@ -150,7 +154,7 @@ export class Character{
                 
         }
         
-        return path;
+        return [];
     }
 
     moveTo(tile) {
@@ -175,14 +179,19 @@ export class Character{
     }
 
     attack(tile){
-        path = this.lineOfSight(tile, true);
+        let path = this.lineOfSight(tile, true);
         // TODO: calculate the hit rate
+        console.log(this.name, " is attacking ", tile.mesh.name);
         this.weapon.dealsDamage(tile, this);
     }
 
     takeDamage(damage){
         this.health -= damage;
+        console.log(this.health);
         if (this.health <= 0) {
+            this.body.visible = false;
+            if (this.game.enemy.has(this)) this.game.enemy.delete(this);
+            console.log(this.name, " is dead");
             delete this;
         }
     }
