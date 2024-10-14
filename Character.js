@@ -44,6 +44,7 @@ export class Character{
         var path = new Set();
         var N = distance(this.getTile(), tile) + 0.0;
         
+        var t;
         for (let i = 1; i <= N; i++){
             // Progression
             var q = lerp(this.q, tile.q, i/N);
@@ -58,29 +59,26 @@ export class Character{
             else ns = -nq - nr;
             
             // Appending
-            var t = this.board.getTile(nq, nr);
+            t = this.board.getTile(nq, nr);
 
             // Check if this is valid
 
             if (t != this.getTile()){
-                if (isSolid){
-                    if (!t.properties.pathfindable && !t.properties.hittable) return false;
-                }
-                else {
-                    if (!t.properties.seeThroughable) return false;
-                }
+                if (!t.properties.seeThroughable && !t.properties.hittable) return false;
                 path.add(t);
                 if (isSolid){
                     if (t.character != null) break;
-                    if (!t.properties.pathfindable && t.properties.hittable) break;
+                    if (!t.properties.seeThroughable && t.properties.hittable) break;
                 }
                 else {
-                    
+                    if (!t.properties.seeThroughable) break;
                 }
             }
             
         }
         
+        // Not reaching the target tile
+        if (t != tile) return false;
         
         if (path.size == 0 || path.size > this.sightRange || !path.has(tile)) return false;
 
@@ -106,14 +104,27 @@ export class Character{
         var current;
         var cost;
         var timeout = 0;
-        while (choice.length > 0 && timeout < 100) {
+        var path = [];
+        while (choice.length > 0 && timeout < 300) {
             
             timeout++;
             // Pop the element with least heuristic cost from the array
                 current = choice.shift();
             
-            if (current == tile) break;
-
+            if (current == tile) {
+                current = tile;
+                timeout = 0;
+                while (current != null && timeout < 300) {
+                    timeout++;
+                    
+                    path.push(current);
+                    current = came_from[current.mesh.name];
+                }
+                //path.push(start);
+                path.reverse();
+                path.shift();
+                return path;
+            }
 
             for (let next of neighboringTile(current, this.game)) {
                 // To reach the tile next, the cost needed:
@@ -139,19 +150,6 @@ export class Character{
                 
         }
         
-        // Back traverse
-        current = tile;
-        var path = []
-        timeout = 0;
-        while (current != null && timeout < 100) {
-            timeout++;
-            
-            path.push(current);
-            current = came_from[current.mesh.name];
-        }
-        //path.push(start);
-        path.reverse();
-        path.shift();
         return path;
     }
 

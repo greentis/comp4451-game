@@ -94,7 +94,12 @@ export class Tile {
         for (var player of this.game.player){
             var sight = player.lineOfSight(this,false);
             if(!sight) continue;
-            if (sight.has(this)) return true;
+            return true;
+        }
+        for (var player of this.game.player){
+            var path = player.findValidPath(this);
+            if(path.length == 0) continue;
+            if (path.includes(this)) return true;
         }
         return false;
     }
@@ -167,7 +172,7 @@ export class Tile {
 
     hovering(){
         if (this.state == 'selected' || this.state == 'aggressive') return;
-        //if (!this.isVisible()) return;
+        if (!this.isVisible()) return;
         if (this.game.movingPlayer){
             if (this.game.movingPlayer.actionstate == Hunter.ACTION.move){
                 var path = this.game.movingPlayer.findValidPath(this);
