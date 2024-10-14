@@ -12,16 +12,35 @@ import { userInput } from './userInput.js';
 
 export class Game{
 	constructor(){
+	//
+	// Base game elements
+	//
+
+		// game scene
 		this.createScene();
 		
+		// UI
+		this.ui = new userInput(this);
+		this.ui.makeInterface();
+
+		// Event Handler
+		this.selectedObject = null;
+		this.activateEventHandler();
+
+	//
+	// For each mission
+	//
+
 		// Board & Tiles (Development phase)
 			this.board = new Board(this);
+			this.board.body.rotation.x = Math.PI * 0;
+			this.board.body.rotation.y = 0;
 			this.scene.add(this.board.body);
-			this.movingPlayer = null;
 
+			this.movingPlayer = null;
 			
-			var playerSpawnPoints = this.board.getPlayerSpawnPoint();
 		// Players (Development phase)
+			var playerSpawnPoints = this.board.getPlayerSpawnPoint();
 			this.player = new Set([
 				new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 1, this, 'Player 1'),
 				new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 1, this, 'Player 2'),
@@ -31,14 +50,12 @@ export class Game{
 				new Animal(0, 5, 1, this, 'Monkey')
 			]);
 		
+		// turn iteration
+		// ---- Press 'f' key to skip turn
+			this.isPlayerTurn = true;
 
-		// UI
-			this.ui = new userInput(this);
-			this.ui.makeInterface();
-
-		// Event Handler
-			this.selectedObject = null;
-			this.activateEventHandler();
+		
+		
 	}
 
 	createScene(){
@@ -73,12 +90,7 @@ export class Game{
 
 		// Animation loop
 		this.renderer.setAnimationLoop(()=>{
-				// x rolls towards camera
-				this.board.body.rotation.x = Math.PI * 0;
-				// y turns anticlockwise
-				this.board.body.rotation.y = 0;
-			
-				this.renderer.render( this.scene, this.camera );
+			this.renderer.render( this.scene, this.camera );
 		});
 		document.body.appendChild( this.renderer.domElement );
 		
@@ -97,6 +109,9 @@ export class Game{
 		
 
 		window.addEventListener('click', (event)=>{
+			// You can't click on object if its not player's turn
+			if (!this.isPlayerTurn) return;
+
 			mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
 			mouseVec.y = - (event.clientY / window.innerHeight) * 2 + 1;
 			raycaster.setFromCamera(mouseVec, this.camera);
@@ -204,6 +219,17 @@ export class Game{
 					break;
 				case 'd':
 					this.camera.position.x += 0.1;
+					break;
+				case 'f':
+					this.isPlayerTurn = false;
+
+					// Deselects everything currently
+					this.selectedObject.deselect();
+					if (this.selectedObject.deselect_forced) this.selectedObject.deselect_forced();
+					this.selectedObject = null;
+					break;
+				case 'r':	// for debug purpose to skip enemies turn
+					this.isPlayerTurn = true;
 					break;
 				default:
 					console.log(event.key);

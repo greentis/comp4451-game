@@ -6,11 +6,12 @@ import {Board} from './Board.js';
 import { TileProperties } from './TileProperties.js';
 import { Weapon } from './Weapon.js';
 import { WeaponProperties } from './WeaponProperties.js';
+import { Indicator } from './CharacterIndicator.js';
 
 // private method
-var lerp = (a, b, t) => {return a + (b - a) * t;}
-var distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
-var neighboringTile = (tile, game) => {
+const lerp = (a, b, t) => {return a + (b - a) * t;}
+const distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
+const neighboringTile = (tile, game) => {
     var q = tile.q; var r = tile.r;
     var tiles = [];
     for (let i = -1; i <= 1; i++){
@@ -33,16 +34,24 @@ export class Character{
         this.name = name;
         this.game = game;
         this.board = game.board;
-        //this.moveAble = false;
-        this.moveRange = 8;
-        this.sightRange = 8;
+        
 
         this.health = health;
 
-        // abstract variable
-        this.body;
+        // Constants
+        //this.moveAble = false;
+        this.moveRange = 8;
+        this.sightRange = 8;
+        this.body = new THREE.Group();
+        this.indicator = new Indicator(this);
+        
     }
 
+    // This function returns:
+    //     a set, if the lineOfSight establishes
+    //     false, if there are no valid lineOfSight
+    // for checking an attack hits the tile, use isSolid = true
+    // for checking what board elements the players SEES, use isSolid = false
     lineOfSight(tile, isSolid = true){
         var path = new Set();
         var N = distance(this.getTile(), tile) + 0.0;
@@ -89,6 +98,10 @@ export class Character{
         return path;
     }
 
+    // This function returns an array of the path in order
+    // An array with .length == 0 indicates that there is no valid path
+    // between the character and the target tile
+    // ** There are no path between the same tile
     findValidPath(tile){
         function weightedDist(t1, t2){
             if (t2.character) return 100;
@@ -157,26 +170,71 @@ export class Character{
         return [];
     }
 
-    moveTo(tile) {
+    async moveTo(tile) {
+        
+
         var path = this.findValidPath(tile);
         
         if (!path) return false;
-
-        path.forEach((t)=>{
+        let x,y,z;
+        for (let t of path){
             // Before Updating coordinate
+            this.body.position.x = x = this.getTile().body.position.x;
+            this.body.position.y = y = this.getTile().body.position.y;
+            this.body.position.z = z = this.getTile().body.position.z;
             this.getTile().characterLeave();
-            
+            this.game.scene.add(this.body);
             // Adjust the character facing
             this.facing(t.q, t.r);
 
             // Update coordinate
             this.q = t.q; this.r = t.r;
 
+            let start;
+            const waitForMoveAnimation = ()=>{
+                return new Promise((resolve)=>{
+                    // the animation frame function
+                    const animate = (timestamp)=>{
+                        // record the starting time
+                        if (!start) start = timestamp;
+
+                        // time represents time passed since start
+                        const time = timestamp - start;
+
+                        // ~ Animation ~
+                        this.body.position.x = lerp(x, t.x, time/200);
+                        this.body.position.z = lerp(z, t.z, time/200);
+
+                        if (time < 200) { 
+                            // Call another animation frame
+                            requestAnimationFrame(animate);
+                        }
+                        else{
+                            // Stop the animation after 0.2 seconds
+                            resolve();
+                        }
+                    }
+
+                    // Call the first animation frame
+                    requestAnimationFrame(animate);
+                })
+            }
+
+            // The mother function is async to be ableto await
+            await waitForMoveAnimation();
+
             // After Updating coordinate
+            this.body.position.x = 0;
+            this.body.position.y = 0;
+            this.body.position.z = 0;
             this.getTile().characterEnter(this);
-        });
+        }
         return true;
     }
+
+    
+      
+      
 
     attack(tile){
         let path = this.lineOfSight(tile, true);

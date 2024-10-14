@@ -9,7 +9,6 @@ export class Animal extends Character{
     constructor(q, r, health, game, name){
         super(q, r, health, game, name);
 
-        this.body = new THREE.Object3D();
         this.setType(AnimalProperties.TYPE.Monkey);
     }
 

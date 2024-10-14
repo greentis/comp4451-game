@@ -76,12 +76,12 @@ export class Tile {
     characterEnter(character){
         this.character = character;
         console.log(character.mesh.name);
-        this.body.add(character.mesh);
+        this.body.add(character.body);
         this.deHovering();
     }
 
     characterLeave(){
-        this.body.remove(this.character.mesh);
+        this.body.remove(this.character.body);
         this.state = 'default';
         this.character = null;
     }

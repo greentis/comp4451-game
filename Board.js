@@ -7,16 +7,16 @@ import { noise } from './perlin.js';
 import { Hunter } from './Hunter.js';
 //import * as math from 'mathjs';
 
-var lerp = (a, b, t) => {return a + (b - a) * t;}
-var distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
+const lerp = (a, b, t) => {return a + (b - a) * t;}
+const distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
 // distanceQR: calculate the distance between two hexagon tile in q,r coordinate given only
-var distanceQR = (t1, t2) => {var t1s = -t1.q - t1.r; var t2s = -t2.q - t2.r; return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1s - t2s));}
+const distanceQR = (t1, t2) => {var t1s = -t1.q - t1.r; var t2s = -t2.q - t2.r; return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1s - t2s));}
 // getHeights: get the height of the tile based on the type of the tile
-var distanceToBoundary = (q, r, width, length) => {
+const distanceToBoundary = (q, r, width, length) => {
     return Math.min(width - Math.abs(q), length - Math.abs(r));
 }
 
-var getHeights = (a) => {
+const getHeights = (a) => {
     switch (a){
         case TileProperties.TYPE.Void:
             return 10.0;
@@ -35,7 +35,7 @@ var getHeights = (a) => {
     }
 }
 //xxhash: a simple hash function
-var xxhash = (seed, x, y) => {
+const xxhash = (seed, x, y) => {
     let h = seed + x * 374761393 + y * 668265263;
     h = (h ^ (h >>> 13)) * 1274126177;
     h = h ^ (h >>> 16);
@@ -47,7 +47,7 @@ export class Board {
     constructor(game){
         this.game = game;
 
-        this.body = new THREE.Object3D();
+        this.body = new THREE.Group();
         var geometry = new THREE.PlaneGeometry( 100, 100 );
         var material = new THREE.MeshPhongMaterial( {color: 0x052010 ,side: THREE.DoubleSide} );
         this.mesh = new THREE.Mesh( geometry, material );
@@ -843,7 +843,7 @@ export class Board {
     // Event Handling
     //
 
-    select(){}
+    select(){console.log("Board base")}
     deselect(){}
     hovering(){}
     deHovering(){}

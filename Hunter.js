@@ -12,7 +12,6 @@ export class Hunter extends Character{
         super(q, r, health, game, name);
 
         this.actionstate = Hunter.ACTION['idle'];
-        this.body = new THREE.Object3D();
 
         this.weapon = new Weapon(this, WeaponProperties.TYPE.Bomb, 5);
 
@@ -37,6 +36,8 @@ export class Hunter extends Character{
             this.mesh.name=name;
             this.body.add(this.mesh);
             this.getTile().characterEnter(this);
+
+            console.log(this.body.children, this.mesh);
         });
         
     }

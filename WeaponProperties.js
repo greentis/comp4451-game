@@ -16,7 +16,7 @@ export class WeaponProperties {
                 this.name = 'Bomb';
 
                 url="assets/grenade/scene.gltf";
-                this.meshScale = 1;
+                this.meshScale = 0.04;
                 break;
             case WeaponProperties.TYPE.Gun:
                 this.name = 'Gun';
