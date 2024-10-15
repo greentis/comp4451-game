@@ -6,7 +6,7 @@ import { Character } from './Character.js';
 import { Hunter } from './Hunter.js';
 
 export class Tile {
-    constructor(q, r, x, y, z, game, typeID = TileProperties.TYPE.Default){
+    constructor(q, r, x, y, z, board, game, typeID = TileProperties.TYPE.Default){
         // constructor
         this.q = q;
         this.r = r;
@@ -15,7 +15,7 @@ export class Tile {
         this.y = y;
         this.z = z;
         this.game = game;
-        this.board = game.board;
+        this.board = board;
         
 
         // pointer
@@ -44,6 +44,7 @@ export class Tile {
     }
 
     setType(typeID){
+        this.typeID = typeID;
         this.properties = new TileProperties(this, typeID);
         this.mesh.name = this.properties.name + ' Tile (' + this.q.toString() + ', ' + this.r.toString() + ')';
         //this.render();
@@ -99,6 +100,46 @@ export class Tile {
         }
         return false;
     }
+
+    //
+    // Helper function
+    //
+
+    getTilesWithinRadius(radius){
+        // get all of the tiles in the ring of the center tile with the radius
+        // the ring is the hexagon ring around the center tile
+        // if the radius is 0, then return the center tile
+        // if the radius is 1, then return the adjacent tiles of the center tile
+        var ringTiles = new Array();
+        if (radius == 0){
+            ringTiles.add(this);
+            return ringTiles;
+        }
+        var q = this.q;
+        var r = this.r;
+
+        for (let i = 0; i < radius + 1; i++){
+            ringTiles.push(this.board.getTile(q - radius + i, r + radius));
+        }
+        for (let i = 1; i < radius + 1; i++){
+            ringTiles.push(this.board.getTile(q + i, r + radius - i));
+        }
+        for (let i = 1; i < radius + 1; i++){
+            ringTiles.push(this.board.getTile(q + radius, r - i));
+        }
+        for (let i = 1; i < radius + 1; i++){
+            ringTiles.push(this.board.getTile(q + radius - i, r - radius));
+        }
+        for (let i = 1; i < radius + 1; i++){
+            ringTiles.push(this.board.getTile(q - i, r - radius + i));
+        }
+        for (let i = 1; i < radius; i++){
+            ringTiles.push(this.board.getTile(q - radius, r + i));
+        }
+
+        return ringTiles;
+    }
+
     //
     // Event Handling
     //

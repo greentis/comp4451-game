@@ -45,9 +45,3 @@ AnimalProperties.ENEMYPOINTS = {
     Monkey: 2,
     
 }
-
-
-// Make TileProperties.TYPE Bidirectional
-Object.keys(AnimalProperties.TYPE).forEach(e => {
-    AnimalProperties.TYPE[AnimalProperties.TYPE[e]] = e;
-});

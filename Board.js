@@ -572,8 +572,54 @@ export class Board {
         console.log('perlin noise', test);
         */
         
+        // 7.1 turn all void tile which adjacent to non-rock tile to rock tile
+        // the void tile which adjacent to the non-rock tile will be turned into rock tile
+        // so that the map will be more connected
+        var voidTile = new Set();
+        for (let q = -width; q <= width; q++){
+            for (let r = -length; r <= length; r++){
+                if (this.temp[q][r] == TileProperties.TYPE.Void){
+                    var adjacent = this.findAdjacent(q, r, width, length);
+                    var defaultAdjacent = false;
+                    adjacent.forEach((a)=>{
+                        if (this.temp[a.q][a.r] == TileProperties.TYPE.Void || this.temp[a.q][a.r] == TileProperties.TYPE.Hold) return;
+                        if (this.temp[a.q][a.r] == TileProperties.TYPE.Rock) return;
+                        defaultAdjacent = true;
+                    });
+                    if (defaultAdjacent){
+                        this.temp[q][r] = TileProperties.TYPE.Rock;
+                    }else{
+                        voidTile.add({q: q, r: r});
+                    }
+                }
+            }
+        }
 
 
+        // 7.2 generate the tile based on the annotated map
+        this.forEachGrid((q, r)=>{
+            //skip the tile if it is void tile
+            if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold ) return;
+
+            var x = q * Math.cos(Math.PI / 6);
+            var y = 0;
+            var z = r + q * Math.cos(Math.PI / 3);
+            var tile = new Tile(q, r, x, y, -z, this, this.game, this.temp[q][r]);
+            
+            // Add tile to map
+            this.body.add(tile.body);
+            this.grids.set(q.toString()+r.toString(), tile);
+        });
+
+
+        
+        
+
+
+    }
+
+
+    /* generateCharacter(playerSet, enemySet){
         //5. calculate the spawn point of the player in the map
         // the player will be added to the default tile or water tile(if no default tile)
         //random select spawn point for character1 based on the annotated map and seed
@@ -586,11 +632,11 @@ export class Board {
         //5.1 find the spawn point for player 0
         var iteration = 0;
         var spawnPlayerDone = false;
-        this.playerSpawnPoints[0] = {q: startingTile.q, r: startingTile.r};
+        this.playerSpawnPoints[0] = this.getTile(startingTile.q, startingTile.r);
         while(!spawnPlayerDone && distanceToBoundary(this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r, width, length) >= this.playerToBoard){
             if (iteration > 1000){
                 //set the spawn point to the starting tile as the last resort
-                this.playerSpawnPoints[0] = {q: startingTile.q, r: startingTile.r};
+                this.playerSpawnPoints[0] = this.getTile(startingTile.q, startingTile.r);
                 break;
             }
             var q = Math.round(xxhash((seed +  iteration* 73) *163, this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r) * 2 * this.rmax - this.rmax + 1);
@@ -598,10 +644,10 @@ export class Board {
 
 
             if (this.temp[q][r] == TileProperties.TYPE.Default){
-                this.playerSpawnPoints[0] = {q: q, r: r};
+                this.playerSpawnPoints[0] = this.getTile(q, r);
                 spawnPlayerDone = true;
             }else if (this.temp[q][r] == TileProperties.TYPE.Water && iteration > 250){
-                this.playerSpawnPoints[0] = {q: q, r: r};
+                this.playerSpawnPoints[0] = this.getTile(q, r);
                 spawnPlayerDone = true;
             }
             iteration++;
@@ -609,6 +655,7 @@ export class Board {
         //console.log('iteration at step 6', iteration);
         console.log('Player Spawn Point 0: ', this.playerSpawnPoints[0]);
 
+        playerSet.add(new Hunter(this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r, 1, this.game, 'Player 1'));
         //5.2 find the spawn point for other players
         // the spawn point for these characters will follow below rules:
         // 1. try the bottom left adjacent (q-1,r-1) of the player 0 spawn point
@@ -622,16 +669,16 @@ export class Board {
             var playerFound = false;
             var ring = 1;
             while(!playerFound){
-                var ringTiles = this.ringTiles(player0, ring);
+                var ringTiles = player0.getTilesWithinRadius(ring);
                 for (let j = 0; j < ringTiles.length; j++){
                     var q = ringTiles[j].q;
                     var r = ringTiles[j].r;
                     if(this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
-                    if (this.temp[q][r] == TileProperties.TYPE.Default || this.temp[q][r] == TileProperties.TYPE.Water){
+                    if (this.getTile(q,r).typeID == TileProperties.TYPE.Default || this.getTile(q,r).typeID == TileProperties.TYPE.Water){
                         //check if that tile occupied by other player already
                         var occupied = false;
                         for (let k = 0; k < i; k++){
-                            if (this.playerSpawnPoints[k].q == q && this.playerSpawnPoints[k].r == r){
+                            if (this.playerSpawnPoints[k] && this.playerSpawnPoints[k].q == q && this.playerSpawnPoints[k].r == r){
                                 occupied = true;
                                 break;
                             }
@@ -639,11 +686,11 @@ export class Board {
                         if (occupied) continue;
 
                         //if other player have no path to the player 0 spawn point, then restart the process
-                        var path = findValidPath({q: q, r: r}, this.playerSpawnPoints[0]);
+                        var path = findValidPath(this.getTile(q, r), this.playerSpawnPoints[0]);
                         if (path.length == 0) continue;
                         
                         
-                        this.playerSpawnPoints[i] = {q: q, r: r};
+                        this.playerSpawnPoints[i] = this.getTile(q,r);
                         playerFound = true;
                         break;
                     }
@@ -653,8 +700,9 @@ export class Board {
                 if(ring > 3){
                     //set the spawn point to the starting tile nearby as the last resort
                     //force turning that tile into default tile
-                    this.playerSpawnPoints[i] = {q: startingTile.q-i, r: startingTile.r+i};
-                    this.temp[startingTile.q-i][startingTile.r+i] = TileProperties.TYPE.Default;
+                    this.playerSpawnPoints[i] = getTile(startingTile.q-i, startingTile.r+i);
+                    playerSet.add(new Hunter(this.playerSpawnPoints[i].q, this.playerSpawnPoints[i].r, 1, this.game, 'Player '+ i.toString()));
+                    this.getTile(startingTile.q-i, startingTile.r+i).setType(TileProperties.TYPE.Default);
                     break;
                 }
             }
@@ -663,7 +711,7 @@ export class Board {
         //console.log('testing for ringTiles2', this.ringTiles({q: 0, r: 0}, 2));
         //console.log('testing for ringTiles3', this.ringTiles({q: 0, r: 0}, 3));
         console.log('player spawn points', this.playerSpawnPoints);
-
+        return;
         // 6. calculate the spawn point of the enemy in the map
         // 6.1 divide the enemy into several groups
         // the enemies will be divided into several groups
@@ -714,8 +762,8 @@ export class Board {
                 
                 
                 //condition 3a
-                if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water 
-                    && this.temp[q][r] != TileProperties.TYPE.Tree && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
+                if (!lastResort && this.getTile(q,r).typeID != TileProperties.TYPE.Default && this.getTile(q,r).typeID != TileProperties.TYPE.Water 
+                    && this.getTile(q,r).typeID != TileProperties.TYPE.Tree && this.getTile(q,r).typeID != TileProperties.TYPE.Bush) continue;
                 //condition 3d
                 if (!lastResort && distanceQR(this.playerSpawnPoints[0], {q: q, r: r}) < this.enemyToPlayer - 0.01*iteration) continue;
                 
@@ -752,11 +800,11 @@ export class Board {
                         break;
                     }
                 }
-                this.enemyGroup[i][0][1] = {q: q, r: r};
+                this.enemyGroup[i][0][1] = this.getTile(q, r);
                 leaderFound = true;
             }
             if (lastResort){
-                this.temp[q][r] = TileProperties.TYPE.Default;
+                this.getTile(q,r).setType(TileProperties.TYPE.Default);
             }
         }
 
@@ -772,7 +820,7 @@ export class Board {
         // 3. if all of the above condition of 2 is satisfied, then set the tile as the spawn point of the enemy
         // otherwise, restart the process
         for (let i = 0; i < enemyGroupNumber; i++){
-            var leader = this.enemyGroup[i][0][1];
+            var leader = this.getTile(this.enemyGroup[i][0][1].q, this.enemyGroup[i][0][1].r);
             for (let j = 1; j < this.enemyGroup[i].length; j++){
                 var enemyFound = false;
                 var iteration = 0;
@@ -787,7 +835,7 @@ export class Board {
                         //last resort, set the enemy spawn point to a unoccupied tile nearby
                         lastResort = true;
                     }
-                    var ringTiles = this.ringTiles(leader, ring);
+                    var ringTiles = leader.getTilesWithinRadius(ring);
 
                     for (let k = 0; k < ringTiles.length; k++){
                         var q = ringTiles[k].q;
@@ -795,8 +843,8 @@ export class Board {
                         if (this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
 
                         //condition 2a
-                        if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water
-                            && this.temp[q][r] != TileProperties.TYPE.Tree && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
+                        if (!lastResort && this.getTile(q,r).typeID != TileProperties.TYPE.Default && this.getTile(q,r).typeID != TileProperties.TYPE.Water
+                            && this.getTile(q,r).typeID != TileProperties.TYPE.Tree && this.getTile(q,r).typeID != TileProperties.TYPE.Bush) continue;
                         
                             //condition 2b
                         var occupied = false;
@@ -852,52 +900,11 @@ export class Board {
                     }
                 }
                 if (lastResort){
-                    this.temp[q][r] = TileProperties.TYPE.Default;
+                    this.getTile(q,r).setType(TileProperties.TYPE.Default);
                 }
             }
         }
-        
-        // 7.1 turn all void tile which adjacent to non-rock tile to rock tile
-        // the void tile which adjacent to the non-rock tile will be turned into rock tile
-        // so that the map will be more connected
-        var voidTile = new Set();
-        for (let q = -width; q <= width; q++){
-            for (let r = -length; r <= length; r++){
-                if (this.temp[q][r] == TileProperties.TYPE.Void){
-                    var adjacent = this.findAdjacent(q, r, width, length);
-                    var defaultAdjacent = false;
-                    adjacent.forEach((a)=>{
-                        if (this.temp[a.q][a.r] == TileProperties.TYPE.Void || this.temp[a.q][a.r] == TileProperties.TYPE.Hold) return;
-                        if (this.temp[a.q][a.r] == TileProperties.TYPE.Rock) return;
-                        defaultAdjacent = true;
-                    });
-                    if (defaultAdjacent){
-                        this.temp[q][r] = TileProperties.TYPE.Rock;
-                    }else{
-                        voidTile.add({q: q, r: r});
-                    }
-                }
-            }
-        }
-
-
-        // 7.2 generate the tile based on the annotated map
-        this.forEachGrid((q, r)=>{
-            //skip the tile if it is void tile
-            if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold ) return;
-
-            var x = q * Math.cos(Math.PI / 6);
-            var y = 0;
-            var z = r + q * Math.cos(Math.PI / 3);
-            var tile = new Tile(q, r, x, y, -z,this.game, this.temp[q][r]);
-            
-            // Add tile to map
-            this.body.add(tile.body);
-            this.grids.set(q.toString()+r.toString(), tile);
-        });
-
-
-    }
+    } */
 
     getPlayerSpawnPoint(){
         return this.playerSpawnPoints;
@@ -984,6 +991,72 @@ export class Board {
         return adjacent;
     }
 
+    findValidPath(startTile, tile){
+        function weightedDist(t1, t2){
+            return t2.properties.passCost;
+        }
+        //return this.lineOfSight(tile);
+
+
+        // Queue
+        var start = startTile;
+
+        var choice = [start];
+        var came_from = {};      came_from[start.mesh.name] = null;
+        var path_cost = {};      path_cost[start.mesh.name] = 0;
+        var heuristic_cost = {}; heuristic_cost[start.mesh.name] = weightedDist(start, tile);
+
+        var current;
+        var cost;
+        var timeout = 0;
+        var path = [];
+        while (choice.length > 0 && timeout < 3000) {
+            
+            timeout++;
+            // Pop the element with least heuristic cost from the array
+                current = choice.shift();
+            
+            if (current == tile) {
+                current = tile;
+                timeout = 0;
+                while (current != null && timeout < 300) {
+                    timeout++;
+                    
+                    path.push(current);
+                    current = came_from[current.mesh.name];
+                }
+                //path.push(start);
+                path.reverse();
+                path.shift();
+                return path;
+            }
+
+            for (let next of this.hexRound(current.q, current.r, current.s)) {
+                // To reach the tile next, the cost needed:
+                cost = path_cost[current.mesh.name] + weightedDist(current, next);
+                if (cost > 1000) continue;
+                // Add or Update the path cost of the next if: 
+                if (!Object.keys(path_cost).includes(next.mesh.name) || cost < path_cost[next.mesh.name]) {
+                    // The tile next now have cost = cost
+                        path_cost[next.mesh.name] = cost;
+                    // Heuristic guess of the cost of the tile next
+                        heuristic_cost[next.mesh.name] = cost + weightedDist(next, tile);
+                        choice.push(next);
+                    // For backward propagation
+                        came_from[next.mesh.name] = current;
+                        //console.log(timeout , next.mesh.name, came_from[next.mesh.name]);
+                }
+            }
+
+            // Keep arrray choice as priority queue
+                choice.sort((t1, t2)=>{
+                    return heuristic_cost[t1.mesh.name] - heuristic_cost[t2.mesh.name];
+                });
+                
+        }
+        
+        return [];
+    }
 
     /*findPath_straight(q1, r1, q2, r2){
         //q1, r1: start q, r; q2,r2: end q, r

@@ -40,15 +40,16 @@ export class Game{
 			this.movingPlayer = null;
 			
 		// Players (Development phase)
-			var playerSpawnPoints = this.board.getPlayerSpawnPoint();
-			this.player = new Set([
+			//var playerSpawnPoints = this.board.getPlayerSpawnPoint();
+			/* this.player = new Set([
 				new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 1, this, 'Player 1'),
 				new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 1, this, 'Player 2'),
 				new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 1, this, 'Player 3')
-			]);
-			this.enemy = new Set([
+			]); */
+			/* this.enemy = new Set([
 				new Animal(0, 5, 1, this, 'Monkey')
-			]);
+			]); */
+			//this.board.generateCharacter(this.player, this.enemy);
 		// set the camera to the first player
 		//this.camera.position.set(0, 5, 5);
 		//this.camera.lookAt(0, 0, 0);
