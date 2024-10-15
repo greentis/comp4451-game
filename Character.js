@@ -102,7 +102,7 @@ export class Character{
     // An array with .length == 0 indicates that there is no valid path
     // between the character and the target tile
     // ** There are no path between the same tile
-    findValidPath(tile){
+    findValidPath(tile, moveRange = this.moveRange){
         function weightedDist(t1, t2){
             if (t2.character) return 100;
             return t2.properties.passCost;
@@ -146,7 +146,7 @@ export class Character{
             for (let next of neighboringTile(current, this.game)) {
                 // To reach the tile next, the cost needed:
                 cost = path_cost[current.mesh.name] + weightedDist(current, next);
-                if (cost > this.moveRange) continue;
+                if (cost > moveRange) continue;
                 // Add or Update the path cost of the next if: 
                 if (!Object.keys(path_cost).includes(next.mesh.name) || cost < path_cost[next.mesh.name]) {
                     // The tile next now have cost = cost

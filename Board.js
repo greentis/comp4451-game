@@ -642,6 +642,7 @@ export class Board {
                         var path = findValidPath({q: q, r: r}, this.playerSpawnPoints[0]);
                         if (path.length == 0) continue;
                         
+                        
                         this.playerSpawnPoints[i] = {q: q, r: r};
                         playerFound = true;
                         break;

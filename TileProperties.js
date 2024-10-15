@@ -30,8 +30,8 @@ export class TileProperties {
                 this.pathfindable = false;
                 this.seeThroughable = false;
                 this.hittable = false;
-                this.passCost = 1000.0;
-                this.hitRateCost = 1000.0;
+                this.passCost = 99999;
+                this.hitRateCost = 99999;
 
                 break;
             case TileProperties.TYPE.Wall:
@@ -41,8 +41,8 @@ export class TileProperties {
                 this.pathfindable = false;
                 this.seeThroughable = false; 
                 this.hittable = false;
-                this.passCost = 1000.0;
-                this.hitRateCost = 1000.0;
+                this.passCost = 99999;
+                this.hitRateCost = 99999;
                 
                 break;
             case TileProperties.TYPE.Rock:
@@ -52,8 +52,8 @@ export class TileProperties {
                 this.pathfindable = false;
                 this.seeThroughable = false;
                 this.hittable = false;
-                this.passCost = 1000.0;
-                this.hitRateCost = 1000.0;
+                this.passCost = 99999;
+                this.hitRateCost = 99999;
                 
                 url = 'assets/high-rock/scene.gltf';
                 
@@ -75,7 +75,7 @@ export class TileProperties {
                 this.pathfindable = false;
                 this.hittable = true;
                 this.seeThroughable = true;
-                this.passCost = 1000.0;
+                this.passCost = 99999;
                 this.hitRateCost = 25.0;
 
                 break;
