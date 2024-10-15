@@ -5,6 +5,8 @@ import {Game} from './main.js';
 import { cover } from 'three/src/extras/TextureUtils.js';
 import { noise } from './perlin.js';
 import { Hunter } from './Hunter.js';
+import { AnimalProperties } from './AnimalProperties.js';
+//import { Character } from './Character.js';
 //import * as math from 'mathjs';
 
 const lerp = (a, b, t) => {return a + (b - a) * t;}
@@ -73,13 +75,15 @@ export class Board {
         //2. make the shape of map become irregular by changing some of the tile to void tile, while keeping remaining tile as rock tile
         //3. generate the default tile first
         //4. generate other type of tile(wall, cover, water e.t.c) based on the default tile
-        //5. generate the tile based on the annotated map
+        //5. calculate the spawn point of the player in the map
+        //6. calculate the spawn point of the enemy in the map
+        //7. generate the tile based on the annotated map
 
         
         //below variables are for polygonal generation only
-        this.roomLength = 6; //control the Length of the map
-        this.roomWidth = 6; //control the Width of the map
-        this.roomSizeRange = 0; //control the variation of the size of the room(+/- roomSizeRange)
+        this.roomLength = 12; //control the Length of the map
+        this.roomWidth = 12; //control the Width of the map
+        this.roomSizeRange = 1; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = 0.7; //control around how many percentage of rock tile in the map will be turned into default tile
         this.wallThreshold = 0.7; //control the threshold of the wall tile conversion from rock tile
         this.coverThreshold = 0.4; //control the threshold of the cover tile conversion from rock tile
@@ -88,7 +92,13 @@ export class Board {
         this.rainFall = 0.1; //control the rain fall of the map, tile with height below rain fall will be turned into water tile
         this.riverSource = 0.85; //control the source of the river, tile with height higher than river source will start the river tracing 
         this.vegetationCoverage = 0.1; //control the coverage of the vegetation in the map
+        
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
+        this.enemyDensity = 0.04; //control the density of the enemy per tile in the map(suggested value: < 0.05)
+        this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
+
+        this.levelDifficulty = 1.0; //control the difficulty of the level, the higher the value, the harder the level
+                                    //default value is 1.0
 
         // 1. set the size of the map by 3 radius
         //generat random map with hexagon grid
@@ -331,9 +341,9 @@ export class Board {
         }
 
         //console.log('iteration at step 3.1', expandIteration);
-        //console.log('room percentage', this.roomPercentage, "total area", this.totalArea, "range", (seed % 67)/1000.0);
-        //console.log('default tile', defaultTile.size);
-        //console.log('target area', (this.roomPercentage + (seed % 67)/1000.0) * this.totalArea);
+        console.log('room percentage', this.roomPercentage, "total area", this.totalArea, "range", (seed % 67)/1000.0);
+        console.log('# of default tile', defaultTile.size);
+        console.log('target area', (this.roomPercentage + (seed % 67)/1000.0) * this.totalArea);
         //console.log('min area', (this.roomPercentage - (seed % 67)/1000.0) * this.totalArea);
         //console.log('wallTile size(before 4.1):', wallTile.size);
         
@@ -362,7 +372,7 @@ export class Board {
             rockIteration++;
         }   
         //console.log('wallTile size(after 4.1):', wallTile.size);
-        //console.log('rockTile size:', rockTile.size);
+        console.log('rockTile size:', rockTile.size);
         //console.log('rockTile', rockTile);
         
         // 4.2 convert some of the rock tile to cover tile
@@ -387,8 +397,8 @@ export class Board {
             coverIteration++;
         }
         //console.log('coverIteration', coverIteration);
-        //console.log('wallTile size(after 4.2):', wallTile.size);
-        //console.log('coverTile size:', coverTile.size);
+        console.log('wallTile size(after 4.2):', wallTile.size);
+        console.log('coverTile size:', coverTile.size);
         //console.log('coverTile', coverTile);
         
         // 4.3.0 generate the height map of the tile
@@ -416,7 +426,7 @@ export class Board {
                 }
             }
         }
-        //console.log('waterTile size:', waterTile.size);
+        console.log('waterTile size:', waterTile.size);
 
         // 4.3.2 generate the water(river) tile
         // the river tile is based on the height of the tile
@@ -466,7 +476,7 @@ export class Board {
                 }
             }
         });
-        //console.log('riverTile size:', riverTile.size);
+        console.log('riverTile size:', riverTile.size);
 
         // 4.4 generate the vegetation tile
         // vegetation tile can be tree tile or bush tile
@@ -486,6 +496,7 @@ export class Board {
                 }
             }
         }
+        console.log('vegetationTile size:', vegetationTile.size);
         
 
         // 4.4.1 generate the tree tile
@@ -551,7 +562,7 @@ export class Board {
        
 
         //quick test of perlin noise
-        var test = {};
+        /*var test = {};
         for(let q = -width; q <= width; q++){
             test[q] = {};
             for(let r = -length; r <= length; r++){
@@ -559,7 +570,7 @@ export class Board {
             }
         }
         console.log('perlin noise', test);
-
+        */
         
 
 
@@ -626,14 +637,19 @@ export class Board {
                             }
                         }
                         if (occupied) continue;
+
+                        //if other player have no path to the player 0 spawn point, then restart the process
+                        var path = findValidPath({q: q, r: r}, this.playerSpawnPoints[0]);
+                        if (path.length == 0) continue;
                         
                         this.playerSpawnPoints[i] = {q: q, r: r};
                         playerFound = true;
                         break;
                     }
+                    
                 }
                 ring++;
-                if(ring > 5){
+                if(ring > 3){
                     //set the spawn point to the starting tile nearby as the last resort
                     //force turning that tile into default tile
                     this.playerSpawnPoints[i] = {q: startingTile.q-i, r: startingTile.r+i};
@@ -647,8 +663,224 @@ export class Board {
         //console.log('testing for ringTiles3', this.ringTiles({q: 0, r: 0}, 3));
         console.log('player spawn points', this.playerSpawnPoints);
 
+        // 6. calculate the spawn point of the enemy in the map
+        // 6.1 divide the enemy into several groups
+        // the enemies will be divided into several groups
+        // note that the number of enemy in each group is based on the enemy group point(Egp)
+        // each type of enemy have different enemy point(Ep)
+        // the sum up of the Ep of all of the enemy in the group should be less than the Egp
+        // under above restriction, enemy type(and number) of each group will be selected according to seed
+        var enemyGroupNumber = Math.max(1, Math.round(this.enemyDensity * this.totalArea));
+        this.enemyGroup = {};
+        var Egp = 6.0 + this.levelDifficulty * 2.5;
+        for (let i = 0; i < enemyGroupNumber; i++){
+            enemyGroup[i] = {};
+            var Ep = 0.0;
+            var j = 0;
+            while(Ep < Egp){
+                var enemyType = Math.round(xxhash(seed * 4451, i, Ep) * 1023) % AnimalProperties.TYPE.length;
+                this.enemyGroup[i][j][0] = enemyType;
+                this.enemyGroup[i][j][1] = {q: 999, r: 999};
+            }
+        }
+        
+        // 6.2 calculate the spawn point of leader of each group
+        // for each group, choose a random tile as the spawn point based on below rules:
+        // 1. choose a group leader enemygroup[i][0]
+        // 2. randomly select a tile as the spawn point
+        // 3a. if the tile is not default or water/river or tree or bush, restart the process
+        // 3b. if the tile is occupied by other group, restart the process
+        // 3c. if the tile dont have path to the player spawn point, restart the process(using character.findValidPath)
+        // 3d. if the tile is too close to the player spawn point, restart the process
+        // 3e. if the tile is too close to the other group spawn point, restart the process
+        // 3f. if the tile is occupied by other player, restart the process
+        // 4. if all of the above condition of 3 is satisfied, then set the tile as the spawn point of the leader
+        // otherwise, restart the process
+        for (let i = 0; i < enemyGroupNumber; i++){
+            var leaderFound = false;
+            var iteration = 0;
+            var lastResort = false;
+            while(!leaderFound){
+                iteration++;
+                if (iteration > 1000) {
+                    //last resort, set the leader spawn point to a unoccupied tile nearby
+                    lastResort = true;
+                }
+                var q = Math.round(xxhash(seed * 731, i, iteration) * 2 * this.rmax - this.rmax + 1);
+                var r = Math.round(xxhash(seed * 731, i, iteration) * 2 * this.rmax - this.rmax + 1);
+                if (this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
+                
+                
+                
+                //condition 3a
+                if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water 
+                    && this.temp[q][r] != TileProperties.TYPE.Tree && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
+                //condition 3d
+                if (!lastResort && distanceQR(this.playerSpawnPoints[0], {q: q, r: r}) < this.enemyToPlayer - 0.01*iteration) continue;
+                
+                //condition 3b
+                var occupied = false;
+                for (let j = 0; j < i; j++){
+                    if (this.enemyGroup[j][0][1].q == q && this.enemyGroup[j][0][1].r == r){
+                        occupied = true;
+                        break;
+                    }
+                }
+                if (occupied) continue;
 
-        // 6. generate the tile based on the annotated map
+                //condition 3c
+                var path = findValidPath({q: q, r: r}, this.playerSpawnPoints[0]);
+                if (path.length == 0) continue;
+               
+
+                //condition 3e
+                var tooClose = false;
+                for (let j = 0; j < i; j++){
+                    if (!lastResort && distanceQR(this.enemyGroup[j][0][1], {q: q, r: r}) < this.enemyToEnemy - 0.015*iteration){
+                        tooClose = true;
+                        break;
+                    }
+                }
+                if (tooClose) continue;
+
+                //condition 3f
+                var occupiedByPlayer = false;
+                for (let j = 0; j < 3; j++){
+                    if (this.playerSpawnPoints[j].q == q && this.playerSpawnPoints[j].r == r){
+                        occupiedByPlayer = true;
+                        break;
+                    }
+                }
+                this.enemyGroup[i][0][1] = {q: q, r: r};
+                leaderFound = true;
+            }
+            if (lastResort){
+                this.temp[q][r] = TileProperties.TYPE.Default;
+            }
+        }
+
+        // 6.3 calculate the spawn point of the other enemy in the group
+        // the spawn point of these enemies will be based on the leader spawn point
+        // 1. try the bottom left adjacent (q-1,r-1) of the leader spawn point
+        // 2a. if the tile is not default or water/river or tree or bush, then move clockwise to the next adjacent tile
+        // 2b. if the tile is occupied by other group, then move clockwise to the next adjacent tile
+        // 2c. if the tile is occupied by other player, then move clockwise to the next adjacent tile
+        // 2d. if the tile is too close to the player spawn point, then move clockwise to the next adjacent tile
+        // 2e. if the tile is too close to the other group spawn point, then move clockwise to the next adjacent tile
+        // 2f. if the tile have no path to leader spawn point, then move clockwise to the next adjacent tile
+        // 3. if all of the above condition of 2 is satisfied, then set the tile as the spawn point of the enemy
+        // otherwise, restart the process
+        for (let i = 0; i < enemyGroupNumber; i++){
+            var leader = this.enemyGroup[i][0][1];
+            for (let j = 1; j < this.enemyGroup[i].length; j++){
+                var enemyFound = false;
+                var iteration = 0;
+                var lastResort = false;
+                var ring = 1;
+                while(!enemyFound){
+                    iteration++;
+                    if (iteration > 100) {
+                        ring += 1;
+                    }
+                    if (ring > 3){
+                        //last resort, set the enemy spawn point to a unoccupied tile nearby
+                        lastResort = true;
+                    }
+                    var ringTiles = this.ringTiles(leader, ring);
+
+                    for (let k = 0; k < ringTiles.length; k++){
+                        var q = ringTiles[k].q;
+                        var r = ringTiles[k].r;
+                        if (this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
+
+                        //condition 2a
+                        if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water
+                            && this.temp[q][r] != TileProperties.TYPE.Tree && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
+                        
+                            //condition 2b
+                        var occupied = false;
+                        //check the leader first
+                        for (let l = 0; l < enemyGroupNumber; l++){
+                            if (this.enemyGroup[l][0][1].q == q && this.enemyGroup[l][0][1].r == r){
+                                occupied = true;
+                                break;
+                            }
+                        }
+                        //check the other enemy in the previous group
+                        for (let l = 0; l < i; l++){
+                            for (let m = 1; m < this.enemyGroup[l].length; m++){
+                                if (this.enemyGroup[l][m][1].q == q && this.enemyGroup[l][m][1].r == r){
+                                    occupied = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (occupied) continue;
+
+                        //condition 2c
+                        var occupiedByPlayer = false;
+                        for (let l = 0; l < 3; l++){
+                            if (this.playerSpawnPoints[l].q == q && this.playerSpawnPoints[l].r == r){
+                                occupiedByPlayer = true;
+                                break;
+                            }
+                        }
+                        if (occupiedByPlayer) continue;
+
+                        //condition 2d
+                        if (!lastResort && distanceQR(this.playerSpawnPoints[0], {q: q, r: r}) < this.enemyToPlayer - 0.02*iteration) continue;
+
+                        //condition 2e
+                        var tooClose = false;
+                        for (let l = 0; l < enemyGroupNumber; l++){
+                            if (l == i) continue;
+                            if (!lastResort && distanceQR(this.enemyGroup[l][0][1], {q: q, r: r}) < this.enemyToEnemy - 0.03*iteration){
+                                tooClose = true;
+                                break;
+                            }
+                        }
+                        if (tooClose) continue;
+
+                        //condition 2f
+                        var path = findValidPath({q: q, r: r}, leader);
+                        if (path.length == 0) continue;
+
+                        this.enemyGroup[i][j][1] = {q: q, r: r};
+                        enemyFound = true;
+                        break;
+                    }
+                }
+                if (lastResort){
+                    this.temp[q][r] = TileProperties.TYPE.Default;
+                }
+            }
+        }
+        
+        // 7.1 turn all void tile which adjacent to non-rock tile to rock tile
+        // the void tile which adjacent to the non-rock tile will be turned into rock tile
+        // so that the map will be more connected
+        var voidTile = new Set();
+        for (let q = -width; q <= width; q++){
+            for (let r = -length; r <= length; r++){
+                if (this.temp[q][r] == TileProperties.TYPE.Void){
+                    var adjacent = this.findAdjacent(q, r, width, length);
+                    var defaultAdjacent = false;
+                    adjacent.forEach((a)=>{
+                        if (this.temp[a.q][a.r] == TileProperties.TYPE.Void || this.temp[a.q][a.r] == TileProperties.TYPE.Hold) return;
+                        if (this.temp[a.q][a.r] == TileProperties.TYPE.Rock) return;
+                        defaultAdjacent = true;
+                    });
+                    if (defaultAdjacent){
+                        this.temp[q][r] = TileProperties.TYPE.Rock;
+                    }else{
+                        voidTile.add({q: q, r: r});
+                    }
+                }
+            }
+        }
+
+
+        // 7.2 generate the tile based on the annotated map
         this.forEachGrid((q, r)=>{
             //skip the tile if it is void tile
             if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold ) return;
@@ -668,6 +900,10 @@ export class Board {
 
     getPlayerSpawnPoint(){
         return this.playerSpawnPoints;
+    }
+
+    getEnemySpawnPoint(){
+        return this.enemyGroup;
     }
 
     getTile(q, r){
@@ -748,7 +984,7 @@ export class Board {
     }
 
 
-    findPath_straight(q1, r1, q2, r2){
+    /*findPath_straight(q1, r1, q2, r2){
         //q1, r1: start q, r; q2,r2: end q, r
         //find straight line path from start to end(not concern the cost and unpasable tile)
         if (q1 == q2 && r1 == r2){
@@ -778,7 +1014,7 @@ export class Board {
         }
         this.path = path;
         return path;
-    }
+    }*/
         
 
     clearMarkings(){

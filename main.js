@@ -49,6 +49,10 @@ export class Game{
 			this.enemy = new Set([
 				new Animal(0, 5, 1, this, 'Monkey')
 			]);
+		// set the camera to the first player
+		//this.camera.position.set(0, 5, 5);
+		//this.camera.lookAt(0, 0, 0);
+		
 		
 		// turn iteration
 		// ---- Press 'f' key to skip turn

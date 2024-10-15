@@ -40,6 +40,13 @@ AnimalProperties.TYPE = {
     Monkey: 0
 }
 
+// used for map generation in Board.js
+AnimalProperties.ENEMYPOINTS = {
+    Monkey: 2,
+    
+}
+
+
 // Make TileProperties.TYPE Bidirectional
 Object.keys(AnimalProperties.TYPE).forEach(e => {
     AnimalProperties.TYPE[AnimalProperties.TYPE[e]] = e;
