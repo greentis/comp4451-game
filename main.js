@@ -4,9 +4,9 @@ import { MapControls } from 'three/addons/controls/MapControls.js';
 import { Hunter } from './Hunter.js';
 import {Animal} from './Animal.js';
 
-import {Board} from './Board.js';
+import { Board } from './Board.js';
 import { TileProperties } from './TileProperties.js';
-import {Character} from './Character.js';
+import { Character } from './Character.js';
 import { userInput } from './userInput.js';
 //global variables
 
@@ -15,7 +15,7 @@ export class Game{
 	//
 	// Base game elements
 	//
-
+		console.log("Start Game");
 		// game scene
 		this.createScene();
 		
