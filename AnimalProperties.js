@@ -40,11 +40,13 @@ AnimalProperties.TYPE = {
     Monkey: 0
 }
 
-// used for map generation in Board.js
+
+/* // used for map generation in Board.js
 AnimalProperties.ENEMYPOINTS = {
-    Monkey: 2,
+    Monkey: 2
     
-}
+} */
+
 
 
 // Make TileProperties.TYPE Bidirectional

@@ -46,9 +46,23 @@ export class Game{
 				new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 1, this, 'Player 2'),
 				new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 1, this, 'Player 3')
 			]);
-			this.enemy = new Set([
+			var enemySpawnPoints = this.board.getEnemySpawnPoint();
+			this.enemy = new Set([]);
+			for (let i = 0; i < Object.keys(enemySpawnPoints).length; i++){
+				for(let j = 0; j < Object.keys(enemySpawnPoints[i]).length; j++){
+					
+					//make a name according to [i][j]
+					var name = 'Enemy ' + i + j;
+					if (enemySpawnPoints[i] && enemySpawnPoints[i][j]) {
+						this.enemy.add(new Animal(enemySpawnPoints[i][j][1].q, enemySpawnPoints[i][j][1].r, 1, this, name));
+					}
+				}
+			}
+			this.enemy.add(new Animal(-6, -9, 1, this, 'Monkey'));
+			//console.log(this.enemy);
+			/*this.enemy = new Set([
 				new Animal(0, 5, 1, this, 'Monkey')
-			]);
+			]);*/
 		// set the camera to the first player
 		//this.camera.position.set(0, 5, 5);
 		//this.camera.lookAt(0, 0, 0);

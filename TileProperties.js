@@ -94,7 +94,7 @@ export class TileProperties {
             case TileProperties.TYPE.Bush:
                 this.name = 'bush';
                 this.color = 0x00EE99;
-                this.offsetY = 0.9;
+                this.offsetY = 0.55;
 
                 this.pathfindable = true;
                 this.seeThroughable = false;
@@ -106,7 +106,7 @@ export class TileProperties {
             case TileProperties.TYPE.Tree:
                 this.name = 'tree';
                 this.color = 0x00EE33;
-                //this.offsetY = 1.2;
+                this.offsetY = 1.2;
 
                 this.pathfindable = false;
                 this.seeThroughable = false;

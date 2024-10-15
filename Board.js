@@ -5,7 +5,6 @@ import {Game} from './main.js';
 import { cover } from 'three/src/extras/TextureUtils.js';
 import { noise } from './perlin.js';
 import { Hunter } from './Hunter.js';
-import { AnimalProperties } from './AnimalProperties.js';
 //import { Character } from './Character.js';
 //import * as math from 'mathjs';
 
@@ -44,6 +43,12 @@ const xxhash = (seed, x, y) => {
     return Math.abs(h) / 2147483648.0;
 };
 
+// make a Ep table for enemy spawn point
+// input: enemy type
+// output: Ep (enemy spawn point)
+var EpTable = {
+    [0] : 2,
+}
 
 export class Board {
     constructor(game){
@@ -96,6 +101,7 @@ export class Board {
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
         this.enemyDensity = 0.04; //control the density of the enemy per tile in the map(suggested value: < 0.05)
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
+        this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
 
         this.levelDifficulty = 1.0; //control the difficulty of the level, the higher the value, the harder the level
                                     //default value is 1.0
@@ -639,9 +645,9 @@ export class Board {
                         if (occupied) continue;
 
                         //if other player have no path to the player 0 spawn point, then restart the process
-                        var path = findValidPath({q: q, r: r}, this.playerSpawnPoints[0]);
+                        /*var path = findValidPath({q: q, r: r}, this.playerSpawnPoints[0]);
                         if (path.length == 0) continue;
-                        
+                        */
                         
                         this.playerSpawnPoints[i] = {q: q, r: r};
                         playerFound = true;
@@ -664,6 +670,7 @@ export class Board {
         //console.log('testing for ringTiles3', this.ringTiles({q: 0, r: 0}, 3));
         console.log('player spawn points', this.playerSpawnPoints);
 
+    
         // 6. calculate the spawn point of the enemy in the map
         // 6.1 divide the enemy into several groups
         // the enemies will be divided into several groups
@@ -671,17 +678,22 @@ export class Board {
         // each type of enemy have different enemy point(Ep)
         // the sum up of the Ep of all of the enemy in the group should be less than the Egp
         // under above restriction, enemy type(and number) of each group will be selected according to seed
-        var enemyGroupNumber = Math.max(1, Math.round(this.enemyDensity * this.totalArea));
+        var enemyGroupNumber = Math.max(1, Math.round(this.enemyDensity / 4.4 * this.totalArea));
         this.enemyGroup = {};
         var Egp = 6.0 + this.levelDifficulty * 2.5;
         for (let i = 0; i < enemyGroupNumber; i++){
-            enemyGroup[i] = {};
+            this.enemyGroup[i] = {};
             var Ep = 0.0;
             var j = 0;
             while(Ep < Egp){
-                var enemyType = Math.round(xxhash(seed * 4451, i, Ep) * 1023) % AnimalProperties.TYPE.length;
+                var enemyType = Math.round(xxhash(seed * 4451, i, Ep) * 1023) % Object.keys(EpTable).length;
+                Ep += EpTable[enemyType];
+                if (Ep > Egp) break;
+                //console.log('Ep', Ep, 'Egp', Egp);
+
+                this.enemyGroup[i][j] = {};
                 this.enemyGroup[i][j][0] = enemyType;
-                this.enemyGroup[i][j][1] = {q: 999, r: 999};
+                j++;
             }
         }
         
@@ -730,8 +742,8 @@ export class Board {
                 if (occupied) continue;
 
                 //condition 3c
-                var path = findValidPath({q: q, r: r}, this.playerSpawnPoints[0]);
-                if (path.length == 0) continue;
+                //var path = findValidPath({q: q, r: r}, this.playerSpawnPoints[0]);
+                //if (path.length == 0) continue;
                
 
                 //condition 3e
@@ -771,9 +783,11 @@ export class Board {
         // 2f. if the tile have no path to leader spawn point, then move clockwise to the next adjacent tile
         // 3. if all of the above condition of 2 is satisfied, then set the tile as the spawn point of the enemy
         // otherwise, restart the process
+        //console.log('check point6.3');
         for (let i = 0; i < enemyGroupNumber; i++){
             var leader = this.enemyGroup[i][0][1];
-            for (let j = 1; j < this.enemyGroup[i].length; j++){
+            
+            for (let j = 1; j < Object.keys(this.enemyGroup[i]).length; j++){
                 var enemyFound = false;
                 var iteration = 0;
                 var lastResort = false;
@@ -788,7 +802,8 @@ export class Board {
                         lastResort = true;
                     }
                     var ringTiles = this.ringTiles(leader, ring);
-
+                    
+                    
                     for (let k = 0; k < ringTiles.length; k++){
                         var q = ringTiles[k].q;
                         var r = ringTiles[k].r;
@@ -798,7 +813,8 @@ export class Board {
                         if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water
                             && this.temp[q][r] != TileProperties.TYPE.Tree && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
                         
-                            //condition 2b
+                        
+                        //condition 2b
                         var occupied = false;
                         //check the leader first
                         for (let l = 0; l < enemyGroupNumber; l++){
@@ -807,9 +823,18 @@ export class Board {
                                 break;
                             }
                         }
+                        if (occupied) continue;
+                        //check the other enemy in the same group
+                        for (let l = 0; l < j; l++){
+                            if (this.enemyGroup[i][l][1].q == q && this.enemyGroup[i][l][1].r == r){
+                                occupied = true;
+                                break;
+                            }
+                        }
+                        if (occupied) continue;
                         //check the other enemy in the previous group
                         for (let l = 0; l < i; l++){
-                            for (let m = 1; m < this.enemyGroup[l].length; m++){
+                            for (let m = 1; m < Object.keys(this.enemyGroup[l]).length; m++){
                                 if (this.enemyGroup[l][m][1].q == q && this.enemyGroup[l][m][1].r == r){
                                     occupied = true;
                                     break;
@@ -817,6 +842,7 @@ export class Board {
                             }
                         }
                         if (occupied) continue;
+                       
 
                         //condition 2c
                         var occupiedByPlayer = false;
@@ -827,10 +853,11 @@ export class Board {
                             }
                         }
                         if (occupiedByPlayer) continue;
+                        
 
                         //condition 2d
                         if (!lastResort && distanceQR(this.playerSpawnPoints[0], {q: q, r: r}) < this.enemyToPlayer - 0.02*iteration) continue;
-
+                        
                         //condition 2e
                         var tooClose = false;
                         for (let l = 0; l < enemyGroupNumber; l++){
@@ -841,12 +868,15 @@ export class Board {
                             }
                         }
                         if (tooClose) continue;
+                        
 
                         //condition 2f
-                        var path = findValidPath({q: q, r: r}, leader);
-                        if (path.length == 0) continue;
+                        //var path = findValidPath({q: q, r: r}, leader);
+                        //if (path.length == 0) continue;
+                        
 
                         this.enemyGroup[i][j][1] = {q: q, r: r};
+                        //console.log('enemy group', this.enemyGroup[i][j][1]);
                         enemyFound = true;
                         break;
                     }
@@ -856,6 +886,7 @@ export class Board {
                 }
             }
         }
+        console.log('enemy spawn points', this.enemyGroup);
         
         // 7.1 turn all void tile which adjacent to non-rock tile to rock tile
         // the void tile which adjacent to the non-rock tile will be turned into rock tile
