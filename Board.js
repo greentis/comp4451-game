@@ -65,26 +65,7 @@ export class Board {
         this.generatePolygonal();
     }
     
-    generate(){
-        var width = 6;
-        var length = 20;
-        var boundary = 2;
-        this.qmin = -width, this.qmax = width;
-        this.rmin = -length, this.rmax = boundary;
-        this.smin = -boundary, this.smax = length;
-
-        this.forEachGrid((q, r)=>{
-            var x = q * Math.cos(Math.PI / 6);
-            var y = 0;
-            var z = r + q * Math.cos(Math.PI / 3);
-            var tile = new Tile(q, r, x, y, z,this.game, TileProperties.TYPE.Default);
-            
-            // Add tile to map
-            this.body.add(tile.body);
-            this.grids.set(q.toString()+r.toString(), tile);
-        });
-                
-    }
+    
 
     generatePolygonal(){
         //generate the map with polygonal grid
@@ -96,8 +77,8 @@ export class Board {
 
         
         //below variables are for polygonal generation only
-        this.roomLength = 18; //control the Length of the map
-        this.roomWidth = 18; //control the Width of the map
+        this.roomLength = 6; //control the Length of the map
+        this.roomWidth = 6; //control the Width of the map
         this.roomSizeRange = 0; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = 0.7; //control around how many percentage of rock tile in the map will be turned into default tile
         this.wallThreshold = 0.7; //control the threshold of the wall tile conversion from rock tile
@@ -340,6 +321,13 @@ export class Board {
         }
         if(lastWallTile.size != 0){
             wallTile = new Set([...lastWallTile]);
+        }
+
+        if(this.checkBoardBoundaries(startingTile.q, startingTile.r, width, length, this.temp)){
+            //set the starting tile to the rock tile if it is at the boundary
+            this.temp[startingTile.q][startingTile.r] = TileProperties.TYPE.Rock;
+            defaultTile.delete(startingTile);
+            wallTile.add(startingTile);
         }
 
         //console.log('iteration at step 3.1', expandIteration);
@@ -820,7 +808,7 @@ export class Board {
     
     generate(){
         var width = 6;
-        var length = 20;
+        var length = 6;
         var boundary = 2;
         this.qmin = -width, this.qmax = width;
         this.rmin = -length, this.rmax = boundary;
