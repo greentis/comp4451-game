@@ -10,6 +10,7 @@ export class Animal extends Character{
         super(q, r, health, game, name);
 
         this.setType(AnimalProperties.TYPE.Monkey);
+        this.action.setActionPoint(0);
     }
 
     setType(typeID){

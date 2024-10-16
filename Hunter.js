@@ -28,7 +28,7 @@ export class Hunter extends Character{
             });
             this.mesh = model;
             this.light = new THREE.PointLight(0xc08844, 40);
-            this.light.position.y = 0.5;
+            this.light.position.y = 2;
             this.light.decay = 0.5;
             this.light.distance = this.sightRange - 0.5;
             this.light.castShadow = true;
@@ -40,6 +40,7 @@ export class Hunter extends Character{
             console.log(this.body.children, this.mesh);
         });
         
+        this.action.setActionPoint(2);
     }
 
     //
@@ -47,35 +48,42 @@ export class Hunter extends Character{
     //
         select(){
             //pop out all playerMove
-            super.select();
             this.game.movingPlayer = this;
-            if (this.actionstate == Hunter.ACTION['idle']) {
-                this.actionstate = Hunter.ACTION['move'];
-                console.log('move');
+            if (this.actionstate == Hunter.ACTION.idle) {
+                this.actionstate = Hunter.ACTION.move;
+                this.actionstate += (2 - this.action.actionPoint);
+                //console.log('move');
+                this.updateMarking();
+            }
+            else if (this.actionstate == Hunter.ACTION.attack) {
+                console.log("new");
+                this.actionstate = Hunter.ACTION.idle;
+                this.updateMarking();
             }
         }
         deselect(){
-            
+            this.actionstate += (2 - this.action.actionPoint);
             switch (this.actionstate) {
-                case Hunter.ACTION.idle:
-                    super.deselect();
-                    this.board.clearMarkings();
-                    this.game.movingPlayer = null;
-                    this.actionstate = Hunter.ACTION.idle;
-                    console.log('idle');
-                    break;
                 case Hunter.ACTION.move:
                     this.getTile().setState('aggressive');
                     this.actionstate = Hunter.ACTION.attack;
-                    console.log('attack');
+                    //console.log('attack');
                     return this;
                 case Hunter.ACTION.attack:
                     super.deselect();
                     this.board.clearMarkings();
                     this.game.movingPlayer = null;
                     this.actionstate = Hunter.ACTION.idle;
-                    console.log('idle');
+                    //console.log('idle');
                     return;
+                case Hunter.ACTION.idle:
+                default:
+                    super.deselect();
+                    this.board.clearMarkings();
+                    this.game.movingPlayer = null;
+                    this.actionstate = Hunter.ACTION.idle;
+                    //console.log('idle');
+                    break;
             }
         }
         deselect_forced(){
@@ -84,6 +92,21 @@ export class Hunter extends Character{
             this.game.movingPlayer = null;
             this.actionstate = Hunter.ACTION.idle;
             console.log('idle');
+        }
+        updateMarking(){
+            switch (this.actionstate) {
+                case Hunter.ACTION.move:
+                    this.getTile().setState('selected');
+                    break;
+                case Hunter.ACTION.attack:
+                    this.getTile().setState('aggressive');
+                    break;
+                case Hunter.ACTION.idle:
+                default:
+                    super.deselect();
+                    this.board.clearMarkings();
+                    break;
+            }
         }
 
         hovering(){

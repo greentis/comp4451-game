@@ -6,7 +6,7 @@ import {Board} from './Board.js';
 import { TileProperties } from './TileProperties.js';
 import { Weapon } from './Weapon.js';
 import { WeaponProperties } from './WeaponProperties.js';
-import { Indicator } from './CharacterIndicator.js';
+import { ActionTracker } from './ActionTracker.js';
 
 // private method
 const lerp = (a, b, t) => {return a + (b - a) * t;}
@@ -43,8 +43,9 @@ export class Character{
         this.moveRange = 8;
         this.sightRange = 8;
         this.body = new THREE.Group();
-        this.indicator = new Indicator(this);
+        this.action = new ActionTracker(this);
         
+        this.action.setActionPoint(0);
     }
 
     // This function returns:
@@ -229,6 +230,7 @@ export class Character{
             this.body.position.z = 0;
             this.getTile().characterEnter(this);
         }
+        this.action.reduceActionPoint(1);
         return true;
     }
 
@@ -237,7 +239,10 @@ export class Character{
       
 
     attack(tile){
+        this.action.reduceActionPoint(2);
+
         let path = this.lineOfSight(tile, true);
+        
         // TODO: calculate the hit rate
         console.log(this.name, " is attacking ", tile.mesh.name);
         this.weapon.dealsDamage(tile, this);

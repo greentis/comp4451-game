@@ -9,7 +9,8 @@ export class Weapon{
         this.character = character;
         this.body = new THREE.Object3D();
         this.setType(typeID);
-        this.body.position.y += 2;
+        this.body.position.y += 2.5;
+        this.body.rotation.y = Math.PI/2;
         this.character.body.add(this.body);
         this.damage = damage;
     }
