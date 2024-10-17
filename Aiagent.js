@@ -46,7 +46,7 @@ export class AIAgent {
             }
             //if the animal is wake, assign the action to the animal
             //the action will be assigned according to the overall priority, calculated as below:
-            // overall priority(for each action) = basic priority * priority modifier
+            // overall priority(for each action) = basic priority * e^(priority modifier)
             // probability of taking each action = overall priority of action t / sum of overall priority
             //the basic priority is defined in AnimalProperties.js
             //there is 3 action for each animal: finding cover, attack player, escape
@@ -54,17 +54,19 @@ export class AIAgent {
             var findCoverModifier = this.findCoverModifier(e);  //TODO: implement this function
             var attackPlayerModifier = this.attackPlayerModifier(e); //TODO: implement this function
             var escapeModifier = this.escapeModifier(e); //TODO: implement this function
+            console.log("findCoverModifier: ", findCoverModifier, "attackPlayerModifier: ", attackPlayerModifier, "escapeModifier: ", escapeModifier);
 
             //calculate the overall priority for each action
             var overallPriority = [];
             overallPriority.push(AnimalProperties.PRIORITY[e.name][0] * findCoverModifier);
             overallPriority.push(AnimalProperties.PRIORITY[e.name][1] * attackPlayerModifier);
             overallPriority.push(AnimalProperties.PRIORITY[e.name][2] * escapeModifier);
+            console.log("overallPriority: ", overallPriority);
 
             //calculate the probability of taking each action
             var sum = overallPriority.reduce((a, b) => a + b, 0);
             var probability = overallPriority.map(e => e / sum);
-            
+            console.log("probability: ", probability);
 
             //randomly choose the action according to the probability based on seed
             let cumulativeSum = 0;
