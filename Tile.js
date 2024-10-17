@@ -149,9 +149,7 @@ export class Tile {
                 default: throw new Error("game.movingPlayer is in idle state!");
             }
             hunter.deselect_forced();
-            
-            
-            this.game.selectedObject = null;
+            return;
         }
         else {
             console.log(this.mesh.name);
@@ -170,6 +168,7 @@ export class Tile {
     deselected(){
         this.state = 'default';
         this.render();
+        console.log("deselected");
     }
 
     setState(state){

@@ -243,12 +243,35 @@ export class Game{
 					this.isPlayerTurn = false;
 
 					// Deselects everything currently
-					this.selectedObject.deselect();
-					if (this.selectedObject.deselect_forced) this.selectedObject.deselect_forced();
-					this.selectedObject = null;
+					if (this.selectedObject) {
+						this.selectedObject.deselect();
+						if (this.selectedObject.deselect_forced) this.selectedObject.deselect_forced();
+						this.selectedObject = null;
+					}
+					
+
+					// Set all player's action Point to 0
+					this.player.forEach((player)=>{
+						player.action.setActionPoint(0);
+					});
+
+					// Set all player's action Point to 0
+					this.enemy.forEach((enemy)=>{
+						enemy.action.setActionPoint(2);
+					});
 					break;
 				case 'r':	// for debug purpose to skip enemies turn
 					this.isPlayerTurn = true;
+
+					// Set all player's action Point to 0
+					this.player.forEach((player)=>{
+						player.action.setActionPoint(2);
+					});
+
+					// Set all player's action Point to 0
+					this.enemy.forEach((enemy)=>{
+						enemy.action.setActionPoint(0);
+					});
 					break;
 				default:
 					console.log(event.key);

@@ -29,15 +29,13 @@ export class Hunter extends Character{
             this.mesh = model;
             this.light = new THREE.PointLight(0xc08844, 40);
             this.light.position.y = 2;
-            this.light.decay = 0.5;
-            this.light.distance = this.sightRange - 0.5;
+            this.light.decay = 1;
+            this.light.distance = this.sightRange - 1;
             this.light.castShadow = true;
             this.mesh.add(this.light);
             this.mesh.name=name;
             this.body.add(this.mesh);
             this.getTile().characterEnter(this);
-
-            console.log(this.body.children, this.mesh);
         });
         
         this.action.setActionPoint(2);
@@ -53,11 +51,6 @@ export class Hunter extends Character{
                 this.actionstate = Hunter.ACTION.move;
                 this.actionstate += (2 - this.action.actionPoint);
                 //console.log('move');
-                this.updateMarking();
-            }
-            else if (this.actionstate == Hunter.ACTION.attack) {
-                console.log("new");
-                this.actionstate = Hunter.ACTION.idle;
                 this.updateMarking();
             }
         }
@@ -87,11 +80,10 @@ export class Hunter extends Character{
             }
         }
         deselect_forced(){
-            super.deselect();
-            this.board.clearMarkings();
             this.game.movingPlayer = null;
             this.actionstate = Hunter.ACTION.idle;
-            console.log('idle');
+            this.updateMarking();
+            this.game.selectedObject = null;
         }
         updateMarking(){
             switch (this.actionstate) {

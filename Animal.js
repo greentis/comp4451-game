@@ -11,6 +11,8 @@ export class Animal extends Character{
 
         this.setType(AnimalProperties.TYPE.Monkey);
         this.action.setActionPoint(0);
+
+        this.weapon;
     }
 
     setType(typeID){
