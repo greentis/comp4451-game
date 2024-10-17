@@ -255,11 +255,11 @@ export class Character{
         if (this.health <= 0) {
             this.body.visible = false;
             if (this.game.enemy.has(this)) {
-                for(let e of this.game.enemy){
+                /*for(let e of this.game.enemy){
                     if(e.group == this.groupID){
                         e.wake = true;
                     }
-                }
+                }*/
                 this.game.enemy.delete(this);
             }
             console.log(this.name, " is dead");
