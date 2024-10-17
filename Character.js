@@ -254,7 +254,14 @@ export class Character{
         console.log(this.health);
         if (this.health <= 0) {
             this.body.visible = false;
-            if (this.game.enemy.has(this)) this.game.enemy.delete(this);
+            if (this.game.enemy.has(this)) {
+                for(let e of this.game.enemy){
+                    if(e.group == this.groupID){
+                        e.wake = true;
+                    }
+                }
+                this.game.enemy.delete(this);
+            }
             console.log(this.name, " is dead");
             delete this;
         }

@@ -40,6 +40,13 @@ AnimalProperties.TYPE = {
     Monkey: 0
 }
 
+AnimalProperties.HEALTH = {
+    Monkey: 1
+}
+
+AnimalProperties.WEAPON = {
+    Monkey: null
+}
 
 /* // used for map generation in Board.js
 //WARNING: the mapping move to the Board.js(EpTable), please remember update it whenever you change the animal type

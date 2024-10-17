@@ -6,16 +6,21 @@ import { AnimalProperties } from './AnimalProperties.js';
 import { Hunter } from './Hunter.js';
 
 export class Animal extends Character{
-    constructor(q, r, health, game, name, groupid){
+    constructor(q, r, typeID, game, name, groupid){
+        var health = AnimalProperties.HEALTH[typeID];
         super(q, r, health, game, name);
 
         this.setType(AnimalProperties.TYPE.Monkey);
         this.action.setActionPoint(0);
 
-        this.weapon;
+        this.maxHealth = health;
+        //this.attackRange = AnimalProperties.ATTACKRANGE[typeID];
+        this.weapon = AnimalProperties.WEAPON[typeID];
+
         this.groupID = groupid; //groupID is used to determine the group of the animal
         this.actionstate = null;
         this.wake = false; // wake up when player is near or under attack
+        
     }
 
     setType(typeID){
@@ -32,11 +37,11 @@ export class Animal extends Character{
         //wake up when player is near or under attack
         let player = this.game.player;
         for(let p of player){
-            if(this.lineOfSight(p.getTile(), true)){
+            if(this.lineOfSight(p.getTile(), false)){
                 this.wake = true;
             }
         }
-        if(this.health < this.properties.health){
+        if(this.health < this.maxHealth){
             this.wake = true;
         }
 

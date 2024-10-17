@@ -56,10 +56,11 @@ export class Game{
 					//make a name according to [i][j]
 					var name = 'Enemy ' + i + j;
 					if (enemySpawnPoints[i] && enemySpawnPoints[i][j]) {
-						this.enemy.add(new Animal(enemySpawnPoints[i][j][1].q, enemySpawnPoints[i][j][1].r, 1, this, name, i));
+						this.enemy.add(new Animal(enemySpawnPoints[i][j][1].q, enemySpawnPoints[i][j][1].r, Monkey, this, name, i));
 					}
 				}
 			}
+			//console.log(this.enemy);
 			this.enemy.add(new Animal(-6, -9, 1, this, 'Monkey'));
 			this.aiAgent = new AIAgent(this);
 			this.aiAgent.AIControl();
