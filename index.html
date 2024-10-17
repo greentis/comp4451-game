@@ -4,24 +4,44 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>My first three.js app</title>
+		<title>Forest Hunter by Group 9 Curtis & Timothy</title>
 		<style>
-			body { margin: 0; }
-		</style>
-	</head>
-	<body><!--
-			var GUI = new lil.GUI;
-			var gui = new GUI();
+			body { margin: 0; background-color: black;}
+			#infoBox {
+				color: white;
+				background-color: black;
+				height: 100px;
+				display: flex;
+				flex-direction: column;
+				position: absolute;
+				flex-wrap: wrap;
+    j			justify-content: space-evenly;
+			}
 
-			var controls;
-			var light, light2, light3, params;	// add this
-			params = {intensity: 1};
-			gui.add( params, 'intensity', 0, 2 );
-			gui.open();
-		-->
+			.container {
+				color: white;
+				background-color: black;
+				height: 50px;
+				display: flex;
+				flex-direction: row;
+				position: relative;
+			}
+
+			.box{
+				border-radius: 10%;
+				position:relative;
+				width:100px;
+				height:50px;
+				
+				text-align: center;
+				align-content: center;
+				background-color:darkblue;
+			}
+		</style>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 		
 		<script type="module" src="/main.js"></script>
-		<script type="module" src="/userInput.js"></script>
+		<script type="module" src="/infoBox.js"></script>
 		
 		<script type="module" src="/Tile.js"></script>
 		<script type="module" src="/Board.js"></script>
@@ -34,5 +54,24 @@
 		<script type="module" src="/TileProperties.js"></script>
 		<script type="module" src="/WeaponProperties.js"></script>
 		<script type="module" src="/AnimalProperties.js"></script>
+
+	</head>
+	<body>
+		<div id='infoBox'>
+			<div class="box">
+				Forest Hunter
+			</div>
+			
+			<div v-if="format == 'default'" class="container">
+				<button v-on:click="passRound" class="box" style="color:red">End Round</button>
+			</div>
+			<div v-if="format == 'character'">
+				<div v-for="p in [1,2]" class="box">haelth:{{p}}</div>
+			</div>
+			<div v-if="format == 'HunterStateCheck'">
+				<div v-for="p in [1,2]" class="box">haelth:{{p}}</div>
+			</div>
+		</div>
+		
 	</body>
 </html>

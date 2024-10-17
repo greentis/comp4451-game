@@ -8,7 +8,6 @@ import { Board } from './Board.js';
 import { TileProperties } from './TileProperties.js';
 import { WeaponProperties } from './WeaponProperties.js';
 import { Character } from './Character.js';
-import { userInput } from './userInput.js';
 //global variables
 
 export class Game{
@@ -20,10 +19,6 @@ export class Game{
 		// game scene
 		this.createScene();
 		
-		// UI
-		this.ui = new userInput(this);
-		this.ui.makeInterface();
-
 		// Event Handler
 		this.selectedObject = null;
 		this.activateEventHandler();
@@ -110,6 +105,7 @@ export class Game{
 		// Animation loop
 		this.renderer.setAnimationLoop(()=>{
 			this.renderer.render( this.scene, this.camera );
+
 		});
 		document.body.appendChild( this.renderer.domElement );
 		
@@ -240,38 +236,10 @@ export class Game{
 					this.camera.position.x += 0.1;
 					break;
 				case 'f':
-					this.isPlayerTurn = false;
-
-					// Deselects everything currently
-					if (this.selectedObject) {
-						this.selectedObject.deselect();
-						if (this.selectedObject.deselect_forced) this.selectedObject.deselect_forced();
-						this.selectedObject = null;
-					}
-					
-
-					// Set all player's action Point to 0
-					this.player.forEach((player)=>{
-						player.action.setActionPoint(0);
-					});
-
-					// Set all player's action Point to 0
-					this.enemy.forEach((enemy)=>{
-						enemy.action.setActionPoint(2);
-					});
+					this.setToPlayerTurn(false);
 					break;
 				case 'r':	// for debug purpose to skip enemies turn
-					this.isPlayerTurn = true;
-
-					// Set all player's action Point to 0
-					this.player.forEach((player)=>{
-						player.action.setActionPoint(2);
-					});
-
-					// Set all player's action Point to 0
-					this.enemy.forEach((enemy)=>{
-						enemy.action.setActionPoint(0);
-					});
+					this.setToPlayerTurn(true);
 					break;
 				default:
 					console.log(event.key);
@@ -280,9 +248,38 @@ export class Game{
 			this.renderer.render( this.scene, this.camera );
 		}
 		, false);
-		
-		
+	}
+
+	setToPlayerTurn(set){
+
+		this.isPlayerTurn = set;
+
+		if (set){
+			// Deselects everything currently
+			if (this.selectedObject) {
+				this.selectedObject.deselect();
+				if (this.selectedObject.deselect_forced) this.selectedObject.deselect_forced();
+				this.selectedObject = null;
+			}
+
+			this.player.forEach((player)=>{
+				player.action.setActionPoint(2);
+			});
+
+			this.enemy.forEach((enemy)=>{
+				enemy.action.setActionPoint(0);
+			});
+		}
+		else{
+			this.player.forEach((player)=>{
+				player.action.setActionPoint(0);
+			});
+
+			this.enemy.forEach((enemy)=>{
+				enemy.action.setActionPoint(2);
+			});
+		}
 	}
 }
 
-const game = new Game();
+export const game = new Game();
