@@ -41,9 +41,6 @@ export class AIAgent {
 
         //2.resource assignment algorithm
         for (let e of this.enemy) {
-            if (e.actionstate != null) {
-                continue;
-            }
             //if the animal is wake, assign the action to the animal
             //the action will be assigned according to the overall priority, calculated as below:
             // overall priority(for each action) = basic priority * e^(priority modifier)
@@ -127,18 +124,83 @@ export class AIAgent {
 
     escapeModifier(e) {
         /* TODO: implement this function */
+        var escapeModifier = 1;
+
+        //factor 1: the health of the animal
+        escapeModifier += (0.6 - e.health / e.maxHealth) * 2.5;
+
+        //factor 2: the remaing animal in the same group versus the remaing player
+        var player = this.player;
+        var enemy = this.enemy;
+        var playerCount = 0;
+        var enemyCount = 0;
+        for (let p of player) {
+                playerCount++;
+        }
+        for (let e2 of enemy) {
+            if (e2.groupID == e.groupID) {
+                enemyCount++;
+            }
+        }
+        escapeModifier += (playerCount - enemyCount) / playerCount * 2;
+
+        //factor 3: if last action is escape, the escape modifier will be decreased
+        if (e.actionstate == "escape") {
+            escapeModifier /= 1.5;
+        }
+        return escapeModifier;
     }
 
     findCover(e, seed) {
         /* TODO: implement this function */
+        e.actionstate = "findCover";
 
     }
 
     attackPlayer(e, seed) {
         /* TODO: implement this function */
+        e.actionstate = "attackPlayer";
 
     }
 
+    escape(e, seed) {
+        /* TODO: implement this function */
+        //find the tile which is the farest from the player, while can be reached by the animal
+        e.actionstate = "escape";
+
+        var player = this.player;
+        var enemy = this.enemy;
+        var playerTile = [];
+        var enemyTile = [];
+        for (let p of player) {
+            playerTile.push(p.getTile());
+        }
+        for (let e2 of enemy) {
+            if (e2.groupID == e.groupID) {
+                enemyTile.push(e2.getTile());
+            }
+        }
+        var maxDistance = 0;
+        var maxTile = null;
+        for (let t of this.game.board.tile) {
+            if (t.isVisibleAI(e)) {
+                var minDistance = 1000;
+                for (let p of playerTile) {
+                    var distance = this.game.board.getDistance(t, p);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                    }
+                }
+                if (minDistance > maxDistance) {
+                    maxDistance = minDistance;
+                    maxTile = t;
+                }
+            }
+        }
+        if (maxTile) {
+            e.moveTo(maxTile);
+        }
+    }
 
     //debug function
     printWake() {
