@@ -47,6 +47,12 @@ AnimalProperties.ENEMYPOINTS = {
     
 } */
 
+//used for AIagent.js
+//basic priority for each type of animal: (finding cover, attack player, escape)
+//suggest: all of the priority should be sum up to 10, and keep as integer
+AnimalProperties.PRIORITY = {
+    Monkey: [6, 3, 1]
+}
 
 
 // Make TileProperties.TYPE Bidirectional

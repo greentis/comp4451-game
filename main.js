@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { MapControls } from 'three/addons/controls/MapControls.js';
 import { Hunter } from './Hunter.js';
-import {Animal} from './Animal.js';
+import { Animal } from './Animal.js';
+import { AIAgent } from './AIagent.js';
 
 import { Board } from './Board.js';
 import { TileProperties } from './TileProperties.js';
@@ -55,11 +56,14 @@ export class Game{
 					//make a name according to [i][j]
 					var name = 'Enemy ' + i + j;
 					if (enemySpawnPoints[i] && enemySpawnPoints[i][j]) {
-						this.enemy.add(new Animal(enemySpawnPoints[i][j][1].q, enemySpawnPoints[i][j][1].r, 1, this, name));
+						this.enemy.add(new Animal(enemySpawnPoints[i][j][1].q, enemySpawnPoints[i][j][1].r, 1, this, name, i));
 					}
 				}
 			}
 			this.enemy.add(new Animal(-6, -9, 1, this, 'Monkey'));
+			this.aiAgent = new AIAgent(this);
+			this.aiAgent.AIControl();
+			this.aiAgent.printWake();
 			//console.log(this.enemy);
 			/*this.enemy = new Set([
 				new Animal(0, 5, 1, this, 'Monkey')
@@ -91,7 +95,7 @@ export class Game{
 		
 
 
-		this.ambientLight = new THREE.AmbientLight( 0x000000 ); // soft white light
+		this.ambientLight = new THREE.AmbientLight( 0xAAAAAA ); // soft white light, 0x000000
 		this.scene.add( this.ambientLight );
 
 		this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );

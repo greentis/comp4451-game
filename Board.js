@@ -108,20 +108,20 @@ export class Board {
 
         // 1. set the size of the map by 3 radius
         //generat random map with hexagon grid
-        //setting random seed
+        //setting random this.seed
         // cover all the map with rock first
-        var seed = 710; 71045;//Math.round(Math.random()* 900000 + 100000);
-        seed = seed % 65536; //make sure the seed is within 0 - 65536, so that noise.seed() can accept it
-        console.log('This board have seed ', seed);
+        this.seed = 710; 71045;//Math.round(Math.random()* 900000 + 100000);
+        this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
+        console.log('This board have this.seed ', this.seed);
         var perlinNoise = new noise();
-        perlinNoise.seed(seed);
+        perlinNoise.seed(this.seed);
 
         if (this.roomSizeRange == 0) {
             var width = this.roomWidth;
             var length = this.roomLength;
         }else{
-            var width = this.roomWidth + Math.round((seed % this.roomSizeRange) * xxhash(seed, 37, 13));
-            var length = this.roomLength + Math.round( (seed % this.roomSizeRange) * xxhash(seed, 13, 37));
+            var width = this.roomWidth + Math.round((this.seed % this.roomSizeRange) * xxhash(this.seed, 37, 13));
+            var length = this.roomLength + Math.round( (this.seed % this.roomSizeRange) * xxhash(this.seed, 13, 37));
         }
         //var boundary = 20;
         //console.log('width', width, 'length', length);
@@ -131,8 +131,8 @@ export class Board {
 
         this.temp = {};
         this.totalArea = 0;
-        var startingTile ={q: Math.round(seed % (2 * width - 1) - width + 1), r:
-            Math.round(seed % (2* length - 1) - length + 1)}; 
+        var startingTile ={q: Math.round(this.seed % (2 * width - 1) - width + 1), r:
+            Math.round(this.seed % (2* length - 1) - length + 1)}; 
         console.log('Starting Tile is ', startingTile.q, startingTile.r); 
         
 
@@ -151,19 +151,19 @@ export class Board {
         // proabability of the void tile to be turn into rock tile is:
         // p = k_1 * (1 - countNonVoid / (width * 2 + 1) * (length * 2 + 1))
         //   + k_2 * (# of nonVoid tile in adjacent tiles) 
-        //   + k_3 * ( checkingValues based on the seed and q,r)
-        //   + k_4 * xxhash(seed * target, q, r)
+        //   + k_3 * ( checkingValues based on the this.seed and q,r)
+        //   + k_4 * xxhash(this.seed * target, q, r)
         //   + 0.01 * iteration
-        // checkingValues = distance(voidStartingTile, (q,r)) * 0.15 - 1 + xxhash(seed, q, r) 
+        // checkingValues = distance(voidStartingTile, (q,r)) * 0.15 - 1 + xxhash(this.seed, q, r) 
         // the iteration will end when countNonVoid > target values
-        // target values = (0.2 + 0.6 * roomPercentage + 0.2 * (seed % 80) / 100.0) *(width * 2 + 1) * (length * 2 + 1)
+        // target values = (0.2 + 0.6 * roomPercentage + 0.2 * (this.seed % 80) / 100.0) *(width * 2 + 1) * (length * 2 + 1)
         var countNonVoid = 0.0;
         var k1 = 0.15;   //factor of total nonVoid tile
         var k2 = 0.07;  //factor of neighbor nonVoid tile
         var k3 = 2.25; //factor of checkingValues
         var k4 = 0.4; //factor of hash noise value
         var target = //(width * 2 + 1) * (length * 2 + 1); 
-                    Math.round((0.2 + 0.6 * this.roomPercentage + 0.2 * (seed % 80) / 100.0) * (width * 2 + 1) * (length * 2 + 1));
+                    Math.round((0.2 + 0.6 * this.roomPercentage + 0.2 * (this.seed % 80) / 100.0) * (width * 2 + 1) * (length * 2 + 1));
         //console.log('target', target);
 
         //generate a void value map based on perlin noise for later used in k3 component of the probability
@@ -171,7 +171,7 @@ export class Board {
         for (let q = -width; q <= width; q++){
             voidMap[q] = {};
             for (let r = -length; r <= length; r++){
-                voidMap[q][r] = perlinNoise.perlin2(seed*target, q/width, r/length);
+                voidMap[q][r] = perlinNoise.perlin2(this.seed*target, q/width, r/length);
             }
         }
 
@@ -219,7 +219,7 @@ export class Board {
                             var p = k1 * (1 - countNonVoid / ((width * 2 + 1) * (length * 2 + 1))) 
                                     + k2 * neighborNonVoid
                                     + k3 * checkingValues
-                                    + k4 * xxhash(seed * target, a.q, a.r)
+                                    + k4 * xxhash(this.seed * target, a.q, a.r)
                                     + 0.01 * iteration;
                             //console.log('p', p);
                             if (p > 0.5){
@@ -278,7 +278,7 @@ export class Board {
         // or the expandedTile list is empty
         var expandIteration = 1.0;
         var lastWallTile = new Set([...wallTile]);
-        while( defaultTile.size < (this.roomPercentage - (seed % 67)/1000.0) * this.totalArea){ //bug1
+        while( defaultTile.size < (this.roomPercentage - (this.seed % 67)/1000.0) * this.totalArea){ //bug1
             // keep the expandedTile list as defaultTile list
             // clear the wallTile list
             //console.log('Iteration: ', expandIteration);
@@ -294,11 +294,11 @@ export class Board {
             wallTile = new Set();
 
 
-            while (expandedTile.size > 0 && defaultTile.size < (this.roomPercentage + (seed % 7)/100.0) * this.totalArea){ //bug1
+            while (expandedTile.size > 0 && defaultTile.size < (this.roomPercentage + (this.seed % 7)/100.0) * this.totalArea){ //bug1
                 
                 //console.log('default tile', defaultTile.size, 'expanded tile', expandedTile.size);
                 expandedTile.forEach((t)=>{
-                    if (defaultTile.size >= (this.roomPercentage + (seed % 67)/1000.0) * this.totalArea){
+                    if (defaultTile.size >= (this.roomPercentage + (this.seed % 67)/1000.0) * this.totalArea){
                         //console.log('default tile', defaultTile.size, 'expanded tile', expandedTile.size);
                         expandedTile.clear();
                         return;
@@ -311,12 +311,12 @@ export class Board {
                         if (this.temp[a.q][a.r] == TileProperties.TYPE.Wall) return;
                         if (this.temp[a.q][a.r] == TileProperties.TYPE.Default) return;
 
-                        //checkValues should based on the seed, but not math.random()
-                        //so that the map is generated same every time if same seed
+                        //checkValues should based on the this.seed, but not math.random()
+                        //so that the map is generated same every time if same this.seed
                         //checkValues will increase as the iteration increase
                         //to have a lenient check on the tile to be turned into default tile
                         //so that avoid too few default tile in the map
-                        var checkingValues = (expandIteration - 1) / 250.0 + xxhash(seed, a.q, a.r);
+                        var checkingValues = (expandIteration - 1) / 250.0 + xxhash(this.seed, a.q, a.r);
                         //console.log('q', a.q, 'r', a.r, 'checkingValues', checkingValues);
 
                         if (this.temp[a.q][a.r] != TileProperties.TYPE.Default && checkingValues > (1-this.roomPercentage)){
@@ -347,10 +347,10 @@ export class Board {
         }
 
         //console.log('iteration at step 3.1', expandIteration);
-        console.log('room percentage', this.roomPercentage, "total area", this.totalArea, "range", (seed % 67)/1000.0);
+        console.log('room percentage', this.roomPercentage, "total area", this.totalArea, "range", (this.seed % 67)/1000.0);
         console.log('# of default tile', defaultTile.size);
-        console.log('target area', (this.roomPercentage + (seed % 67)/1000.0) * this.totalArea);
-        //console.log('min area', (this.roomPercentage - (seed % 67)/1000.0) * this.totalArea);
+        console.log('target area', (this.roomPercentage + (this.seed % 67)/1000.0) * this.totalArea);
+        //console.log('min area', (this.roomPercentage - (this.seed % 67)/1000.0) * this.totalArea);
         //console.log('wallTile size(before 4.1):', wallTile.size);
         
         // 4. generate other type of tile(wall, cover, water e.t.c) based on the default tile
@@ -358,16 +358,16 @@ export class Board {
         //doing iteration in the wallTile list
         //for each tile in the wallTile list
         // it turn into wall tile if checkValues is greater than wallThreshold
-        var seedWall = xxhash(seed, wallTile.size, defaultTile.size) * 1000000.0;
+        this.seedWall = xxhash(this.seed, wallTile.size, defaultTile.size) * 1000000.0;
         var totalWallTile = wallTile.size;
         var rockTile = new Set();
         var rockIteration = 1.0;
-        while ( rockTile.size < totalWallTile * (1 - this.wallThreshold) - (seedWall %37) / 1000.0){
+        while ( rockTile.size < totalWallTile * (1 - this.wallThreshold) - (this.seedWall %37) / 1000.0){
             if (rockIteration > 1000) break;
 
             wallTile.forEach((t)=>{
-                //console.log('xxhash', xxhash(seedWall, t.q, t.r));
-                var checkingValues = (rockIteration - 1) / 250.0 + xxhash(seedWall, t.q, t.r);
+                //console.log('xxhash', xxhash(this.seedWall, t.q, t.r));
+                var checkingValues = (rockIteration - 1) / 250.0 + xxhash(this.seedWall, t.q, t.r);
                 if (checkingValues > this.wallThreshold){
                     rockTile.add(t);
                     wallTile.delete(t);
@@ -388,11 +388,11 @@ export class Board {
         //var totalRockTile = rockTile.size;
         var coverTile = new Set();
         var coverIteration = 1.0;
-        while ( coverTile.size < totalWallTile * (this.coverThreshold) - (seedWall % 37) / 1000.0){
+        while ( coverTile.size < totalWallTile * (this.coverThreshold) - (this.seedWall % 37) / 1000.0){
             if (coverIteration > 1000) break;
             wallTile.forEach((t)=>{
-                var checkingValues = -1.0 * (coverIteration - 1) / 250.0 + xxhash(seedWall, t.q, t.r);
-                //console.log('xxhash', xxhash(seed, t.q, t.r));
+                var checkingValues = -1.0 * (coverIteration - 1) / 250.0 + xxhash(this.seedWall, t.q, t.r);
+                //console.log('xxhash', xxhash(this.seed, t.q, t.r));
                 //console.log('t.q', t.q, 't.r', t.r, 'checkingValues', checkingValues);
                 if (checkingValues < this.coverThreshold){
                     coverTile.add(t);
@@ -413,8 +413,8 @@ export class Board {
         for (let q = -width; q <= width; q++){
             heightMap[q] = {};
             for (let r = -length; r <= length; r++){
-                heightMap[q][r] = perlinNoise.perlin2(seed, q/width, r/length) 
-                                + xxhash(seed, q, r)*0.25 
+                heightMap[q][r] = perlinNoise.perlin2(this.seed, q/width, r/length) 
+                                + xxhash(this.seed, q, r)*0.25 
                                 + getHeights(this.temp[q][r])
                                 - 0.35;
             }
@@ -493,7 +493,7 @@ export class Board {
         for (let q = -width; q <= width; q++){
             vegetationMap[q] = {};
             for (let r = -length; r <= length; r++){
-                vegetationMap[q][r] = xxhash(seed * this.vegetationCoverage * 137.0, q, r);
+                vegetationMap[q][r] = xxhash(this.seed * this.vegetationCoverage * 137.0, q, r);
                 if (this.temp[q][r] == TileProperties.TYPE.Void) vegetationMap[q][r] = 10.0;
                 if (this.checkBoardBoundaries(q, r, width, length, this.temp)) vegetationMap[q][r] = 10.0; 
 
@@ -547,8 +547,8 @@ export class Board {
             bushValue += ((height - 0.45) ** 2 - 0.25)* k2;
 
             //factor 3: based on the perlin noise
-            treeValue += perlinNoise.perlin2(seed * 137, t.q/width, t.r/length) * k3;
-            bushValue += perlinNoise.perlin2(seed * 137, t.q/width, t.r/length) * k3;
+            treeValue += perlinNoise.perlin2(this.seed * 137, t.q/width, t.r/length) * k3;
+            bushValue += perlinNoise.perlin2(this.seed * 137, t.q/width, t.r/length) * k3;
 
             if(treeValue>bushValue){
                 this.temp[t.q][t.r] = TileProperties.TYPE.Tree;
@@ -572,7 +572,7 @@ export class Board {
         for(let q = -width; q <= width; q++){
             test[q] = {};
             for(let r = -length; r <= length; r++){
-                test[q][r] = perlinNoise.perlin2(seed, q/width, r/length);
+                test[q][r] = perlinNoise.perlin2(this.seed, q/width, r/length);
             }
         }
         console.log('perlin noise', test);
@@ -582,7 +582,7 @@ export class Board {
 
         //5. calculate the spawn point of the player in the map
         // the player will be added to the default tile or water tile(if no default tile)
-        //random select spawn point for character1 based on the annotated map and seed
+        //random select spawn point for character1 based on the annotated map and this.seed
         this.playerSpawnPoints = {};
         for(let i = 0; i < 3; i++){ 
             //WARNING: this assume the character number is always 3, ignore some character may died already
@@ -599,8 +599,8 @@ export class Board {
                 this.playerSpawnPoints[0] = {q: startingTile.q, r: startingTile.r};
                 break;
             }
-            var q = Math.round(xxhash((seed +  iteration* 73) *163, this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r) * 2 * this.rmax - this.rmax + 1);
-            var r = Math.round(xxhash((seed + iteration * 73) * 163, this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r) * 2 * this.rmax - this.rmax + 1);
+            var q = Math.round(xxhash((this.seed +  iteration* 73) *163, this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r) * 2 * this.rmax - this.rmax + 1);
+            var r = Math.round(xxhash((this.seed + iteration * 73) * 163, this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r) * 2 * this.rmax - this.rmax + 1);
 
 
             if (this.temp[q][r] == TileProperties.TYPE.Default){
@@ -677,7 +677,7 @@ export class Board {
         // note that the number of enemy in each group is based on the enemy group point(Egp)
         // each type of enemy have different enemy point(Ep)
         // the sum up of the Ep of all of the enemy in the group should be less than the Egp
-        // under above restriction, enemy type(and number) of each group will be selected according to seed
+        // under above restriction, enemy type(and number) of each group will be selected according to this.seed
         var enemyGroupNumber = Math.max(1, Math.round(this.enemyDensity / 4.4 * this.totalArea));
         this.enemyGroup = {};
         var Egp = 6.0 + this.levelDifficulty * 2.5;
@@ -686,7 +686,7 @@ export class Board {
             var Ep = 0.0;
             var j = 0;
             while(Ep < Egp){
-                var enemyType = Math.round(xxhash(seed * 4451, i, Ep) * 1023) % Object.keys(EpTable).length;
+                var enemyType = Math.round(xxhash(this.seed * 4451, i, Ep) * 1023) % Object.keys(EpTable).length;
                 Ep += EpTable[enemyType];
                 if (Ep > Egp) break;
                 //console.log('Ep', Ep, 'Egp', Egp);
@@ -719,8 +719,8 @@ export class Board {
                     //last resort, set the leader spawn point to a unoccupied tile nearby
                     lastResort = true;
                 }
-                var q = Math.round(xxhash(seed * 731, i, iteration) * 2 * this.rmax - this.rmax + 1);
-                var r = Math.round(xxhash(seed * 731, i, iteration) * 2 * this.rmax - this.rmax + 1);
+                var q = Math.round(xxhash(this.seed * 731, i, iteration) * 2 * this.rmax - this.rmax + 1);
+                var r = Math.round(xxhash(this.seed * 731, i, iteration) * 2 * this.rmax - this.rmax + 1);
                 if (this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
                 
                 

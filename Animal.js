@@ -6,18 +6,40 @@ import { AnimalProperties } from './AnimalProperties.js';
 import { Hunter } from './Hunter.js';
 
 export class Animal extends Character{
-    constructor(q, r, health, game, name){
+    constructor(q, r, health, game, name, groupid){
         super(q, r, health, game, name);
 
         this.setType(AnimalProperties.TYPE.Monkey);
         this.action.setActionPoint(0);
 
         this.weapon;
+        this.groupID = groupid; //groupID is used to determine the group of the animal
+        this.actionstate = null;
+        this.wake = false; // wake up when player is near or under attack
     }
 
     setType(typeID){
         this.properties = new AnimalProperties(this, typeID);
         //this.render();
+    }
+
+    getEnemy(){
+        return this.game.enemy;
+    }
+
+    //helper function of AIControl
+    updateWake(){
+        //wake up when player is near or under attack
+        let player = this.game.player;
+        for(let p of player){
+            if(this.lineOfSight(p.getTile(), true)){
+                this.wake = true;
+            }
+        }
+        if(this.health < this.properties.health){
+            this.wake = true;
+        }
+
     }
 
     //Event handler
@@ -43,3 +65,4 @@ export class Animal extends Character{
         
     }
 }
+
