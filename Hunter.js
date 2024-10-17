@@ -51,41 +51,39 @@ export class Hunter extends Character{
                 this.actionstate = Hunter.ACTION.move;
                 this.actionstate += (2 - this.action.actionPoint);
                 //console.log('move');
-                this.updateMarking();
+                this.updateActionState();
             }
+            //console.log("hunter select", this.actionstate);
         }
         deselect(){
-            this.actionstate += (2 - this.action.actionPoint);
+            //console.log("hunter deselect", this.actionstate);
             switch (this.actionstate) {
                 case Hunter.ACTION.move:
-                    this.getTile().setState('aggressive');
                     this.actionstate = Hunter.ACTION.attack;
-                    //console.log('attack');
+                    this.updateActionState();
                     return this;
                 case Hunter.ACTION.attack:
-                    super.deselect();
-                    this.board.clearMarkings();
-                    this.game.movingPlayer = null;
                     this.actionstate = Hunter.ACTION.idle;
-                    //console.log('idle');
+                    this.updateActionState();
                     return;
+                case Hunter.ACTION.selected:
+                    this.actionstate = Hunter.ACTION.idle;
+                    this.updateActionState();
+                    break;
                 case Hunter.ACTION.idle:
                 default:
-                    super.deselect();
-                    this.board.clearMarkings();
-                    this.game.movingPlayer = null;
                     this.actionstate = Hunter.ACTION.idle;
-                    //console.log('idle');
+                    this.updateActionState();
                     break;
             }
         }
         deselect_forced(){
             this.game.movingPlayer = null;
             this.actionstate = Hunter.ACTION.idle;
-            this.updateMarking();
+            this.updateActionState();
             this.game.selectedObject = null;
         }
-        updateMarking(){
+        updateActionState(){
             switch (this.actionstate) {
                 case Hunter.ACTION.move:
                     this.getTile().setState('selected');
@@ -93,10 +91,15 @@ export class Hunter extends Character{
                 case Hunter.ACTION.attack:
                     this.getTile().setState('aggressive');
                     break;
+                case Hunter.ACTION.selected:
+                    this.getTile().setState('selected');
+                    this.game.movingPlayer = null;
+                    break; 
                 case Hunter.ACTION.idle:
                 default:
                     super.deselect();
                     this.board.clearMarkings();
+                    this.game.movingPlayer = null;
                     break;
             }
         }
@@ -112,5 +115,6 @@ export class Hunter extends Character{
 Hunter.ACTION = {
     idle : 0,
     move : 1,
-    attack : 2
+    attack : 2,
+    selected: 3
 }

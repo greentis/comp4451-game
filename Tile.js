@@ -75,7 +75,6 @@ export class Tile {
 
     characterEnter(character){
         this.character = character;
-        console.log(character.mesh.name);
         this.body.add(character.body);
         this.deHovering();
     }
@@ -120,6 +119,10 @@ export class Tile {
                     this.game.movingPlayer = null;
                 }
                 hunter.deselect_forced();
+                return;
+            }
+            else if(this.character.actionstate == Hunter.ACTION.selected) {
+                this.character.deselect_forced();
                 return;
             }
             // This tile has a character on it
@@ -168,7 +171,6 @@ export class Tile {
     deselected(){
         this.state = 'default';
         this.render();
-        console.log("deselected");
     }
 
     setState(state){
