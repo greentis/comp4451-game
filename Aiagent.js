@@ -35,13 +35,12 @@ export class AIAgent {
         }
         this.reinforcement();
 
-        if (!this.wake) {
-            return; //if the animal is not awake, do nothing
-        }
-
         //2.resource assignment algorithm
         for (let e of this.enemy) {
             //if the animal is wake, assign the action to the animal
+            if (!e.wake) {
+                continue;
+            }
             //the action will be assigned according to the overall priority, calculated as below:
             // overall priority(for each action) = basic priority * e^(priority modifier)
             // probability of taking each action = overall priority of action t / sum of overall priority
