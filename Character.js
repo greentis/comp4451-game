@@ -178,6 +178,7 @@ export class Character{
         
         if (!path) return false;
         let x,y,z;
+        this.getTile().setState('default');
         for (let t of path){
             // Before Updating coordinate
             this.body.position.x = x = this.getTile().body.position.x;
