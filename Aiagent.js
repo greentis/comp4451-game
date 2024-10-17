@@ -11,6 +11,7 @@ export class AIAgent {
             return AIAgent.instance;
         }
 
+        this.game = game;
         this.enemy = game.enemy;
         this.player = game.player;
 
@@ -26,6 +27,9 @@ export class AIAgent {
         //1. check if the animal is wake/ or getting reinforced by other animal in the same group
         //2. if the animal is wake, use the resource assignment algorithm to assign the action to the animal
         //3. carry out the action of the animal
+        var seed = this.game.board.getSeed();
+        
+        //1. check if the animal is wake/ or getting reinforced by other animal in the same group
         for (let e of this.enemy) {
             e.updateWake();
         }
@@ -47,9 +51,9 @@ export class AIAgent {
             //the basic priority is defined in AnimalProperties.js
             //there is 3 action for each animal: finding cover, attack player, escape
             //the priority modifier is defined in the function below
-            var findCoverModifier = this.findCoverModifier(e);
-            var attackPlayerModifier = this.attackPlayerModifier(e);
-            var escapeModifier = this.escapeModifier(e);
+            var findCoverModifier = this.findCoverModifier(e);  //TODO: implement this function
+            var attackPlayerModifier = this.attackPlayerModifier(e); //TODO: implement this function
+            var escapeModifier = this.escapeModifier(e); //TODO: implement this function
 
             //calculate the overall priority for each action
             var overallPriority = [];
@@ -60,9 +64,38 @@ export class AIAgent {
             //calculate the probability of taking each action
             var sum = overallPriority.reduce((a, b) => a + b, 0);
             var probability = overallPriority.map(e => e / sum);
+            
 
-            //randomly choose the action according to the probability
-            var random = Math.random();
+            //randomly choose the action according to the probability based on seed
+            let cumulativeSum = 0;
+            let chosenAction = -1;
+            for (let i = 0; i < probability.length; i++) {
+                cumulativeSum += probability[i];
+                if (seed < cumulativeSum) {
+                    chosenAction = i;
+                    break;
+                }
+            }
+
+
+            //3. carry out the action of the animal
+            switch (chosenAction) {
+                case 0:
+                    //finding cover
+                    this.findCover(e, seed);    //TODO: implement this function
+                    break;
+                case 1:
+                    //attack player
+                    this.attackPlayer(e, seed); //TODO: implement this function
+                    break;
+                case 2:
+                    //escape
+                    this.escape(e, seed);  //TODO: implement this function
+                    break;
+                default:
+                    break;
+            }
+            
         }
     }
 
@@ -79,6 +112,29 @@ export class AIAgent {
                 }
             }
         }
+    }
+
+    findCoverModifier(e) {
+        /* TODO: implement this function */
+    }
+
+    attackPlayerModifier(e) {
+        /* TODO: implement this function */
+
+    }
+
+    escapeModifier(e) {
+        /* TODO: implement this function */
+    }
+
+    findCover(e, seed) {
+        /* TODO: implement this function */
+
+    }
+
+    attackPlayer(e, seed) {
+        /* TODO: implement this function */
+
     }
 
 

@@ -938,6 +938,10 @@ export class Board {
         return this.enemyGroup;
     }
 
+    getSeed(){
+        return this.seed;
+    }
+
     getTile(q, r){
         //console.log('getTile: q: ', q, 'r: ', r);
         return this.grids.get(q.toString()+r.toString());
