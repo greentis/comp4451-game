@@ -6,6 +6,7 @@ import {Animal} from './Animal.js';
 
 import { Board } from './Board.js';
 import { TileProperties } from './TileProperties.js';
+import { WeaponProperties } from './WeaponProperties.js';
 import { Character } from './Character.js';
 import { userInput } from './userInput.js';
 //global variables
@@ -42,9 +43,9 @@ export class Game{
 		// Players (Development phase)
 			var playerSpawnPoints = this.board.getPlayerSpawnPoint();
 			this.player = new Set([
-				new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 1, this, 'Player 1'),
-				new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 1, this, 'Player 2'),
-				new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 1, this, 'Player 3')
+				new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 1, WeaponProperties.TYPE.Gun, this, 'Player 1'),
+				new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 1, WeaponProperties.TYPE.Bomb, this, 'Player 2'),
+				new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 1, WeaponProperties.TYPE.Saw, this, 'Player 3')
 			]);
 			var enemySpawnPoints = this.board.getEnemySpawnPoint();
 			this.enemy = new Set([]);

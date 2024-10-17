@@ -8,12 +8,12 @@ import { WeaponProperties } from './WeaponProperties.js';
 
 
 export class Hunter extends Character{
-    constructor(q, r, health, game, name){
+    constructor(q, r, health, weaponType, game, name){
         super(q, r, health, game, name);
 
         this.actionstate = Hunter.ACTION['idle'];
 
-        this.weapon = new Weapon(this, WeaponProperties.TYPE.Bomb, 5);
+        this.weapon = new Weapon(this, weaponType, 5);
 
         const gltfLoader = new GLTFLoader();
         const url = 'assets/low_poly_kyle_crane/scene.gltf';

@@ -261,7 +261,7 @@ export class Character{
 
     facing(q, r){
         var tile = this.game.board.getTile(q, r);
-        this.mesh.rotation.y = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
+        this.body.rotation.y = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
     }
     
     getTile(){

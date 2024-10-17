@@ -16,13 +16,25 @@ export class WeaponProperties {
                 this.name = 'Bomb';
 
                 url="assets/grenade/scene.gltf";
-                this.meshScale = 0.04;
+                this.meshScale = 0.036;
+                this.weapon.body.position.y = 2.4;
+                this.weapon.body.rotation.y = Math.PI/2;
                 break;
             case WeaponProperties.TYPE.Gun:
                 this.name = 'Gun';
 
                 url="assets/gun/scene.gltf";
-                this.meshScale = 0.02;
+                this.meshScale = 0.18;
+                this.weapon.body.position.y = 2.3;
+                this.weapon.body.rotation.y = -Math.PI/2;
+                break;
+            case WeaponProperties.TYPE.Saw:
+                this.name = 'Saw';
+
+                url="assets/saw/scene.gltf";
+                this.meshScale = 0.4;
+                this.weapon.body.position.y = 2.3;
+                this.weapon.body.rotation.y = Math.PI;
                 break;
             default:
                 break;
@@ -48,7 +60,7 @@ export class WeaponProperties {
 WeaponProperties.TYPE = {
     Gun: 0,
     Bomb: 1,
-    Knife: 2
+    Saw: 2
 }
 
 // Make TileProperties.TYPE Bidirectional
