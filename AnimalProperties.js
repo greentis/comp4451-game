@@ -12,13 +12,16 @@ export class AnimalProperties {
 
         this.animal.health = 1;
         this.animal.weapon = new Weapon(this, WeaponProperties.TYPE.Gun);
-                
+        this.animal.actionPriority = [6, 3, 1];
+        
         var url = 'assets/monkey/scene.gltf';
         switch (typeID) {
             case AnimalProperties.TYPE.Monkey:
                 url = 'assets/monkey/scene.gltf';
                 this.meshScale = 0.01;
                 this.animal.health = 2;
+
+                
                 break;
             default:
                 break;
