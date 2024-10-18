@@ -11,7 +11,7 @@ import { infoBox } from './infoBox.js';
 
 export class Animal extends Character{
     constructor(q, r, typeID, game, name, groupid){
-        super(q, r, health, game, name);
+        
 
         this.setType(AnimalProperties.TYPE.Monkey);
         this.action.setActionPoint(0);
@@ -23,6 +23,7 @@ export class Animal extends Character{
         this.actionstate = null;
         this.wake = false; // wake up when player is near or under attack
         
+        super(q, r, this.health, game, name);
     }
 
     setType(typeID){
