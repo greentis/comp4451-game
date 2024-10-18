@@ -36,7 +36,7 @@ export class AIAgent {
         }
         this.reinforcement();
 
-        return;
+        
         //2.resource assignment algorithm
         for (let e of this.enemy) {
             //if the animal is wake, assign the action to the animal
