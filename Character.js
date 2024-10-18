@@ -7,6 +7,7 @@ import { TileProperties } from './TileProperties.js';
 import { Weapon } from './Weapon.js';
 import { WeaponProperties } from './WeaponProperties.js';
 import { ActionTracker } from './ActionTracker.js';
+import { infoBox } from './infoBox.js';
 
 // private method
 const lerp = (a, b, t) => {return a + (b - a) * t;}
@@ -48,6 +49,122 @@ export class Character{
         this.action.setActionPoint(0);
     }
 
+    displayInfo(){
+        infoBox.health = this.health;
+        infoBox.movementSpeed = this.moveRange;
+        infoBox.sightRange = this.sightRange;
+        infoBox.weapon = this.weapon.name;
+        infoBox.damage = this.weapon.damage;
+        infoBox.blastRadius = this.weapon.blastRadius;
+        infoBox.format = infoBox.FORMAT.CharacterStats;
+    }
+
+    closeInfo(){
+        infoBox.format = infoBox.FORMAT.MissionInfo;
+    }
+
+    async moveTo(tile) {
+        
+
+        var path = this.findValidPath(tile);
+        
+        if (!path) return false;
+        let x,y,z;
+        this.getTile().setState('default');
+        for (let t of path){
+            // Before Updating coordinate
+            this.body.position.x = x = this.getTile().body.position.x;
+            this.body.position.y = y = this.getTile().body.position.y;
+            this.body.position.z = z = this.getTile().body.position.z;
+            this.getTile().characterLeave();
+            this.game.scene.add(this.body);
+            // Adjust the character facing
+            this.facing(t.q, t.r);
+
+            // Update coordinate
+            this.q = t.q; this.r = t.r;
+
+            let start;
+            const waitForMoveAnimation = ()=>{
+                return new Promise((resolve)=>{
+                    // the animation frame function
+                    const animate = (timestamp)=>{
+                        // record the starting time
+                        if (!start) start = timestamp;
+
+                        // time represents time passed since start
+                        const time = timestamp - start;
+
+                        // ~ Animation ~
+                        this.body.position.x = lerp(x, t.x, time/200);
+                        this.body.position.z = lerp(z, t.z, time/200);
+
+                        if (time < 200) { 
+                            // Call another animation frame
+                            requestAnimationFrame(animate);
+                        }
+                        else{
+                            // Stop the animation after 0.2 seconds
+                            resolve();
+                        }
+                    }
+
+                    // Call the first animation frame
+                    requestAnimationFrame(animate);
+                })
+            }
+
+            // The mother function is async to be ableto await
+            await waitForMoveAnimation();
+
+            // After Updating coordinate
+            this.body.position.x = 0;
+            this.body.position.y = 0;
+            this.body.position.z = 0;
+            this.getTile().characterEnter(this);
+        }
+        this.action.reduceActionPoint(1);
+        return true;
+    }
+
+    
+      
+      
+
+    attack(tile){
+        this.action.reduceActionPoint(2);
+
+        let path = this.lineOfSight(tile, true);
+        
+        // TODO: calculate the hit rate
+        console.log(this.name, " is attacking ", tile.mesh.name);
+        this.weapon.dealsDamage(tile, this);
+    }
+
+    takeDamage(damage){
+        this.health -= damage;
+        console.log(this.health);
+        if (this.health <= 0) {
+            this.body.visible = false;
+            if (this.game.enemy.has(this)) {
+                /*for(let e of this.game.enemy){
+                    if(e.group == this.groupID){
+                        e.wake = true;
+                    }
+                }*/
+                this.game.enemy.delete(this);
+            }
+            if (this.game.player.has(this)) this.game.player.delete(this);
+            console.log(this.name, " is dead");
+            this.getTile().characterLeave();
+            delete this;
+        }
+    }
+
+    facing(q, r){
+        var tile = this.game.board.getTile(q, r);
+        this.body.rotation.y = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
+    }
     // This function returns:
     //     a set, if the lineOfSight establishes
     //     false, if there are no valid lineOfSight
@@ -170,108 +287,6 @@ export class Character{
         
         return [];
     }
-
-    async moveTo(tile) {
-        
-
-        var path = this.findValidPath(tile);
-        
-        if (!path) return false;
-        let x,y,z;
-        this.getTile().setState('default');
-        for (let t of path){
-            // Before Updating coordinate
-            this.body.position.x = x = this.getTile().body.position.x;
-            this.body.position.y = y = this.getTile().body.position.y;
-            this.body.position.z = z = this.getTile().body.position.z;
-            this.getTile().characterLeave();
-            this.game.scene.add(this.body);
-            // Adjust the character facing
-            this.facing(t.q, t.r);
-
-            // Update coordinate
-            this.q = t.q; this.r = t.r;
-
-            let start;
-            const waitForMoveAnimation = ()=>{
-                return new Promise((resolve)=>{
-                    // the animation frame function
-                    const animate = (timestamp)=>{
-                        // record the starting time
-                        if (!start) start = timestamp;
-
-                        // time represents time passed since start
-                        const time = timestamp - start;
-
-                        // ~ Animation ~
-                        this.body.position.x = lerp(x, t.x, time/200);
-                        this.body.position.z = lerp(z, t.z, time/200);
-
-                        if (time < 200) { 
-                            // Call another animation frame
-                            requestAnimationFrame(animate);
-                        }
-                        else{
-                            // Stop the animation after 0.2 seconds
-                            resolve();
-                        }
-                    }
-
-                    // Call the first animation frame
-                    requestAnimationFrame(animate);
-                })
-            }
-
-            // The mother function is async to be ableto await
-            await waitForMoveAnimation();
-
-            // After Updating coordinate
-            this.body.position.x = 0;
-            this.body.position.y = 0;
-            this.body.position.z = 0;
-            this.getTile().characterEnter(this);
-        }
-        this.action.reduceActionPoint(1);
-        return true;
-    }
-
-    
-      
-      
-
-    attack(tile){
-        this.action.reduceActionPoint(2);
-
-        let path = this.lineOfSight(tile, true);
-        
-        // TODO: calculate the hit rate
-        console.log(this.name, " is attacking ", tile.mesh.name);
-        this.weapon.dealsDamage(tile, this);
-    }
-
-    takeDamage(damage){
-        this.health -= damage;
-        console.log(this.health);
-        if (this.health <= 0) {
-            this.body.visible = false;
-            if (this.game.enemy.has(this)) {
-                /*for(let e of this.game.enemy){
-                    if(e.group == this.groupID){
-                        e.wake = true;
-                    }
-                }*/
-                this.game.enemy.delete(this);
-            }
-            console.log(this.name, " is dead");
-            delete this;
-        }
-    }
-
-    facing(q, r){
-        var tile = this.game.board.getTile(q, r);
-        this.body.rotation.y = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
-    }
-    
     getTile(){
         return this.game.board.getTile(this.q, this.r);
     }
@@ -282,10 +297,12 @@ export class Character{
 
     select(){
         this.getTile().selected();
+        this.displayInfo();
     }
 
     deselect(){
         this.getTile().deselected();
+        this.closeInfo();
     }
 
     hovering(){
