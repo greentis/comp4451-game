@@ -8,6 +8,8 @@ import { Board } from './Board.js';
 import { TileProperties } from './TileProperties.js';
 import { WeaponProperties } from './WeaponProperties.js';
 import { Character } from './Character.js';
+
+import { infoBox } from './infoBox.js';
 //global variables
 
 export class Game{
@@ -255,6 +257,9 @@ export class Game{
 		this.isPlayerTurn = set;
 
 		if (set){
+			// Change what UI displays
+			infoBox.format = infoBox.FORMAT.MissionInfo;
+
 			// Deselects everything currently
 			if (this.selectedObject) {
 				this.selectedObject.deselect();
@@ -271,6 +276,9 @@ export class Game{
 			});
 		}
 		else{
+			// Change what UI displays
+			infoBox.format = infoBox.FORMAT.HunterStateTrack;
+
 			this.player.forEach((player)=>{
 				player.action.setActionPoint(0);
 			});

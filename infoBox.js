@@ -1,20 +1,33 @@
 import { game } from "./main";
-import { Character } from "./Character";
-import { Hunter } from "./Hunter";
-import { Animal } from "./Animal";
 
-var data = {
-    format:"default",
+export var infoBox = {
+    FORMAT:{
+        MissionInfo:"MissionInfo",
+        HunterStateTrack:"HunterStateTrack",
+        CharacterStats:"CharacterStats"
+    },
+    format:"MissionInfo",
     a:2,
+    health:undefined,
+    sightRange:undefined,
+    movementSpeed:undefined,
+
+    weapon:undefined,
+    damage:undefined,
+    blastRadius:undefined,
+    
+    players:[],
+    
     passRound: () => {
         game.setToPlayerTurn(false);
-        data.format = "HunterStateTrack";
+        infoBox.players = game.player;
+        infoBox.format = infoBox.FORMAT.HunterStateTrack;
     }
 };
 
 new Vue({
     el:'#infoBox',
-    data:data
+    data:infoBox
 });
 
 export function updateData(){

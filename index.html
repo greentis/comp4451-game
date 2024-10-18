@@ -5,39 +5,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Forest Hunter by Group 9 Curtis & Timothy</title>
-		<style>
-			body { margin: 0; background-color: black;}
-			#infoBox {
-				color: white;
-				background-color: black;
-				height: 100px;
-				display: flex;
-				flex-direction: column;
-				position: absolute;
-				flex-wrap: wrap;
-    j			justify-content: space-evenly;
-			}
-
-			.container {
-				color: white;
-				background-color: black;
-				height: 50px;
-				display: flex;
-				flex-direction: row;
-				position: relative;
-			}
-
-			.box{
-				border-radius: 10%;
-				position:relative;
-				width:100px;
-				height:50px;
-				
-				text-align: center;
-				align-content: center;
-				background-color:darkblue;
-			}
-		</style>
+		
 		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 		
 		<script type="module" src="/main.js"></script>
@@ -54,7 +22,44 @@
 		<script type="module" src="/TileProperties.js"></script>
 		<script type="module" src="/WeaponProperties.js"></script>
 		<script type="module" src="/AnimalProperties.js"></script>
+		<style>
+			body { margin: 0; background-color: black;}
+			#infoBox {
+				color: white;
+				background-color: black;
+				height: 100px;
+				display: flex;
+				flex-direction: column;
+				position: absolute;
+				flex-wrap:nowrap;
+    			justify-content:space-evenly;
+				gap:0px;
+			}
 
+			.container {
+				color: white;
+				background-color: black;
+				height: 50px;
+				display: flex;
+				flex-direction: row;
+				position: relative;
+				flex-wrap:nowrap;
+    			justify-content:space-evenly;
+				gap:0px;
+			}
+
+			.box{
+				border-radius: 10%;
+				position:relative;
+				width:100px;
+				height:50px;
+				flex-grow: 1;
+				flex-shrink: 1;
+				text-align: center;
+				align-content: center;
+				background-color:darkblue;
+			}
+		</style>
 	</head>
 	<body>
 		<div id='infoBox'>
@@ -62,14 +67,20 @@
 				Forest Hunter
 			</div>
 			
-			<div v-if="format == 'default'" class="container">
-				<button v-on:click="passRound" class="box" style="color:red">End Round</button>
+			<div v-if="format == 'MissionInfo'" class="container">
+				<div v-on:click="passRound" class="box" style="color:red">End Round</div>
 			</div>
-			<div v-if="format == 'character'">
-				<div v-for="p in [1,2]" class="box">haelth:{{p}}</div>
+			<div v-if="format == 'CharacterStats'" class="container">
+				<div class="box">Health:{{health}}</div>
+				<div class="box">Range of Sight:{{sightRange}}</div>
+				<div class="box">Max Steps per move:{{movementSpeed}}</div>
+				<div class="box"></div>
+				<div class="box">Weapon type:{{weapon}}</div>
+				<div class="box">Damage:{{damage}}</div>
+				<div class="box">Impact Radius:{{blastRadius}}</div>
 			</div>
-			<div v-if="format == 'HunterStateCheck'">
-				<div v-for="p in [1,2]" class="box">haelth:{{p}}</div>
+			<div v-if="format == 'HunterStateTrack'" class="container">
+				<div v-for="p in players" class="box">{{p.name}}'s health:{{p.health}}</div>
 			</div>
 		</div>
 		

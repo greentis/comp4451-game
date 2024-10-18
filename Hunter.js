@@ -5,6 +5,8 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { Weapon } from './Weapon.js';
 import { WeaponProperties } from './WeaponProperties.js';
 
+import { infoBox } from './infoBox.js';
+
 
 
 export class Hunter extends Character{
@@ -87,12 +89,15 @@ export class Hunter extends Character{
             switch (this.actionstate) {
                 case Hunter.ACTION.move:
                     this.getTile().setState('selected');
+                    this.displayInfo();
                     break;
                 case Hunter.ACTION.attack:
                     this.getTile().setState('aggressive');
+                    this.displayInfo();
                     break;
                 case Hunter.ACTION.selected:
                     this.getTile().setState('selected');
+                    this.displayInfo();
                     this.game.movingPlayer = null;
                     break; 
                 case Hunter.ACTION.idle:
@@ -100,6 +105,7 @@ export class Hunter extends Character{
                     super.deselect();
                     this.board.clearMarkings();
                     this.game.movingPlayer = null;
+                    infoBox.format = infoBox.FORMAT.MissionInfo;
                     break;
             }
         }

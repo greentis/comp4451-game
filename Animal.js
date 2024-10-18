@@ -4,6 +4,10 @@ import {Character} from './Character.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { AnimalProperties } from './AnimalProperties.js';
 import { Hunter } from './Hunter.js';
+import { Weapon } from './Weapon.js';
+import { WeaponProperties } from './WeaponProperties.js';
+
+import { infoBox } from './infoBox.js';
 
 export class Animal extends Character{
     constructor(q, r, health, game, name){
@@ -12,7 +16,7 @@ export class Animal extends Character{
         this.setType(AnimalProperties.TYPE.Monkey);
         this.action.setActionPoint(0);
 
-        this.weapon;
+        this.weapon = new Weapon(this, WeaponProperties.TYPE.Gun);
     }
 
     setType(typeID){
@@ -41,5 +45,9 @@ export class Animal extends Character{
             }
         }
         
+    }
+
+    deselect(){
+        super.deselect();
     }
 }
