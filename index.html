@@ -28,6 +28,7 @@
 				color: white;
 				background-color: black;
 				height: 100px;
+				width: 100%;
 				display: flex;
 				flex-direction: column;
 				position: absolute;
@@ -61,26 +62,28 @@
 			}
 
 			.largeBox{
-				border-radius: 10%;
-				position:relative;
-				width:100px;
+				width:200px;
 				height:50px;
-				flex-grow: 1;
-				flex-shrink: 1;
-				text-align: center;
-				align-content: center;
-				background-color:darkblue;
+			}
+
+			.controller{
+				flex-grow: 0;
 			}
 		</style>
 	</head>
 	<body>
 		<div id='infoBox'>
-			<div class="box">
-				Forest Hunter
+			<div class="container">
+				<div class="box">
+					Forest Hunter
+				</div>
 			</div>
 			
+			
 			<div v-if="format == 'MissionInfo'" class="container">
-				<div v-on:click="passRound" class="box" style="color:red">End Round</div>
+				<div v-on:click="passRound" class="box controller" style="color:red">
+					End Round
+				</div>
 			</div>
 			<div v-if="format == 'CharacterStats'" class="container">
 				<div class="box">Hp: ❤️{{health}}</div>

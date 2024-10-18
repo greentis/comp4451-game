@@ -47,6 +47,8 @@ export class Character{
         this.action = new ActionTracker(this);
         
         this.action.setActionPoint(0);
+
+        this.getTile().characterEnter(this);
     }
 
     displayInfo(){

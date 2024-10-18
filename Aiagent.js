@@ -56,9 +56,9 @@ export class AIAgent {
 
             //calculate the overall priority for each action
             var overallPriority = [];
-            overallPriority.push(AnimalProperties.PRIORITY[e.name][0] * findCoverModifier);
-            overallPriority.push(AnimalProperties.PRIORITY[e.name][1] * attackPlayerModifier);
-            overallPriority.push(AnimalProperties.PRIORITY[e.name][2] * escapeModifier);
+            overallPriority.push(e.actionPriority.cover * findCoverModifier);
+            overallPriority.push(e.actionPriority.attack * attackPlayerModifier);
+            overallPriority.push(e.actionPriority.escape * escapeModifier);
             console.log("overallPriority: ", overallPriority);
 
             //calculate the probability of taking each action

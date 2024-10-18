@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { MapControls } from 'three/addons/controls/MapControls.js';
 import { Hunter } from './Hunter.js';
 import { Animal } from './Animal.js';
-import { AIAgent } from './AIagent.js';
+import { AIAgent } from './AiAgent.js';
 
 import { Board } from './Board.js';
 import { TileProperties } from './TileProperties.js';
@@ -58,7 +58,7 @@ export class Game{
 				}
 			}
 			//console.log(this.enemy);
-			this.enemy.add(new Animal(-6, -9, 1, "Monkey", this, name, 0));
+			this.enemy.add(new Animal(-6, -9, "Monkey", this, name, 0));
 			this.aiAgent = new AIAgent(this);
 			this.aiAgent.AIControl();
 			this.aiAgent.printWake();
@@ -133,9 +133,12 @@ export class Game{
 		window.addEventListener('click', (event)=>{
 			// You can't click on object if its not player's turn
 			if (!this.isPlayerTurn) return;
+			if (event.clientY <= 100) return;
 
 			mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
 			mouseVec.y = - (event.clientY / window.innerHeight) * 2 + 1;
+			
+			
 			raycaster.setFromCamera(mouseVec, this.camera);
 		
 			var intersects = raycaster.intersectObjects(this.scene.children);
@@ -166,6 +169,7 @@ export class Game{
 		var hoveringObject = null;
 		
 		window.addEventListener('mousemove', (event)=>{
+			if (event.clientY <= 100) return;
 			// Do raycast to find all objects within sight
 			mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
 			mouseVec.y = - (event.clientY / window.innerHeight) * 2 + 1;

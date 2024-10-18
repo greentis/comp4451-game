@@ -37,7 +37,6 @@ export class Hunter extends Character{
             this.mesh.add(this.light);
             this.mesh.name=name;
             this.body.add(this.mesh);
-            this.getTile().characterEnter(this);
         });
         
         this.action.setActionPoint(2);
