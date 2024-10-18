@@ -4,7 +4,8 @@ export var infoBox = {
     FORMAT:{
         MissionInfo:"MissionInfo",
         HunterStateTrack:"HunterStateTrack",
-        CharacterStats:"CharacterStats"
+        CharacterStats:"CharacterStats",
+        AttackData:"AttackData"
     },
     format:"MissionInfo",
     a:2,
@@ -16,6 +17,9 @@ export var infoBox = {
     damage:undefined,
     blastRadius:undefined,
     
+    target:undefined,
+    hitRate:undefined,
+
     players:[],
     
     passRound: () => {

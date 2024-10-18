@@ -4,6 +4,7 @@ import { TileProperties } from './TileProperties.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { Character } from './Character.js';
 import { Hunter } from './Hunter.js';
+import { infoBox } from './infoBox.js';
 
 export class Tile {
     constructor(q, r, x, y, z, game, typeID = TileProperties.TYPE.Default){
@@ -66,6 +67,9 @@ export class Tile {
         else if (this.state == 'pathed') {
             this.mesh.material.emissive.set(0x00ABDD);
         }
+        else if (this.state == 'blasted') {
+            this.mesh.material.emissive.set(0x770000);
+        }
         else if (this.state == 'aggressive' || this.state == 'aimed') {
             this.body.position.y += 0.1;
             this.mesh.material.emissive.set(0xCC2222);
@@ -107,6 +111,18 @@ export class Tile {
         if(path.length == 0) return false;
         if (path.includes(this)) return true;
         return false;
+    }
+
+    getTilesWithinRange(radius){
+        let tiles = [];
+        for (let q = -radius; q <= radius; q++){
+            for (let r = -radius; r <= radius; r++){
+                if (Math.abs(q+r)>radius) continue;
+                let t = this.game.board.getTile(this.q + q, this.r + r);
+                if (t) tiles.push(t);
+            }
+        }
+        return tiles;
     }
     //
     // Event Handling
@@ -195,22 +211,23 @@ export class Tile {
             if (this.game.movingPlayer.actionstate == Hunter.ACTION.move){
                 var path = this.game.movingPlayer.findValidPath(this);
                 if (!path) return;
-                path.forEach((t)=>{
-                    t.state = 'pathed';
-                    t.render();
-                });
-                this.game.board.lightedGrid = path;
+
+                this.game.board.addMarkings(path,'pathed');
+
                 this.game.movingPlayer.facing(this.q, this.r);
             }
             else if (this.game.movingPlayer.actionstate == Hunter.ACTION.attack){
                 var path = this.game.movingPlayer.lineOfSight(this, true);
                 if (!path) return;
-                path.forEach((t)=>{
-                    t.state = 'pathed';
-                    t.render();
-                });
-                this.game.board.lightedGrid = path;
+                infoBox.hitRate = this.game.movingPlayer.getHitRate(path);
+                infoBox.target = this.character ? this.character : undefined;
+                infoBox.format = infoBox.FORMAT.AttackData;
+
+                this.game.board.addMarkings(this.getTilesWithinRange(this.game.movingPlayer.weapon.blastRadius),'blasted');
+                this.game.board.addMarkings(path,'pathed');
+
                 this.game.movingPlayer.facing(this.q, this.r);
+
                 this.state = 'aimed';
                 this.render();
                 return;

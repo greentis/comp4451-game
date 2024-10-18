@@ -14,6 +14,7 @@ export class WeaponProperties {
         switch (typeID) {
             case WeaponProperties.TYPE.Bomb:
                 this.weapon.name = 'Bomb';
+                this.weapon.blastRadius = 2;
 
                 url="assets/grenade/scene.gltf";
                 this.meshScale = 0.036;

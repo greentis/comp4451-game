@@ -55,7 +55,7 @@ export class TileProperties {
                 this.passCost = 99999;
                 this.hitRateCost = 99999;
                 
-                url = 'assets/high-rock/scene.gltf';
+                //url = 'assets/high-rock/scene.gltf';
                 
                 break;
             case TileProperties.TYPE.Rock:

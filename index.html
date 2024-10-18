@@ -59,6 +59,18 @@
 				align-content: center;
 				background-color:darkblue;
 			}
+
+			.largeBox{
+				border-radius: 10%;
+				position:relative;
+				width:100px;
+				height:50px;
+				flex-grow: 1;
+				flex-shrink: 1;
+				text-align: center;
+				align-content: center;
+				background-color:darkblue;
+			}
 		</style>
 	</head>
 	<body>
@@ -71,16 +83,26 @@
 				<div v-on:click="passRound" class="box" style="color:red">End Round</div>
 			</div>
 			<div v-if="format == 'CharacterStats'" class="container">
-				<div class="box">Health:{{health}}</div>
-				<div class="box">Range of Sight:{{sightRange}}</div>
-				<div class="box">Max Steps per move:{{movementSpeed}}</div>
+				<div class="box">Hp: ❤️{{health}}</div>
+				<div class="box">Sight: {{sightRange}}</div>
+				<div class="box">Dexterity: {{movementSpeed}}</div>
 				<div class="box"></div>
-				<div class="box">Weapon type:{{weapon}}</div>
-				<div class="box">Damage:{{damage}}</div>
-				<div class="box">Impact Radius:{{blastRadius}}</div>
+				<div class="box" v-if="weapon == 'Gun'">🏹 Damage: {{damage}}</div>
+				<div class="box" v-if="weapon == 'Bomb'">💣 Damage: {{damage}}</div>
+				<div class="box" v-if="weapon == 'Saw'">🗡️ Damage: {{damage}}</div>
+				<div class="box" v-if="weapon == 'Bomb'">Blast Radius:{{blastRadius}}</div>
+			</div>
+			<div v-if="format == 'AttackData'" class="container">
+				<div class="box" v-if="weapon == 'Gun'">🏹 Damage: {{damage}}</div>
+				<div class="box" v-if="weapon == 'Bomb'">💣 Damage: {{damage}}</div>
+				<div class="box" v-if="weapon == 'Saw'">🗡️ Damage: {{damage}}</div>
+				<div class="box" v-if="weapon == 'Bomb'">Blast Radius:{{blastRadius}}</div>
+				<div class="box" v-if="weapon != 'Bomb'">Aim Accuracy: {{hitRate}}</div>
+				
+				<div class="box" v-if="target">{{target.name}}: ❤️{{target.health}}</div>
 			</div>
 			<div v-if="format == 'HunterStateTrack'" class="container">
-				<div v-for="p in players" class="box">{{p.name}}'s health:{{p.health}}</div>
+				<div v-for="p in players" class="box">{{p.name}}<br> ❤️{{p.health}}</div>
 			</div>
 		</div>
 		

@@ -1051,15 +1051,19 @@ export class Board {
         this.path = path;
         return path;
     }*/
-        
+    addMarkings(tiles, state){
+        tiles.forEach((t)=>{
+            if (t.state != 'selected' && t.state != 'aggressive') t.setState(state);
+            this.lightedGrid.push(t);
+        });
+    }
 
     clearMarkings(){
         this.lightedGrid.forEach((t)=>{
-            if (t.state != 'selected') t.state = 'default';
-            t.render();
+            if (t.state != 'selected' && t.state != 'aggressive') t.setState('default');
         });
         this.path = [];
-
+        this.lightedGrid = Array();
     }
 
     //

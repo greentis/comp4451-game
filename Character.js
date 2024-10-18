@@ -287,6 +287,17 @@ export class Character{
         
         return [];
     }
+
+    getHitRate(path){
+        let hitRate = 100;
+        let tiles = Array.from(path);
+        tiles.shift();
+        tiles.forEach((t)=>{
+            hitRate -= t.properties.hitRateCost;
+        })
+        return hitRate < 0 ? 0 : hitRate;
+    }
+
     getTile(){
         return this.game.board.getTile(this.q, this.r);
     }
