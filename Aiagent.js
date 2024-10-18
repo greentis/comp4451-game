@@ -2,6 +2,7 @@ import { AnimalProperties } from './AnimalProperties.js';
 import { Animal } from './Animal.js';
 import { Board } from './Board.js';
 
+const distanceQR = (t1, t2) => {var t1s = -t1.q - t1.r; var t2s = -t2.q - t2.r; return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1s - t2s));}
 
 export class AIAgent {
     static instance = null;
@@ -35,6 +36,7 @@ export class AIAgent {
         }
         this.reinforcement();
 
+        return;
         //2.resource assignment algorithm
         for (let e of this.enemy) {
             //if the animal is wake, assign the action to the animal
@@ -162,10 +164,12 @@ export class AIAgent {
 
     }
 
-    escape(e, seed) {
+    escape(e, seed = null) {
         /* TODO: implement this function */
         //find the tile which is the farest from the player, while can be reached by the animal
+        console.log(e);
         e.actionstate = "escape";
+        console.log("escape");
 
         var player = this.player;
         var enemy = this.enemy;
@@ -181,11 +185,15 @@ export class AIAgent {
         }
         var maxDistance = 0;
         var maxTile = null;
-        for (let t of this.game.board.tile) {
-            if (t.isVisibleAI(e)) {
+        
+        for (let g of this.game.board.grids) {
+            var t = g[1];
+            //console.log("t: ", t);
+            if (t.isVisibleAI(e) ) {
                 var minDistance = 1000;
                 for (let p of playerTile) {
-                    var distance = this.game.board.getDistance(t, p);
+                    //console.log("t: ", t.q, t.r, "p: ", p.q, p.r);
+                    var distance = distanceQR(t, p);
                     if (distance < minDistance) {
                         minDistance = distance;
                     }
@@ -196,6 +204,7 @@ export class AIAgent {
                 }
             }
         }
+        console.log("maxTile: ", maxTile);
         if (maxTile) {
             e.moveTo(maxTile);
         }
