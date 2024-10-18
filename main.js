@@ -58,7 +58,7 @@ export class Game{
 				}
 			}
 			//console.log(this.enemy);
-			this.enemy.add(new Animal(-6, -9, "Monkey", this, name, -1));
+			this.enemy.add(new Animal(-6, -9, "Monkey", this, name, -1)); //-7, -10
 			this.aiAgent = new AIAgent(this);
 			this.aiAgent.AIControl();
 			this.aiAgent.printWakeAll();
