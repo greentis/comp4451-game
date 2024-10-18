@@ -282,7 +282,7 @@ export class AIAgent {
             }
 
             //calculate the priority of the target tile
-            var priority = - exposed * 2.0 - minDistance * 0.2 - minDistanceEnemy * 0.3;
+            var priority = - exposed * 3.0 - minDistance * 0.1 - minDistanceEnemy * 0.2;
             if (priority > bestPriority) {
                 bestPriority = priority;
                 bestTile = t;
