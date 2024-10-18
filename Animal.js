@@ -10,18 +10,45 @@ import { WeaponProperties } from './WeaponProperties.js';
 import { infoBox } from './infoBox.js';
 
 export class Animal extends Character{
-    constructor(q, r, health, game, name){
+    constructor(q, r, typeID, game, name, groupid){
+        var health = AnimalProperties.HEALTH[typeID];
         super(q, r, health, game, name);
 
         this.setType(AnimalProperties.TYPE.Monkey);
         this.action.setActionPoint(0);
 
+        this.maxHealth = health;
+        //this.attackRange = AnimalProperties.ATTACKRANGE[typeID];
         this.weapon = new Weapon(this, WeaponProperties.TYPE.Gun);
+
+        this.groupID = groupid; //groupID is used to determine the group of the animal
+        this.actionstate = null;
+        this.wake = false; // wake up when player is near or under attack
+        
     }
 
     setType(typeID){
         this.properties = new AnimalProperties(this, typeID);
         //this.render();
+    }
+
+    getEnemy(){
+        return this.game.enemy;
+    }
+
+    //helper function of AIControl
+    updateWake(){
+        //wake up when player is near or under attack
+        let player = this.game.player;
+        for(let p of player){
+            if(this.lineOfSight(p.getTile(), false)){
+                this.wake = true;
+            }
+        }
+        if(this.health < this.maxHealth){
+            this.wake = true;
+        }
+
     }
 
     //Event handler

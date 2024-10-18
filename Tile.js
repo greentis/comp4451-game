@@ -98,6 +98,16 @@ export class Tile {
         }
         return false;
     }
+
+    isVisibleAI(e){
+        var sight = e.lineOfSight(this,false);
+        if(sight) return true;
+
+        var path = e.findValidPath(this);
+        if(path.length == 0) return false;
+        if (path.includes(this)) return true;
+        return false;
+    }
     //
     // Event Handling
     //

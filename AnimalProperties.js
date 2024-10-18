@@ -40,13 +40,28 @@ AnimalProperties.TYPE = {
     Monkey: 0
 }
 
+AnimalProperties.HEALTH = {
+    Monkey: 1
+}
+
+AnimalProperties.WEAPON = {
+    Monkey: null
+}
 
 /* // used for map generation in Board.js
+//WARNING: the mapping move to the Board.js(EpTable), please remember update it whenever you change the animal type
 AnimalProperties.ENEMYPOINTS = {
     Monkey: 2
     
 } */
 
+//used for AIagent.js
+//basic priority for each type of animal: (finding cover, attack player, escape)
+//suggest: all of the priority should be sum up to 10, and keep as positive integer
+//must: positive(if you dont want the animal to do the action, set it to 0)
+AnimalProperties.PRIORITY = {
+    Monkey: [6, 3, 1]
+}
 
 
 // Make TileProperties.TYPE Bidirectional
