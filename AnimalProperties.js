@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {Animal} from './Animal.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { Weapon } from './Weapon.js';
+import { WeaponProperties } from './WeaponProperties.js';
 
 export class AnimalProperties {
     constructor(animal, typeID){
@@ -13,7 +14,7 @@ export class AnimalProperties {
         this.animal.health = 1;
         this.animal.weapon = new Weapon(this, WeaponProperties.TYPE.Gun);
         this.animal.actionPriority = [6, 3, 1];
-        
+
         var url = 'assets/monkey/scene.gltf';
         switch (typeID) {
             case AnimalProperties.TYPE.Monkey:
