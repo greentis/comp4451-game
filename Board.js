@@ -84,7 +84,7 @@ export class Board {
         //6. calculate the spawn point of the enemy in the map
         //7. generate the tile based on the annotated map
 
-        
+        var printable = false;
         //below variables are for polygonal generation only
         this.roomLength = 12; //control the Length of the map
         this.roomWidth = 12; //control the Width of the map
@@ -112,7 +112,7 @@ export class Board {
         // cover all the map with rock first
         this.seed = 710; 71045;//Math.round(Math.random()* 900000 + 100000);
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
-        console.log('This board have this.seed ', this.seed);
+        if(printable) console.log('This board have seed ', this.seed);
         var perlinNoise = new noise();
         perlinNoise.seed(this.seed);
 
@@ -133,7 +133,7 @@ export class Board {
         this.totalArea = 0;
         var startingTile ={q: Math.round(this.seed % (2 * width - 1) - width + 1), r:
             Math.round(this.seed % (2* length - 1) - length + 1)}; 
-        console.log('Starting Tile is ', startingTile.q, startingTile.r); 
+        if(printable) console.log('Starting Tile is ', startingTile.q, startingTile.r); 
         
 
         // 2. make the shape of map become irregular by changing some of the tile to void tile, while keeping remaining tile as rock tile
@@ -346,12 +346,14 @@ export class Board {
             wallTile.add(startingTile);
         }
 
+        if(printable){
         //console.log('iteration at step 3.1', expandIteration);
         console.log('room percentage', this.roomPercentage, "total area", this.totalArea, "range", (this.seed % 67)/1000.0);
         console.log('# of default tile', defaultTile.size);
         console.log('target area', (this.roomPercentage + (this.seed % 67)/1000.0) * this.totalArea);
         //console.log('min area', (this.roomPercentage - (this.seed % 67)/1000.0) * this.totalArea);
         //console.log('wallTile size(before 4.1):', wallTile.size);
+        }
         
         // 4. generate other type of tile(wall, cover, water e.t.c) based on the default tile
         // 4.1 convert some of the rock tile to wall tile
@@ -377,10 +379,12 @@ export class Board {
             });
             rockIteration++;
         }   
+        if(printable){
         //console.log('wallTile size(after 4.1):', wallTile.size);
         console.log('rockTile size:', rockTile.size);
         //console.log('rockTile', rockTile);
-        
+        }
+
         // 4.2 convert some of the rock tile to cover tile
         //doing iteration in the rockTile list
         //for each tile in the rockTile list
@@ -402,11 +406,13 @@ export class Board {
             });
             coverIteration++;
         }
+        if(printable){
         //console.log('coverIteration', coverIteration);
         console.log('wallTile size(after 4.2):', wallTile.size);
         console.log('coverTile size:', coverTile.size);
         //console.log('coverTile', coverTile);
-        
+        }
+
         // 4.3.0 generate the height map of the tile
         // the height of the tile is based on the perlin noise
         var heightMap = {};
@@ -432,7 +438,7 @@ export class Board {
                 }
             }
         }
-        console.log('waterTile size:', waterTile.size);
+        if(printable) console.log('waterTile size:', waterTile.size);
 
         // 4.3.2 generate the water(river) tile
         // the river tile is based on the height of the tile
@@ -482,7 +488,7 @@ export class Board {
                 }
             }
         });
-        console.log('riverTile size:', riverTile.size);
+        if(printable) console.log('riverTile size:', riverTile.size);
 
         // 4.4 generate the vegetation tile
         // vegetation tile can be tree tile or bush tile
@@ -502,7 +508,7 @@ export class Board {
                 }
             }
         }
-        console.log('vegetationTile size:', vegetationTile.size);
+        if(printable) console.log('vegetationTile size:', vegetationTile.size);
         
 
         // 4.4.1 generate the tree tile
@@ -613,7 +619,7 @@ export class Board {
             iteration++;
         }
         //console.log('iteration at step 6', iteration);
-        console.log('Player Spawn Point 0: ', this.playerSpawnPoints[0]);
+        //console.log('Player Spawn Point 0: ', this.playerSpawnPoints[0]);
 
         //5.2 find the spawn point for other players
         // the spawn point for these characters will follow below rules:
@@ -668,7 +674,7 @@ export class Board {
         //console.log('testing for ringTiles1', this.ringTiles({q: 0, r: 0}, 1));
         //console.log('testing for ringTiles2', this.ringTiles({q: 0, r: 0}, 2));
         //console.log('testing for ringTiles3', this.ringTiles({q: 0, r: 0}, 3));
-        console.log('player spawn points', this.playerSpawnPoints);
+        if(printable) console.log('player spawn points', this.playerSpawnPoints);
 
     
         // 6. calculate the spawn point of the enemy in the map
@@ -886,7 +892,7 @@ export class Board {
                 }
             }
         }
-        console.log('enemy spawn points', this.enemyGroup);
+        if(printable) console.log('enemy spawn points', this.enemyGroup);
         
         // 7.1 turn all void tile which adjacent to non-rock tile to rock tile
         // the void tile which adjacent to the non-rock tile will be turned into rock tile
