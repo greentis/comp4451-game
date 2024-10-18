@@ -17,7 +17,6 @@ export class Animal extends Character{
         this.action.setActionPoint(0);
 
         //this.attackRange = AnimalProperties.ATTACKRANGE[typeID];
-        this.weapon = new Weapon(this, WeaponProperties.TYPE.Gun);
 
         this.groupID = groupid; //groupID is used to determine the group of the animal
         this.actionstate = null;

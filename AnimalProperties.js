@@ -12,7 +12,7 @@ export class AnimalProperties {
 
 
         this.animal.health = 1;
-        this.animal.weapon = new Weapon(this, WeaponProperties.TYPE.Gun);
+        this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);
         this.animal.actionPriority = [6, 3, 1];
 
         var url = 'assets/monkey/scene.gltf';

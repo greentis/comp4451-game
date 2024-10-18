@@ -10,6 +10,7 @@ export class Weapon{
         this.body = new THREE.Object3D();
         this.setType(typeID);
         
+        console.log(this.character);
         this.character.body.add(this.body);
         this.damage = damage;
     }
