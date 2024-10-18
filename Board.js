@@ -8,10 +8,9 @@ import { Hunter } from './Hunter.js';
 //import { Character } from './Character.js';
 //import * as math from 'mathjs';
 
-const lerp = (a, b, t) => {return a + (b - a) * t;}
-const distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
+
 // distanceQR: calculate the distance between two hexagon tile in q,r coordinate given only
-const distanceQR = (t1, t2) => {var t1s = -t1.q - t1.r; var t2s = -t2.q - t2.r; return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1s - t2s));}
+export const distanceQR = (t1, t2) => {var t1s = -t1.q - t1.r; var t2s = -t2.q - t2.r; return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1s - t2s));}
 // getHeights: get the height of the tile based on the type of the tile
 const distanceToBoundary = (q, r, width, length) => {
     return Math.min(width - Math.abs(q), length - Math.abs(r));
@@ -36,7 +35,7 @@ const getHeights = (a) => {
     }
 }
 //xxhash: a simple hash function
-const xxhash = (seed, x, y) => {
+export const xxhash = (seed, x, y) => {
     let h = seed + x * 374761393 + y * 668265263;
     h = (h ^ (h >>> 13)) * 1274126177;
     h = h ^ (h >>> 16);

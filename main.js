@@ -58,12 +58,14 @@ export class Game{
 				}
 			}
 			//console.log(this.enemy);
-			this.enemy.add(new Animal(-6, -9, "Monkey", this, name, 0));
+			this.enemy.add(new Animal(-6, -9, "Monkey", this, name, -1));
 			this.aiAgent = new AIAgent(this);
 			this.aiAgent.AIControl();
-			this.aiAgent.printWake();
+			this.aiAgent.printWakeAll();
 			
-			this.aiAgent.escape(Array.from(this.enemy)[this.enemy.size - 1]);
+			//this.aiAgent.printActionPoint(Array.from(this.enemy)[this.enemy.size - 1]);
+			//this.aiAgent.escape(Array.from(this.enemy)[this.enemy.size - 1]);
+			//this.aiAgent.printActionPoint(Array.from(this.enemy)[this.enemy.size - 1]);
 			
 			
 		// set the camera to the first player

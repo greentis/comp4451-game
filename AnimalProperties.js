@@ -9,26 +9,28 @@ export class AnimalProperties {
         this.id = typeID;
         this.animal = animal;
         //this.animal.name = 'Monkey';
-
-
-        this.animal.health = 1;
-        this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);
-        this.animal.actionPriority = {
-            cover:6,
-            attack:4,
-            escape:2
-        };
-
+        
         var url = 'assets/monkey/scene.gltf';
         switch (typeID) {
             case AnimalProperties.TYPE.Monkey:
                 url = 'assets/monkey/scene.gltf';
                 this.meshScale = 0.01;
                 this.animal.health = 2;
-
-                
+                this.animal.actionPriority = {
+                    cover:6,
+                    attack:4,
+                    escape:1
+                };
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);
                 break;
             default:
+                this.animal.health = 1;
+                this.animal.actionPriority = {
+                    cover:0,
+                    attack:0,
+                    escape:1
+                };
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);
                 break;
         }
 
