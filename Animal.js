@@ -11,13 +11,11 @@ import { infoBox } from './infoBox.js';
 
 export class Animal extends Character{
     constructor(q, r, typeID, game, name, groupid){
-        var health = AnimalProperties.HEALTH[typeID];
         super(q, r, health, game, name);
 
         this.setType(AnimalProperties.TYPE.Monkey);
         this.action.setActionPoint(0);
 
-        this.maxHealth = health;
         //this.attackRange = AnimalProperties.ATTACKRANGE[typeID];
         this.weapon = new Weapon(this, WeaponProperties.TYPE.Gun);
 

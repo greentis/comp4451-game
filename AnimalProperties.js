@@ -1,18 +1,24 @@
 import * as THREE from 'three';
 import {Animal} from './Animal.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import { Weapon } from './Weapon.js';
 
 export class AnimalProperties {
     constructor(animal, typeID){
         this.id = typeID;
         this.animal = animal;
-        this.name = 'Monkey'
+        //this.animal.name = 'Monkey';
 
+
+        this.animal.health = 1;
+        this.animal.weapon = new Weapon(this, WeaponProperties.TYPE.Gun);
+                
         var url = 'assets/monkey/scene.gltf';
         switch (typeID) {
             case AnimalProperties.TYPE.Monkey:
                 url = 'assets/monkey/scene.gltf';
                 this.meshScale = 0.01;
+                this.animal.health = 2;
                 break;
             default:
                 break;
@@ -33,6 +39,8 @@ export class AnimalProperties {
             this.animal.mesh.name=this.name;
             this.animal.getTile().characterEnter(this.animal);
         })
+
+        this.animal.maxHealth = this.animal.health;
     }
 }
 
