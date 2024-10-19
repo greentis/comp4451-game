@@ -18,7 +18,6 @@ export class Animal extends Character{
 
         this.groupID = groupid; //groupID is used to determine the group of the animal
         this.actionstate = null;
-        this.actionPoint = 0;
         this.wake = false; // wake up when player is near or under attack
         
         
@@ -37,7 +36,6 @@ export class Animal extends Character{
     updateWake(){
         //wake up when player is near or under attack
         let player = this.game.player;
-        console.log(this.game);
         for(let p of player){
             if(this.lineOfSight(p.getTile(), false)){
                 this.wake = true;

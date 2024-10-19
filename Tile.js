@@ -103,7 +103,7 @@ export class Tile {
         return false;
     }
 
-    isVisibleAI(e){
+    isVisibleBy(e){
         var sight = e.lineOfSight(this,false);
         if(sight) return true;
 
@@ -206,7 +206,10 @@ export class Tile {
 
     hovering(){
         if (this.state == 'selected' || this.state == 'aggressive') return;
-        if (!this.isVisible()) return;
+        if (!this.isVisible()) {
+            infoBox.hitRate = 0;
+            return;
+        }
         if (this.game.movingPlayer){
             if (this.game.movingPlayer.actionstate == Hunter.ACTION.move){
                 var path = this.game.movingPlayer.findValidPath(this);
@@ -219,7 +222,7 @@ export class Tile {
             else if (this.game.movingPlayer.actionstate == Hunter.ACTION.attack){
                 var path = this.game.movingPlayer.lineOfSight(this, true);
                 if (!path) return;
-                infoBox.hitRate = this.game.movingPlayer.getHitRate(path);
+                infoBox.hitRate = this.game.movingPlayer.getHitRate(this);
                 infoBox.target = this.character ? this.character : undefined;
                 infoBox.format = infoBox.FORMAT.AttackData;
 

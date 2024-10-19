@@ -25,9 +25,9 @@ export var infoBox = {
     enemies:new Set([0]),
     
     passRound: () => {
-        game.setToPlayerTurn(false);
         infoBox.players = game.player;
         infoBox.format = infoBox.FORMAT.HunterStateTrack;
+        game.setToPlayerTurn(false);
     }
 };
 

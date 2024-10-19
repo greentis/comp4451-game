@@ -46,10 +46,14 @@ export class Character{
         this.body = new THREE.Group();
         this.action = new ActionTracker(this);
         
-        this.action.setActionPoint(0);
+        this.setActionPoint(0);
 
         this.getTile().characterEnter(this);
     }
+
+    getActionPoint() {return this.action.actionPoint;}
+    setActionPoint(k) {this.action.setActionPoint(k);}
+    reduceActionPoint(k) {this.action.reduceActionPoint(k);}
 
     displayInfo(){
         infoBox.health = this.health;
@@ -66,7 +70,7 @@ export class Character{
     }
 
     async moveTo(tile) {
-        
+        this.reduceActionPoint(1);
 
         var path = this.findValidPath(tile);
         
@@ -116,7 +120,7 @@ export class Character{
                 })
             }
 
-            // The mother function is async to be ableto await
+            // The mother function is async to be able to await
             await waitForMoveAnimation();
 
             // After Updating coordinate
@@ -125,7 +129,7 @@ export class Character{
             this.body.position.z = 0;
             this.getTile().characterEnter(this);
         }
-        this.action.reduceActionPoint(1);
+        
         return true;
     }
 
@@ -133,19 +137,49 @@ export class Character{
       
       
 
-    attack(tile){
-        this.action.reduceActionPoint(2);
+    async attack(tile){
+        this.reduceActionPoint(2);
 
-        let path = this.lineOfSight(tile, true);
-        
-        // TODO: calculate the hit rate
-        console.log(this.name, " is attacking ", tile.mesh.name);
+        let facingOld = this.body.rotation.y;
+        let facingNew = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
+        let duration = 2 * Math.abs(facingOld-facingNew) * 180 / Math.PI;
+        let start;
+            const waitForMoveAnimation = ()=>{
+                return new Promise((resolve)=>{
+                    // the animation frame function
+                    const animate = (timestamp)=>{
+                        // record the starting time
+                        if (!start) start = timestamp;
+
+                        // time represents time passed since start
+                        const time = timestamp - start;
+
+                        // ~ Animation ~
+                        this.body.rotation.y = lerp(facingOld, facingNew, time/duration);
+
+                        if (time < duration) { 
+                            // Call another animation frame
+                            requestAnimationFrame(animate);
+                        }
+                        else{
+                            // Stop the animation after 0.2 seconds
+                            resolve();
+                        }
+                    }
+
+                    // Call the first animation frame
+                    requestAnimationFrame(animate);
+                })
+            }
+
+            // The mother function is async to be ableto await
+            await waitForMoveAnimation();
+        //console.log(this.name, " is attacking ", tile.mesh.name);
         this.weapon.dealsDamage(tile, this);
     }
 
     takeDamage(damage){
         this.health -= damage;
-        console.log(this.health);
         if (this.health <= 0) {
             this.body.visible = false;
             if (this.game.enemy.has(this)) {
@@ -172,10 +206,12 @@ export class Character{
     //     false, if there are no valid lineOfSight
     // for checking an attack hits the tile, use isSolid = true
     // for checking what board elements the players SEES, use isSolid = false
-    lineOfSight(tile, isSolid = true){
-        var path = new Set();
+    lineOfSight(tile, isSolid = true, toInfinity = false){
         var N = distance(this.getTile(), tile) + 0.0;
-        
+        var sightRange = toInfinity ? 1000 : this.sightRange;
+        if (N > sightRange) return false;
+
+        var path = new Set();
         var t;
         for (let i = 1; i <= N; i++){
             // Progression
@@ -206,13 +242,12 @@ export class Character{
                     if (!t.properties.seeThroughable) break;
                 }
             }
-            
         }
         
         // Not reaching the target tile
         if (t != tile) return false;
         
-        if (path.size == 0 || path.size > this.sightRange || !path.has(tile)) return false;
+        if (path.size == 0 || !path.has(tile)) return false;
 
         // Return the Path
         return path;
@@ -290,7 +325,9 @@ export class Character{
         return [];
     }
 
-    getHitRate(path){
+    getHitRate(tile){
+        let path = this.lineOfSight(tile, true, true);
+        if (!path) return 0;
         let hitRate = 100;
         let tiles = Array.from(path);
         tiles.shift();

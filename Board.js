@@ -98,7 +98,7 @@ export class Board {
         this.vegetationCoverage = 0.1; //control the coverage of the vegetation in the map
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
-        this.enemyDensity = 0.04; //control the density of the enemy per tile in the map(suggested value: < 0.05)
+        this.enemyDensity = 0.01; //control the density of the enemy per tile in the map(suggested value: < 0.05)
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
         this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
 
