@@ -38,6 +38,7 @@ export class Animal extends Character{
     updateWake(){
         //wake up when player is near or under attack
         let player = this.game.player;
+        console.log(this.game);
         for(let p of player){
             if(this.lineOfSight(p.getTile(), false)){
                 this.wake = true;

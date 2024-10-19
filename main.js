@@ -134,6 +134,7 @@ export class Game{
 			// You can't click on object if its not player's turn
 			if (!this.isPlayerTurn) return;
 			if (event.clientY <= 100) return;
+			if (infoBox.format == infoBox.FORMAT.UpgradePanel) return;
 
 			mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
 			mouseVec.y = - (event.clientY / window.innerHeight) * 2 + 1;
@@ -170,6 +171,7 @@ export class Game{
 		
 		window.addEventListener('mousemove', (event)=>{
 			if (event.clientY <= 100) return;
+			if (infoBox.format == infoBox.FORMAT.UpgradePanel) return;
 			// Do raycast to find all objects within sight
 			mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
 			mouseVec.y = - (event.clientY / window.innerHeight) * 2 + 1;

@@ -5,10 +5,11 @@ export var infoBox = {
         MissionInfo:"MissionInfo",
         HunterStateTrack:"HunterStateTrack",
         CharacterStats:"CharacterStats",
-        AttackData:"AttackData"
+        AttackData:"AttackData",
+        UpgradePanel:"UpgradePanel"
     },
     format:"MissionInfo",
-    a:2,
+    missionNo:1,
     health:undefined,
     sightRange:undefined,
     movementSpeed:undefined,
@@ -21,6 +22,7 @@ export var infoBox = {
     hitRate:undefined,
 
     players:[],
+    enemies:new Set([0]),
     
     passRound: () => {
         game.setToPlayerTurn(false);
