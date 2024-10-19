@@ -926,14 +926,56 @@ export class Board {
             var y = 0;
             var z = r + q * Math.cos(Math.PI / 3);
             var tile = new Tile(q, r, x, y, -z,this.game, this.temp[q][r]);
-            
+            if(q==-11 && r==0) console.log('q', q, 'r', r, 'type', this.temp[q][r], 'x', x, 'y', y, 'z', z);
+
             // Add tile to map
             this.body.add(tile.body);
             this.grids.set(q.toString()+r.toString(), tile);
+            if(q==-11 && r==0) {console.log('tile', tile);
+                //print the corrsponding element in grids
+                console.log('grids', this.grids.get(q.toString()+r.toString()));
+            }
         });
+        
+        /*
+        for(let q of Object.keys(this.temp)){
+            for(let r of Object.keys(this.temp[q])){
+                //console.log('q', q, 'r', r, 'type', this.temp[q][r]);
+                //skip the tile if it is void tile
+                if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold) continue;
+                //console.log('tile', tile);
+                
+                var x = q * Math.cos(Math.PI / 6);
+                var y = 0;
+                var z = r + q * Math.cos(Math.PI / 3);
+                var tile = new Tile(q, r, x, y, -z,this.game, this.temp[q][r]);
 
+                // Add tile to map
+                this.body.add(tile.body);
+                this.grids.set(q.toString()+r.toString(), tile);
+
+
+            }
+        }
+        */
 
     }
+
+    //
+    // Private Helper Function
+    // 
+    forEachGrid(func){
+        var vaildGrid = [];
+        for (let q = this.qmin; q <= this.qmax; q++){
+            for (let r = this.rmin; r <= this.rmax; r++){
+                let s = 0 - q - r;
+                //if (s < this.smin || s > this.smax) continue;  
+                if(q==-11 && r==0) console.log('q', q, 'r', r, 's', s);
+                func(q, r, s);
+            }
+        }
+    }
+
 
     getPlayerSpawnPoint(){
         return this.playerSpawnPoints;
@@ -1024,38 +1066,6 @@ export class Board {
         return adjacent;
     }
 
-
-    /*findPath_straight(q1, r1, q2, r2){
-        //q1, r1: start q, r; q2,r2: end q, r
-        //find straight line path from start to end(not concern the cost and unpasable tile)
-        if (q1 == q2 && r1 == r2){
-            return [];
-        }
-        var path = [];
-        var currentTile = this.getTile(q1, r1);
-        var endTile = this.getTile(q2, r2);
-        path.push(currentTile);
-        
-        var temp1 = currentTile;
-        var s1 = currentTile.s;
-        var s2 = endTile.s;
-        var N = distance(currentTile, endTile);
-        for (var i = 0.0; i < N; i++){
-            var q = lerp(q1, q2, i/N);
-            var r = lerp(r1, r2, i/N);
-            var s = lerp(s1, s2, i/N);
-            var tile = this.hexRound(q, r, s);    
-            if (tile != temp1){
-                path.push(tile);
-                temp1 = tile;
-            }
-            if (tile == endTile){
-                break;
-            }
-        }
-        this.path = path;
-        return path;
-    }*/
     addMarkings(tiles, state){
         tiles.forEach((t)=>{
             if (t.state != 'selected' && t.state != 'aggressive') t.setState(state);
@@ -1071,19 +1081,7 @@ export class Board {
         this.lightedGrid = Array();
     }
 
-    //
-    // Private Helper Function
-    // 
-    forEachGrid(func){
-        var vaildGrid = [];
-        for (let q = this.qmin; q <= this.qmax; q++){
-            for (let r = this.rmin; r <= this.rmax; r++){
-                let s = 0 - q - r;
-                if (s < this.smin || s > this.smax) continue;  
-                func(q, r, s);
-            }
-        }
-    }
+    
 
 
     
