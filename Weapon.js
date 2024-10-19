@@ -10,7 +10,6 @@ export class Weapon{
         this.body = new THREE.Object3D();
         this.setType(typeID);
         
-        console.log(this.character);
         this.character.body.add(this.body);
         this.damage = damage;
     }
@@ -22,7 +21,7 @@ export class Weapon{
 
     dealsDamage(tile, damager){
         this.properties.blastRadius;
-        console.log(this.properties.name, " hits ", tile.mesh.name);
+        //console.log(this.name, " hits ", tile.mesh.name);
         if (!tile.character) return;
         if (tile.character.constructor == damager.constructor) return;
         tile.character.takeDamage(this.damage);

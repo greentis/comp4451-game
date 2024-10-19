@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { MapControls } from 'three/addons/controls/MapControls.js';
+
 import { Hunter } from './Hunter.js';
 import { Animal } from './Animal.js';
 import { AIAgent } from './AiAgent.js';
@@ -40,11 +41,13 @@ export class Game{
 			
 		// Players (Development phase)
 			var playerSpawnPoints = this.board.getPlayerSpawnPoint();
-			this.player = new Set([
+			this.player = [
 				new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 1, WeaponProperties.TYPE.Gun, this, 'Player 1'),
 				new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 1, WeaponProperties.TYPE.Bomb, this, 'Player 2'),
 				new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 1, WeaponProperties.TYPE.Saw, this, 'Player 3')
-			]);
+			];
+			//this.camera.position.set(this.player[0].getTile().x, 5, this.player[0].getTile().z + 5);
+			//this.controls.target = new THREE.Vector3(this.player[0].getTile().x, 5, this.player[0].getTile().z + 5)
 			var enemySpawnPoints = this.board.getEnemySpawnPoint();
 			this.enemy = new Set([]);
 			for (let i = 0; i < Object.keys(enemySpawnPoints).length; i++){
@@ -60,7 +63,7 @@ export class Game{
 			//console.log(this.enemy);
 			this.enemy.add(new Animal(-5, -5, "Monkey", this, name, -1)); //-6, -9
 			this.aiAgent = new AIAgent(this);
-			this.aiAgent.AIControl();
+			//this.aiAgent.AIControl();
 			this.aiAgent.printWakeAll();
 			
 			//this.aiAgent.printActionPoint(Array.from(this.enemy)[this.enemy.size - 1]);
@@ -99,17 +102,16 @@ export class Game{
 		this.scene.add( this.ambientLight );
 
 		this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-		this.camera.position.set(0, 5, 5);
-		// camera.up.set(x, y, z);
-		this.camera.lookAt(0, 0, 0);
 		
+		// camera.up.set(x, y, z);
+		this.camera.position.set(0, 5, 5);
 		this.renderer = new THREE.WebGLRenderer();
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
 		
 		this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 		this.controls.screenSpacePanning = false;
-		this.controls.maxPolarAngle = Math.PI / 4;
-		this.controls.minPolarAngle = Math.PI / 4;
+		this.controls.maxPolarAngle = Math.PI /3;
+		this.controls.minPolarAngle = Math.PI /3;
 
 		// Animation loop
 		this.renderer.setAnimationLoop(()=>{
@@ -136,6 +138,7 @@ export class Game{
 			// You can't click on object if its not player's turn
 			if (!this.isPlayerTurn) return;
 			if (event.clientY <= 100) return;
+			if (infoBox.format == infoBox.FORMAT.UpgradePanel) return;
 
 			mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
 			mouseVec.y = - (event.clientY / window.innerHeight) * 2 + 1;
@@ -165,13 +168,14 @@ export class Game{
 				if (previousObject) previousObject.deselect();
 				break;
 			}
-			console.log(this.selectedObject);
+			//console.log(this.selectedObject);
 		}, false);
 		
 		var hoveringObject = null;
 		
 		window.addEventListener('mousemove', (event)=>{
 			if (event.clientY <= 100) return;
+			if (infoBox.format == infoBox.FORMAT.UpgradePanel) return;
 			// Do raycast to find all objects within sight
 			mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
 			mouseVec.y = - (event.clientY / window.innerHeight) * 2 + 1;
@@ -266,7 +270,7 @@ export class Game{
 	setToPlayerTurn(set){
 
 		this.isPlayerTurn = set;
-
+		console.log(set?"Player's":"Animal's", "turn");
 		if (set){
 			// Change what UI displays
 			infoBox.format = infoBox.FORMAT.MissionInfo;
@@ -279,11 +283,11 @@ export class Game{
 			}
 
 			this.player.forEach((player)=>{
-				player.action.setActionPoint(2);
+				player.setActionPoint(2);
 			});
 
 			this.enemy.forEach((enemy)=>{
-				enemy.action.setActionPoint(0);
+				enemy.setActionPoint(0);
 			});
 		}
 		else{
@@ -291,12 +295,14 @@ export class Game{
 			infoBox.format = infoBox.FORMAT.HunterStateTrack;
 
 			this.player.forEach((player)=>{
-				player.action.setActionPoint(0);
+				player.setActionPoint(0);
 			});
 
 			this.enemy.forEach((enemy)=>{
-				enemy.action.setActionPoint(2);
+				enemy.setActionPoint(2);
 			});
+
+			this.aiAgent.AIControl();
 		}
 	}
 }

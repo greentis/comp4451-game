@@ -23,7 +23,11 @@
 		<script type="module" src="/WeaponProperties.js"></script>
 		<script type="module" src="/AnimalProperties.js"></script>
 		<style>
-			body { margin: 0; background-color: black;}
+			body { 
+				margin: 0;
+				background-color: black;
+				font-family: Arial, Arial, Helvetica, sans-serif;
+			}
 			#infoBox {
 				color: white;
 				background-color: black;
@@ -35,6 +39,11 @@
 				flex-wrap:nowrap;
     			justify-content:space-evenly;
 				gap:0px;
+			}
+
+			.extended{
+				height: 60%;
+				width:60%
 			}
 
 			.container {
@@ -72,15 +81,21 @@
 		</style>
 	</head>
 	<body>
-		<div id='infoBox'>
+		<div id='infoBox' :class="format == 'UpgradePanel' ? 'extended': ''">
 			<div class="container">
-				<div class="box">
-					Forest Hunter
+				<div class="box" style="font-size:x-large; color:rgb(46, 198, 120)">
+					<strong>Forest Hunter</strong> 
 				</div>
 			</div>
 			
 			
 			<div v-if="format == 'MissionInfo'" class="container">
+				<div v-on:click="passRound" class="box">
+					Mission {{missionNo}}
+				</div>
+				<div v-on:click="passRound" class="box">
+					Animals left: {{enemies.size}}
+				</div>
 				<div v-on:click="passRound" class="box controller" style="color:red">
 					End Round
 				</div>
@@ -106,6 +121,9 @@
 			</div>
 			<div v-if="format == 'HunterStateTrack'" class="container">
 				<div v-for="p in players" class="box">{{p.name}}<br> ❤️{{p.health}}</div>
+			</div>
+			<div v-if="format == 'UpgradePanel'" class="container">
+
 			</div>
 		</div>
 		

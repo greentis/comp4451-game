@@ -25,7 +25,7 @@ export class AIAgent {
     //during the enemy turn, the function will be called only once
     //the action of different animal will be done in the function already
     //no need use for loop to repeat calling the function
-    AIControl() {
+    async AIControl() {
         //follow below steps to implement the AIControl for each animal
         //1. check if the animal is wake/ or getting reinforced by other animal in the same group
         //2. if the animal is wake, use the resource assignment algorithm to assign the action to the animal
@@ -45,9 +45,8 @@ export class AIAgent {
             if (!e.wake) {
                 continue;
             }
-
-            e.actionPoint = 2;
-            while (e.actionPoint > 0) {
+            let timeout = 0;
+            while (e.getActionPoint() > 0 && e.actionstate != "localMinima" && timeout < 20) {
                 //the action will be assigned according to the overall priority, calculated as below:
                 // overall priority(for each action) = basic priority * e^(priority modifier)
                 // probability of taking each action = overall priority of action t / sum of overall priority
@@ -57,19 +56,19 @@ export class AIAgent {
                 var findCoverModifier = this.findCoverModifier(e);  //TODO: implement this function
                 var attackPlayerModifier = this.attackPlayerModifier(e); //TODO: implement this function
                 var escapeModifier = this.escapeModifier(e); //TODO: implement this function
-                console.log("findCoverModifier: ", findCoverModifier, "attackPlayerModifier: ", attackPlayerModifier, "escapeModifier: ", escapeModifier);
+                //console.log("findCoverModifier: ", findCoverModifier, "attackPlayerModifier: ", attackPlayerModifier, "escapeModifier: ", escapeModifier);
 
                 //calculate the overall priority for each action
                 var overallPriority = [];
                 overallPriority.push(e.actionPriority.cover * findCoverModifier);
                 overallPriority.push(e.actionPriority.attack * attackPlayerModifier);
                 overallPriority.push(e.actionPriority.escape * escapeModifier);
-                console.log("overallPriority: ", overallPriority);
+                //console.log("overallPriority: ", overallPriority);
 
                 //calculate the probability of taking each action
                 var sum = overallPriority.reduce((a, b) => a + b, 0);
                 var probability = overallPriority.map(e => e / sum);
-                console.log("probability: ", probability);
+                //console.log("probability: ", probability);
 
                 //randomly choose the action according to the probability
                 let cumulativeSum = 0;
@@ -81,28 +80,31 @@ export class AIAgent {
                         break;
                     }
                 }
-                console.log("chosenAction: ", chosenAction);
+                //console.log(e.name, "chosenAction ", chosenAction, "with Action Point",e.getActionPoint());
 
                 //3. carry out the action of the animal
                 switch (chosenAction) {
                     case 0:
                         //finding cover
-                        this.findCover(e, seed);    //TODO: implement this function
+                        await this.findCover(e, seed);    //TODO: implement this function
                         break;
                     case 1:
                         //attack player
-                        this.attackPlayer(e, seed); //TODO: implement this function
+                        await this.attackPlayer(e, seed); //TODO: implement this function
                         break;
                     case 2:
                         //escape
-                        this.escape(e, seed);  //TODO: implement this function
+                        await this.escape(e, seed);  //TODO: implement this function
                         break;
+                    case -1:
+                        e.actionstate="localMinima";
                     default:
                         break;
                 }
-                
+                timeout++;
             }  
         }
+        this.game.setToPlayerTurn(true);
     }
 
     //helper function of AIControl
@@ -126,7 +128,7 @@ export class AIAgent {
 
         //factor 1: the health of the animal
         findCoverModifier += (0.8 - e.health / e.maxHealth) * 1.5;
-        console.log("findCoverModifier 1: ", findCoverModifier);
+        //console.log("findCoverModifier 1: ", findCoverModifier);
 
         //factor 2: whether the animal is exposed to the player
         var player = this.player;
@@ -137,12 +139,12 @@ export class AIAgent {
         //var enemyTile = e.getTile();
         var exposed = 0;
         for (let p of playerTile) {
-            if (p.isVisibleAI(e)) {
+            if (p.isVisibleBy(e)) {
                 exposed += 1;
             }
         }
         findCoverModifier += (exposed / playerTile.length) * 2.5;
-        console.log("findCoverModifier 2: ", findCoverModifier);
+        //console.log("findCoverModifier 2: ", findCoverModifier);
 
         //factor 3: whether the last action is findCover
         if (e.actionstate == "findCover") {
@@ -166,15 +168,15 @@ export class AIAgent {
         
         var attackable = false;
         for (let t of playerTile) {
-            t.isVisibleAI(e);
-            if (t.isVisibleAI(e)) {
+            t.isVisibleBy(e);
+            if (t.isVisibleBy(e)) {
                 attackable = true;
             }
         }
         if (attackable) {
             attackPlayerModifier += 1.5;
         }
-        console.log("attackPlayerModifier 1: ", attackPlayerModifier);
+        //console.log("attackPlayerModifier 1: ", attackPlayerModifier);
 
         //factor 2: whether last action is findCover
         if (e.actionstate == "findCover") {
@@ -192,7 +194,7 @@ export class AIAgent {
 
         //factor 1: the health of the animal
         escapeModifier += (0.66 - e.health / e.maxHealth) * 3.5;
-        console.log("escapeModifier 1: ", escapeModifier);
+        //console.log("escapeModifier 1: ", escapeModifier);
 
         //factor 2: the remaing animal in the same group versus the remaing player
         var player = this.player;
@@ -208,7 +210,7 @@ export class AIAgent {
             }
         }
         escapeModifier += (playerCount - enemyCount) / playerCount * 6.5;
-        console.log("escapeModifier 2: ", escapeModifier);
+        //console.log("escapeModifier 2: ", escapeModifier);
 
         //factor 3: if last action is escape, the escape modifier will be decreased
         if (e.actionstate == "escape") {
@@ -216,20 +218,20 @@ export class AIAgent {
         }else if(e.actionstate == "findCover"){
             escapeModifier /= 100;
         }
-        console.log("escapeModifier 3: ", escapeModifier);
+        //console.log("escapeModifier 3: ", escapeModifier);
         return Math.exp(escapeModifier);
     }
 
-    findCover(e, seed) {
+    async findCover(e, seed) {
         /* TODO: implement this function */
         e.actionstate = "findCover";
-        e.actionPoint--;
+        console.log(e.name, " findCover");
 
         //step 1: find out the tiles can be reached by the animal
         var reachableTile = [];
         for( let g of this.game.board.grids){
             var t = g[1];
-            if (t.isVisibleAI(e) && t.character == null) {
+            if (t.isVisibleBy(e) && t.character == null) {
                 reachableTile.push(t);
             }
         }
@@ -240,42 +242,30 @@ export class AIAgent {
             //(2.2)the distance between the target tile and the player(close to the player is better)
             //(2.3)will it get too close to enemy of the same group
         var player = this.player;
-        var playerTile = [];
-        for (let p of player) {
-            playerTile.push(p.getTile());
-        }
         var enemy = this.enemy;
-        var enemyTile = [];
-        for (let e2 of enemy) {
-            if (e2.groupID == e.groupID) {
-                enemyTile.push(e2.getTile());
-            }
-        }
         
         var bestTile = null;
         var bestPriority = -1000;
         for(let t of reachableTile){
             //(2.1)the target tile will be seen by how many player
             var exposed = 0;
-            for (let p of playerTile) {
-                if (p.isVisibleAI(e)) {
+            for (let p of player) {
+                if (t.isVisibleBy(p)) {
                     exposed += 1;
                 }
             }
 
             //(2.2)the distance between the target tile and the player(close to the player is better)
             var minDistance = 1000;
-            for (let p of playerTile) {
-                var distance = distanceQR(t, p);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                }
+            for (let p of player) {
+                var distance = distanceQR(t, p.getTile());
+                if (distance < minDistance) minDistance = distance;
             }
 
             //(2.3)will it get too close to enemy of the same group
             var minDistanceEnemy = 1000;
-            for (let e2 of enemyTile) {
-                var distance = distanceQR(t, e2);
+            for (let e2 of enemy) {
+                var distance = distanceQR(t, e2.getTile());
                 if (distance < minDistanceEnemy) {
                     minDistanceEnemy = distance;
                 }
@@ -289,15 +279,14 @@ export class AIAgent {
             }
         }
         
-        if (bestTile) {
-            e.moveTo(bestTile);
-        }
+        await e.moveTo(bestTile);
+        
     }
 
-    attackPlayer(e, seed) {
+    async attackPlayer(e, seed) {
         /* TODO: implement this function */
         e.actionstate = "attackPlayer";
-        e.actionPoint -= 2;
+        console.log(e.name, " attackPlayer");
 
         //step 1: find out which player is able to be attacked(i.e. in the line of sight of the animal)
         var player = this.player;
@@ -307,11 +296,11 @@ export class AIAgent {
         }
         var attackablePlayer = [];
         for (let p of playerTile) {
-            if (p.isVisibleAI(e)) {
+            if (p.isVisibleBy(e)) {
                 attackablePlayer.push(p);
             }
         }
-        console.log("attackablePlayer: ", attackablePlayer);
+        //console.log("attackablePlayer: ", attackablePlayer);
 
         //step 2: choose the player to attack
         //affect factor: 
@@ -322,24 +311,24 @@ export class AIAgent {
         for (let p of attackablePlayer) {
             attackablePlayerHealth.push(p.character.health);
         }
-        console.log("attackablePlayerHealth: ", attackablePlayerHealth);
+        //console.log("attackablePlayerHealth: ", attackablePlayerHealth);
         var attackablePlayerDistance = [];
         for (let p of attackablePlayer) {
             attackablePlayerDistance.push(distanceQR(e.getTile(), p));
         }
-        console.log("attackablePlayerDistance: ", attackablePlayerDistance);
+        //console.log("attackablePlayerDistance: ", attackablePlayerDistance);
         var attackablePlayerHitRate = [];
         for (let p of attackablePlayer) {
             e.findValidPath(p);
             attackablePlayerHitRate.push(e.getHitRate(p));
         }
-        console.log("attackablePlayerHitRate: ", attackablePlayerHitRate);
+        //console.log("attackablePlayerHitRate: ", attackablePlayerHitRate);
 
         var attackablePlayerPriority = [];
         for (let i = 0; i < attackablePlayer.length; i++) {
             attackablePlayerPriority.push(attackablePlayerHitRate[i] * 0.08 - attackablePlayerHealth[i] * 0.5 - attackablePlayerDistance[i] * 0.2);
         }
-        console.log("attackablePlayerPriority: ", attackablePlayerPriority);
+        //console.log("attackablePlayerPriority: ", attackablePlayerPriority);
         var maxPriority = 0;
         var maxIndex = -1;
         for (let i = 0; i < attackablePlayerPriority.length; i++) {
@@ -348,18 +337,17 @@ export class AIAgent {
                 maxIndex = i;
             }
         }
-        console.log("maxIndex: ", maxIndex);
+        //console.log("maxIndex: ", maxIndex);
         if (maxIndex != -1) {
-            e.attack(attackablePlayer[maxIndex]);
+            await e.attack(attackablePlayer[maxIndex]);
         }
     }
 
-    escape(e, seed = null) {
-        //find the tile which is the farest from the player, while can be reached by the animal
+    async escape(e, seed = null) {
+        //find the tile which is the furthest from the player, while can be reached by the animal
         console.log(e);
         e.actionstate = "escape";
-        e.actionPoint--;
-        console.log("escape");
+        console.log(e.name, " escape");
 
         var player = this.player;
         var enemy = this.enemy;
@@ -379,7 +367,7 @@ export class AIAgent {
         for (let g of this.game.board.grids) {
             var t = g[1];
             //console.log("t: ", t);
-            if (t.isVisibleAI(e) && t.character == null) {
+            if (t.isVisibleBy(e) && t.character == null) {
                 var minDistance = 1000;
                 for (let p of playerTile) {
                     //console.log("t: ", t.q, t.r, "p: ", p.q, p.r);
@@ -396,7 +384,7 @@ export class AIAgent {
         }
         console.log("maxTile: ", maxTile);
         if (maxTile) {
-            e.moveTo(maxTile);
+            await e.moveTo(maxTile);
         }
     }
 
@@ -406,14 +394,14 @@ export class AIAgent {
         for (let e of this.enemy) {
             WakeStatus[e.name] = e.wake;
         }
-        console.log("WakeStatus: ", WakeStatus);
+        //console.log("WakeStatus: ", WakeStatus);
     }
 
     printWake(e){
-        console.log("WakeStatus: ", e.wake);
+        //console.log("WakeStatus: ", e.wake);
     }
 
     printActionPoint(e){
-        console.log("ActionPoint: ", e.actionPoint);
+        console.log("ActionPoint: ", e.getActionPoint());
     }
 }
