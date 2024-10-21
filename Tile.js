@@ -7,17 +7,17 @@ import { Hunter } from './Hunter.js';
 import { infoBox } from './infoBox.js';
 
 export class Tile {
-    constructor(q, r, x, y, z, game, typeID = TileProperties.TYPE.Default){
+    constructor(q, r, x, y, z, game, typeID = TileProperties.TYPE.Default, terrainHeight = 0){
         // constructor
         this.q = q;
         this.r = r;
         this.s = 0 - q - r;
         this.x = x;
-        this.y = y;
+        this.terrainHeight = terrainHeight;
+        this.y = y + this.terrainHeight;
         this.z = z;
         this.game = game;
         this.board = game.board;
-        
 
         // pointer
         this.character = null;
@@ -32,7 +32,6 @@ export class Tile {
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.body.add(this.mesh);
         this.body.position.x = this.x;
-        this.body.position.y = this.y;
         this.body.position.z = this.z;
         this.mesh.rotateY(Math.PI/6);
         this.mesh.userData = this;
@@ -55,7 +54,7 @@ export class Tile {
         this.mesh.material.emissive.set(this.properties.emissive);
         this.mesh.material.color.set(this.properties.color);
         this.body.position.y = this.y + this.properties.offsetY;
-        this.mesh.position.y = this.y - 5 + this.properties.offsetYt;
+        this.mesh.position.y = -5 + this.properties.offsetYt;
         if (!this.properties.pathfindable && !this.properties.hittable) return;
         if (this.state == 'selected') {
             this.body.position.y += 0.1;
@@ -80,12 +79,27 @@ export class Tile {
     characterEnter(character){
         this.character = character;
         this.character.action.render();
-        this.body.add(character.body);
+        if (this.properties.ambushable) {
+            if (this.character.constructor == Hunter){
+                this.character.body.position.y = -1;
+            }
+            else{
+                this.character.body.visible = false;
+            }
+            
+        }
+        this.body.add(this.character.body);
         this.deHovering();
     }
 
     characterLeave(){
         this.body.remove(this.character.body);
+        if (this.character.constructor == Hunter){
+            this.character.body.position.y = 0;
+        }
+        else{
+            this.character.body.visible = true;
+        }
         this.state = 'default';
         this.character = null;
     }

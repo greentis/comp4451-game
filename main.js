@@ -100,6 +100,7 @@ export class Game{
 
 		this.ambientLight = new THREE.AmbientLight( 0xAAAAAA ); // soft white light, 0x000000
 		this.scene.add( this.ambientLight );
+		this.scene.fog = new THREE.Fog( 0x000000, 0.001 , 40);
 
 		this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 		

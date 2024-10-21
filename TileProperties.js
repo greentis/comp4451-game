@@ -21,6 +21,7 @@ export class TileProperties {
 
         this.pathfindable = true;   // Can we walk on it?
         this.seeThroughable = true;  // Can we see through it?
+        this.ambushable = false;
         this.hittable = true;       // Can explosions explode on it?
         this.passCost = 1.0;       // How much does it cost to pass through? (1.0 = normal)
         this.hitRateCost = 5.0;      // How much hitRate point it will reduce if bullet pass throught this tile? (5.0 = normal)
@@ -43,7 +44,7 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE.Wall:
                 this.name = 'Wall'
-                this.color = 0x775533;
+                this.color = 0x221114;
 
                 this.pathfindable = false;
                 this.seeThroughable = false; 
@@ -51,6 +52,7 @@ export class TileProperties {
                 this.passCost = 99999;
                 this.hitRateCost = 99999;
                 
+                this.meshScale = 0.85;
                 url = 'assets/high-rock/scene.gltf';
                 break;
             case TileProperties.TYPE.Rock:
@@ -69,13 +71,14 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE.Cover:
                 this.name = 'Cover'
-                this.color = 0x664543;
+                this.color = 0x1b2410;
+
 
                 this.pathfindable = false;
                 this.hittable = true;
                 this.seeThroughable = true;
                 this.passCost = 99999;
-                this.hitRateCost = 25.0;
+                this.hitRateCost = 30.0;
 
                 this.meshScale = 3;
                 //this.offsetX = 0.1;
@@ -94,23 +97,25 @@ export class TileProperties {
                 this.seeThroughable = true;
                 this.hittable = false;
                 this.passCost = 2.0;
-                this.hitRateCost = 5.0;
 
                 break;
             case TileProperties.TYPE.Bush:
                 this.name = 'bush';
-                this.color = 0x00EE99;
+                this.color = 0x043606;
+                this.offsetYm = 0.1;
 
                 this.pathfindable = true;
-                this.seeThroughable = false;
+                this.seeThroughable = true;
+                this.ambushable = true;
                 this.hittable = true;
                 this.passCost = 3.0;
                 this.hitRateCost = 25.0;
+
                 url = 'assets/bush/scene.gltf';
                 break;
             case TileProperties.TYPE.Tree:
                 this.name = 'tree';
-                this.color = 0x00EE33;
+                this.color = 0x083606;
 
                 this.pathfindable = false;
                 this.seeThroughable = false;
@@ -125,6 +130,16 @@ export class TileProperties {
             default:
                 this.mesh = new THREE.Object3D();
                 this.tile.mesh.add(this.mesh);
+
+                const loader = new THREE.TextureLoader();
+                const texture = loader.load( './assets/grass.png' );
+                texture.colorSpace = THREE.SRGBColorSpace;
+
+                const labelMaterial = new THREE.SpriteMaterial({
+                    map: texture,
+                  });
+                const label = new THREE.Sprite(labelMaterial);
+                this.tile.body.add(label);
                 break;
         }
         if(!url) return;

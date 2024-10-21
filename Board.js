@@ -68,6 +68,32 @@ export class Board {
         this.adjacentTiles = [[1, 0], [0, 1], [-1, 1], [-1, 0], [0, -1], [1, -1]]; // pre-calculated adjacent tiles coordinates change
 
         this.generatePolygonal();
+
+        
+
+        /* geometry = new THREE.BufferGeometry();
+        const vertices = [];
+
+        //const sprite = new THREE.TextureLoader().load( './assets/grass.png' );
+        //sprite.colorSpace = THREE.SRGBColorSpace;
+
+        for ( let i = 0; i < 2000; i ++ ) {
+
+            const x = 40 * Math.random() - 20;
+            const y = 10 * Math.random();
+            const z = 40 * Math.random() - 20;
+
+            vertices.push( x, y, z );
+
+        }
+
+        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+
+        material = new THREE.PointsMaterial( { size: 0.5, sizeAttenuation: true, transparent: true } );
+        material.color.setHSL( 1.0, 0.3, 0.7, THREE.SRGBColorSpace );
+
+        const particles = new THREE.Points( geometry, material );
+        this.game.scene.add( particles ); */
     }
     
     
@@ -413,11 +439,11 @@ export class Board {
 
         // 4.3.0 generate the height map of the tile
         // the height of the tile is based on the perlin noise
-        var heightMap = {};
+        this.heightMap = {};
         for (let q = -width; q <= width; q++){
-            heightMap[q] = {};
+            this.heightMap[q] = {};
             for (let r = -length; r <= length; r++){
-                heightMap[q][r] = perlinNoise.perlin2(this.seed, q/width, r/length) 
+                this.heightMap[q][r] = perlinNoise.perlin2(this.seed, q/width, r/length) 
                                 + xxhash(this.seed, q, r)*0.25 
                                 + getHeights(this.temp[q][r])
                                 - 0.35;
@@ -430,7 +456,7 @@ export class Board {
         var waterTile = new Set();
         for (let q = -width; q <= width; q++){
             for (let r = -length; r <= length; r++){
-                if (heightMap[q][r] < this.rainFall){
+                if (this.heightMap[q][r] < this.rainFall){
                     this.temp[q][r] = TileProperties.TYPE.Water;
                     waterTile.add({q: q, r: r});
                 }
@@ -452,7 +478,7 @@ export class Board {
                 //avoid the void tile & boundary tile
                 if (this.temp[q][r] == TileProperties.TYPE.Void) continue;
                 if(this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
-                if (heightMap[q][r] > this.riverSource){
+                if (this.heightMap[q][r] > this.riverSource){
                     this.temp[q][r] = TileProperties.TYPE.Water;
                     riverSource.add({q: q, r: r});
                     riverTile.add({q: q, r: r});
@@ -462,7 +488,7 @@ export class Board {
 
         riverSource.forEach((s)=>{
             var riverEnd = false;
-            var lowestHeight = heightMap[s.q][s.r];
+            var lowestHeight = this.heightMap[s.q][s.r];
             var source = s;
             while(!riverEnd){
                 var temp = source;
@@ -470,7 +496,7 @@ export class Board {
                 adjacent.forEach((a)=>{
                     if(this.checkBoardBoundaries(a.q, a.r, width, length, this.temp)) return;
 
-                    var height = heightMap[a.q][a.r];
+                    var height = this.heightMap[a.q][a.r];
                     
                     if (height < lowestHeight){
                         lowestHeight = height;
@@ -546,7 +572,7 @@ export class Board {
             bushValue *= k1;
            
             //factor 2: based on the height of the tile
-            var height = heightMap[t.q][t.r];
+            var height = this.heightMap[t.q][t.r];
             treeValue += (1 - height) * k2;
             bushValue += ((height - 0.45) ** 2 - 0.25)* k2;
 
@@ -924,7 +950,7 @@ export class Board {
             var x = q * Math.cos(Math.PI / 6);
             var y = 0;
             var z = r + q * Math.cos(Math.PI / 3);
-            var tile = new Tile(q, r, x, y, -z,this.game, this.temp[q][r]);
+            var tile = new Tile(q, r, x, y, -z,this.game, this.temp[q][r], this.heightMap[q][r]);
             if(q==-11 && r==0) console.log('q', q, 'r', r, 'type', this.temp[q][r], 'x', x, 'y', y, 'z', z);
 
             // Add tile to map

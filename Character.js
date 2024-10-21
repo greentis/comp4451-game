@@ -70,11 +70,11 @@ export class Character{
     }
 
     async moveTo(tile) {
-        this.reduceActionPoint(1);
+        
 
         var path = this.findValidPath(tile);
-        
-        if (!path) return false;
+        if (path.length == 0) return false;
+        this.reduceActionPoint(1);
         let x,y,z;
         this.getTile().setState('default');
         for (let t of path){
@@ -104,6 +104,7 @@ export class Character{
                         // ~ Animation ~
                         this.body.position.x = lerp(x, t.x, time/200);
                         this.body.position.z = lerp(z, t.z, time/200);
+                        this.body.position.y = y;
 
                         if (time < 200) { 
                             // Call another animation frame
