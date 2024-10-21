@@ -26,7 +26,7 @@ enemy AI(2) T
 week 5:
 more weapons type
 upgrade system (1)
-enemy AI(3) T
+
 
 week 6:
 upgrade system(2)
