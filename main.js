@@ -183,12 +183,15 @@ export class Game{
 			var intersects = raycaster.intersectObjects(this.scene.children);
 			
 			// Deactivate objects that is activated in previous call
-			if (hoveringObject) hoveringObject.deHovering();
-			hoveringObject = null;
+			
 			// Try activating the object in ascending order
 			for (var i = 0; i < intersects.length; i++) {
 				var newObject = intersects[i].object.userData;
 				if (!newObject.hovering) continue;
+				if (hoveringObject) {
+					if (hoveringObject == newObject) break;
+					hoveringObject.deHovering();
+				}
 				hoveringObject = newObject;
 				newObject.hovering();
 				break;

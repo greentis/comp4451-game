@@ -52,10 +52,9 @@ var EpTable = {
 export class Board {
     constructor(game){
         this.game = game;
-
         this.body = new THREE.Group();
         var geometry = new THREE.PlaneGeometry( 100, 100 );
-        var material = new THREE.MeshPhongMaterial( {color: 0x052010 ,side: THREE.DoubleSide} );
+        var material = new THREE.MeshPhongMaterial( {color: 0x054509 ,side: THREE.DoubleSide} );
         this.mesh = new THREE.Mesh( geometry, material );
         this.body.add(this.mesh);
         this.mesh.rotateX(Math.PI/2);
@@ -94,7 +93,7 @@ export class Board {
                                    //not that cover threshold should be smaller than wall threshold
             if(this.coverThreshold >= this.wallThreshold) this.coverThreshold = this.wallThreshold;
         this.rainFall = 0.1; //control the rain fall of the map, tile with height below rain fall will be turned into water tile
-        this.riverSource = 0.85; //control the source of the river, tile with height higher than river source will start the river tracing 
+        this.riverSource = 0.8; //control the source of the river, tile with height higher than river source will start the river tracing 
         this.vegetationCoverage = 0.1; //control the coverage of the vegetation in the map
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed

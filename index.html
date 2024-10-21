@@ -73,6 +73,7 @@
 			.largeBox{
 				width:200px;
 				height:50px;
+				flex-grow: 2;
 			}
 
 			.controller{
@@ -90,10 +91,13 @@
 			
 			
 			<div v-if="format == 'MissionInfo'" class="container">
-				<div v-on:click="passRound" class="box">
+				<div class="box">
 					Mission {{missionNo}}
 				</div>
-				<div v-on:click="passRound" class="box">
+				<div class="box largeBox">
+					{{note}}
+				</div>
+				<div class="box">
 					Animals left: {{enemies.size}}
 				</div>
 				<div v-on:click="passRound" class="box controller" style="color:red">
@@ -122,7 +126,7 @@
 			<div v-if="format == 'HunterStateTrack'" class="container">
 				<div v-for="p in players" class="box">{{p.name}}<br> ❤️{{p.health}}</div>
 			</div>
-			<div v-if="format == 'UpgradePanel'" class="container">
+			<div v-if="format == 'UpgradePanel'" class="{container}">
 
 			</div>
 		</div>

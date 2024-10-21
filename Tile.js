@@ -23,7 +23,7 @@ export class Tile {
         this.character = null;
 
         // constant
-        this.gap = 0.5;
+        this.gap = 0.45;
 
         // this.mesh constructed here
         this.body = new THREE.Object3D();
@@ -51,11 +51,11 @@ export class Tile {
     }
 
     render(){
-        this.mesh.scale.set(0.1, 0.1, 0.1);
+        this.mesh.scale.set(0.1 + this.properties.tileScaling, 0.1, 0.1+ this.properties.tileScaling);
         this.mesh.material.emissive.set(this.properties.emissive);
         this.mesh.material.color.set(this.properties.color);
         this.body.position.y = this.y + this.properties.offsetY;
-        this.mesh.position.y = this.y - 5;
+        this.mesh.position.y = this.y - 5 + this.properties.offsetYt;
         if (!this.properties.pathfindable && !this.properties.hittable) return;
         if (this.state == 'selected') {
             this.body.position.y += 0.1;
@@ -79,6 +79,7 @@ export class Tile {
 
     characterEnter(character){
         this.character = character;
+        this.character.action.render();
         this.body.add(character.body);
         this.deHovering();
     }
@@ -171,8 +172,8 @@ export class Tile {
                     break;
                 case Hunter.ACTION.attack:
                     if(hunter.lineOfSight(this, true)){
-                        hunter.attack(this);
                         this.game.movingPlayer = null;
+                        hunter.attack(this);
                     }
                     break;
                 default: throw new Error("game.movingPlayer is in idle state!");
@@ -206,7 +207,7 @@ export class Tile {
 
     hovering(){
         if (this.state == 'selected' || this.state == 'aggressive') return;
-        if (!this.isVisible()) {
+        if (true && !this.isVisible()) {
             infoBox.hitRate = 0;
             return;
         }

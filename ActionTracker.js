@@ -11,7 +11,7 @@ export class ActionTracker{
         char.body.add(this.mesh);
         
         
-        this.mesh.position.y = 0.01;
+        this.render();
         this.mesh.rotateX(-Math.PI/2);
         
         this.mesh.name = "indicator";
@@ -38,6 +38,10 @@ export class ActionTracker{
         this.actionPoint -= k;
         if (this.actionPoint < 0) this.actionPoint = 0;
         this.setActionPoint(this.actionPoint);
+    }
+
+    render(){
+        this.mesh.position.y = 0.01 + this.character.getTile().properties.offsetYt;
     }
 }
 

@@ -150,7 +150,10 @@ export class Character{
                     const animate = (timestamp)=>{
                         // record the starting time
                         if (!start) start = timestamp;
-
+                        if (duration < 0.05) {
+                            console.log("skip animation");
+                            resolve();
+                        }
                         // time represents time passed since start
                         const time = timestamp - start;
 
@@ -172,10 +175,10 @@ export class Character{
                 })
             }
 
-            // The mother function is async to be ableto await
-            await waitForMoveAnimation();
+            // The mother function is async to be able to await
+            //await waitForMoveAnimation();
         //console.log(this.name, " is attacking ", tile.mesh.name);
-        this.weapon.dealsDamage(tile, this);
+        this.weapon.dealsDamage(tile, this.getHitRate(tile), this);
     }
 
     takeDamage(damage){
@@ -190,7 +193,9 @@ export class Character{
                 }
                 this.game.enemy.delete(this);
             }
-            if (this.game.player.has(this)) this.game.player.delete(this);
+            else if (this.game.player.has(this)) {
+                this.game.player.delete(this);
+            }
             console.log(this.name, " is dead");
             this.getTile().characterLeave();
             delete this;

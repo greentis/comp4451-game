@@ -8,8 +8,11 @@ export var infoBox = {
         AttackData:"AttackData",
         UpgradePanel:"UpgradePanel"
     },
+    
     format:"MissionInfo",
     missionNo:1,
+    note:"Find and kill all animals!",
+
     health:undefined,
     sightRange:undefined,
     movementSpeed:undefined,

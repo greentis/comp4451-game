@@ -40,7 +40,6 @@ export class WeaponProperties {
             default:
                 break;
         }
-        console.log(this.id);
         const gltfLoader = new GLTFLoader();
         gltfLoader.load(url, (gltf) => {
             var model = gltf.scene;
