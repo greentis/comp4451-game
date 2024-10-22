@@ -193,6 +193,7 @@ export class Character{
                     }
                 }
                 this.game.enemy.delete(this);
+                infoBox.enemies = this.game.enemy;
             }
             else if (this.game.player.has(this)) {
                 this.game.player.delete(this);

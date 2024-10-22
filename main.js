@@ -62,6 +62,9 @@ export class Game{
 			}
 			//console.log(this.enemy);
 			this.enemy.add(new Animal(-5, -5, "Monkey", this, name, -1)); //-6, -9
+			
+			infoBox.enemies = this.enemy;
+			
 			this.aiAgent = new AIAgent(this);
 			//this.aiAgent.AIControl();
 			this.aiAgent.printWakeAll();
@@ -274,6 +277,7 @@ export class Game{
 	setToPlayerTurn(set){
 
 		this.isPlayerTurn = set;
+		infoBox.note="Find and kill all animals!";
 		console.log(set?"Player's":"Animal's", "turn");
 		if (set){
 			// Change what UI displays

@@ -29,13 +29,13 @@ export class Weapon{
         }
 
         function attenuationFunc(damage, radius, dist){
+            if (radius == 0) return damage;
             let ak = damage - Math.max(0, Math.round(damage * lerp(0.0, 1.0, (dist+0.0)/radius)-0.51));
             console.log(ak);
             return ak;
         }
 
         let affects = tile.getTilesWithinRange(this.blastRadius);
-        console.log(affects);
         affects.forEach(t => {
             if (!t.character) return;
             if (t.character.constructor == damager.constructor) return;

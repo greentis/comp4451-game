@@ -13,7 +13,7 @@ export class Tile {
         this.r = r;
         this.s = 0 - q - r;
         this.x = x;
-        this.terrainHeight = terrainHeight;
+        this.terrainHeight = 0;
         this.y = y + this.terrainHeight;
         this.z = z;
         this.game = game;
