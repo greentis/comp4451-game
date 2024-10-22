@@ -138,13 +138,13 @@ export class Character{
       
       
 
-    async attack(tile){
+    attack(tile){
         this.reduceActionPoint(2);
-
-        let facingOld = this.body.rotation.y;
-        let facingNew = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
-        let duration = 2 * Math.abs(facingOld-facingNew) * 180 / Math.PI;
-        let start;
+        /* 
+            let facingOld = this.body.rotation.y;
+            let facingNew = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
+            let duration = 2 * Math.abs(facingOld-facingNew) * 180 / Math.PI;
+            let start;
             const waitForMoveAnimation = ()=>{
                 return new Promise((resolve)=>{
                     // the animation frame function
@@ -174,7 +174,7 @@ export class Character{
                     // Call the first animation frame
                     requestAnimationFrame(animate);
                 })
-            }
+            } */
 
             // The mother function is async to be able to await
             //await waitForMoveAnimation();
@@ -185,7 +185,8 @@ export class Character{
     takeDamage(damage){
         this.health -= damage;
         if (this.health <= 0) {
-            this.body.visible = false;
+            this.killed();
+            /* this.body.visible = false;
             if (this.game.enemy.has(this)) {
                 for(let e of this.game.enemy){
                     if(e.group == this.groupID){
@@ -200,8 +201,22 @@ export class Character{
             }
             console.log(this.name, " is dead");
             this.getTile().characterLeave();
-            delete this;
+            delete this; */
         }
+    }
+
+    killed(){
+        this.body.visible = false;
+        console.log(this.name, " is dead");
+        this.getTile().characterLeave();
+        delete this;
+    }
+
+    // This function is visual. What ambush does is hitRateCost*=3
+    ambush(){
+        this.weapon.body.visible = false;
+        this.body.position.y = -1;
+
     }
 
     facing(q, r){
@@ -214,6 +229,7 @@ export class Character{
     // for checking an attack hits the tile, use isSolid = true
     // for checking what board elements the players SEES, use isSolid = false
     lineOfSight(tile, isSolid = true, toInfinity = false){
+        console.log("test sight line");
         var N = distance(this.getTile(), tile) + 0.0;
         var sightRange = toInfinity ? 1000 : this.sightRange;
         if (N > sightRange) return false;
@@ -235,6 +251,7 @@ export class Character{
             
             // Appending
             t = this.board.getTile(nq, nr);
+            if (!t) continue;
 
             // Check if this is valid
 
@@ -341,6 +358,7 @@ export class Character{
         tiles.forEach((t)=>{
             hitRate -= t.properties.hitRateCost;
         })
+        if (tile.properties.ambushable) hitRate -= tile.properties.hitRateCost * 2;
         return hitRate < 0 ? 0 : hitRate;
     }
 

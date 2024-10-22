@@ -102,6 +102,7 @@ export class AIAgent {
                         break;
                 }
                 timeout++;
+                //console.log(timeout);
             }  
         }
         this.game.setToPlayerTurn(true);
@@ -283,7 +284,7 @@ export class AIAgent {
         
     }
 
-    async attackPlayer(e, seed) {
+    attackPlayer(e, seed) {
         /* TODO: implement this function */
         e.actionstate = "attackPlayer";
         console.log(e.name, " attackPlayer");
@@ -339,7 +340,7 @@ export class AIAgent {
         }
         //console.log("maxIndex: ", maxIndex);
         if (maxIndex != -1) {
-            await e.attack(attackablePlayer[maxIndex]);
+            e.attack(attackablePlayer[maxIndex]);
         }
     }
 

@@ -109,6 +109,17 @@ export class Hunter extends Character{
             }
         }
 
+        killed(){
+            console.log(this.game.player);
+            const index = this.game.player.findIndex(obj => obj.name == this.name);
+            if (index !== -1) {
+                this.game.player.splice(index, 1);
+            }
+            if (this.game.player.length == 0) this.game.missionFailed();
+            super.killed();
+        }
+
+
         hovering(){
             this.getTile().hovering();
         }

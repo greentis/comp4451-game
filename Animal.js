@@ -47,6 +47,23 @@ export class Animal extends Character{
 
     }
 
+    killed(){
+        for(let e of this.game.enemy){
+            if(e.group == this.groupID){
+                e.wake = true;
+            }
+        }
+        this.game.enemy.delete(this);
+        infoBox.enemies = this.game.enemy;
+        if (this.game.enemy.length == 0) this.game.missionCompleted();
+        super.killed();
+    }
+
+    ambush(){
+        super.ambush();
+        this.weapon.body.visible = false;
+    }
+
     //Event handler
     select(){
         // Case 1: Player can only select visible animal

@@ -79,30 +79,20 @@ export class Tile {
     characterEnter(character){
         this.character = character;
         this.character.action.render();
-        if (this.properties.ambushable) {
-            if (this.character.constructor == Hunter){
-                this.character.body.position.y = -1;
-            }
-            else{
-                this.character.body.visible = false;
-            }
-            
-        }
+        if (this.properties.ambushable) this.character.ambush();
         this.body.add(this.character.body);
         this.deHovering();
     }
 
     characterLeave(){
         this.body.remove(this.character.body);
-        if (this.character.constructor == Hunter){
-            this.character.body.position.y = 0;
-        }
-        else{
-            this.character.body.visible = true;
-        }
+        this.character.body.position.y = 0;
+        this.character.weapon.body.visible = true;
         this.state = 'default';
         this.character = null;
     }
+
+
 
     isVisible(){
         for (var player of this.game.player){
@@ -237,9 +227,9 @@ export class Tile {
             else if (this.game.movingPlayer.actionstate == Hunter.ACTION.attack){
                 var path = this.game.movingPlayer.lineOfSight(this, true);
                 if (!path) return;
-                infoBox.hitRate = this.game.movingPlayer.getHitRate(this);
-                infoBox.target = this.character ? this.character : undefined;
-                infoBox.format = infoBox.FORMAT.AttackData;
+                //infoBox.hitRate = this.game.movingPlayer.getHitRate(this);
+                //infoBox.target = this.character ? this.character : undefined;
+                //infoBox.format = infoBox.FORMAT.AttackData;
 
                 this.game.board.addMarkings(this.getTilesWithinRange(this.game.movingPlayer.weapon.blastRadius),'blasted');
                 this.game.board.addMarkings(path,'pathed');

@@ -956,9 +956,9 @@ export class Board {
             // Add tile to map
             this.body.add(tile.body);
             this.grids.set(q.toString()+r.toString(), tile);
-            if(q==-11 && r==0) {console.log('tile', tile);
+            if(q==-11 && r==0) {//console.log('tile', tile);
                 //print the corrsponding element in grids
-                console.log('grids', this.grids.get(q.toString()+r.toString()));
+                //console.log('grids', this.grids.get(q.toString()+r.toString()));
             }
         });
         

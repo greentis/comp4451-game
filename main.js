@@ -27,64 +27,77 @@ export class Game{
 		this.selectedObject = null;
 		this.activateEventHandler();
 
+		this.missionNo = 1;
+
 	//
 	// For each mission
 	//
+			this.generateMission();
+		
+	}
 
+	missionCompleted(){
+		this.setToPlayerTurn(false);
+		infoBox.format = infoBox.FORMAT.UpgradePanel;
+	}
+
+	missionFailed(){
+
+	}
+
+	generateMission(){
 		// Board & Tiles (Development phase)
-			this.board = new Board(this);
-			this.board.body.rotation.x = Math.PI * 0;
-			this.board.body.rotation.y = 0;
-			this.scene.add(this.board.body);
+		infoBox.missionNo = this.missionNo;
+		this.board = new Board(this);
+		this.board.body.rotation.x = Math.PI * 0;
+		this.board.body.rotation.y = 0;
+		this.scene.add(this.board.body);
 
-			this.movingPlayer = null;
-			
+		this.movingPlayer = null;
+
 		// Players (Development phase)
-			var playerSpawnPoints = this.board.getPlayerSpawnPoint();
-			this.player = [
-				new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 1, WeaponProperties.TYPE.Gun, this, 'Player 1'),
-				new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 1, WeaponProperties.TYPE.Bomb, this, 'Player 2'),
-				new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 1, WeaponProperties.TYPE.Saw, this, 'Player 3')
-			];
-			//this.camera.position.set(this.player[0].getTile().x, 5, this.player[0].getTile().z + 5);
-			//this.controls.target = new THREE.Vector3(this.player[0].getTile().x, 5, this.player[0].getTile().z + 5)
-			var enemySpawnPoints = this.board.getEnemySpawnPoint();
-			this.enemy = new Set([]);
-			for (let i = 0; i < Object.keys(enemySpawnPoints).length; i++){
-				for(let j = 0; j < Object.keys(enemySpawnPoints[i]).length; j++){
-					
-					//make a name according to [i][j]
-					var name = 'Enemy ' + i + j;
-					if (enemySpawnPoints[i] && enemySpawnPoints[i][j]) {
-						this.enemy.add(new Animal(enemySpawnPoints[i][j][1].q, enemySpawnPoints[i][j][1].r, "Monkey", this, name, i));
-					}
+		var playerSpawnPoints = this.board.getPlayerSpawnPoint();
+		this.player = [
+			new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 1, WeaponProperties.TYPE.Gun, this, 'Player 1'),
+			new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 1, WeaponProperties.TYPE.Bomb, this, 'Player 2'),
+			new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 1, WeaponProperties.TYPE.Saw, this, 'Player 3')
+		];
+		//this.camera.position.set(this.player[0].getTile().x, 5, this.player[0].getTile().z + 5);
+		//this.controls.target = new THREE.Vector3(this.player[0].getTile().x, 5, this.player[0].getTile().z + 5)
+		var enemySpawnPoints = this.board.getEnemySpawnPoint();
+		this.enemy = new Set([]);
+		for (let i = 0; i < Object.keys(enemySpawnPoints).length; i++){
+			for(let j = 0; j < Object.keys(enemySpawnPoints[i]).length; j++){
+				
+				//make a name according to [i][j]
+				var name = 'Enemy ' + i + j;
+				if (enemySpawnPoints[i] && enemySpawnPoints[i][j]) {
+					this.enemy.add(new Animal(enemySpawnPoints[i][j][1].q, enemySpawnPoints[i][j][1].r, "Monkey", this, name, i));
 				}
 			}
-			//console.log(this.enemy);
-			this.enemy.add(new Animal(-5, -5, "Monkey", this, name, -1)); //-6, -9
-			
-			infoBox.enemies = this.enemy;
-			
-			this.aiAgent = new AIAgent(this);
-			//this.aiAgent.AIControl();
-			this.aiAgent.printWakeAll();
-			
-			//this.aiAgent.printActionPoint(Array.from(this.enemy)[this.enemy.size - 1]);
-			//this.aiAgent.escape(Array.from(this.enemy)[this.enemy.size - 1]);
-			//this.aiAgent.printActionPoint(Array.from(this.enemy)[this.enemy.size - 1]);
-			
-			
+		}
+		//console.log(this.enemy);
+		this.enemy.add(new Animal(-5, -5, "Monkey", this, name, -1)); //-6, -9
+
+		infoBox.enemies = this.enemy;
+
+		this.aiAgent = new AIAgent(this);
+		//this.aiAgent.AIControl();
+		this.aiAgent.printWakeAll();
+
+		//this.aiAgent.printActionPoint(Array.from(this.enemy)[this.enemy.size - 1]);
+		//this.aiAgent.escape(Array.from(this.enemy)[this.enemy.size - 1]);
+		//this.aiAgent.printActionPoint(Array.from(this.enemy)[this.enemy.size - 1]);
+
+
 		// set the camera to the first player
 		//this.camera.position.set(0, 5, 5);
 		//this.camera.lookAt(0, 0, 0);
-		
-		
+
+
 		// turn iteration
 		// ---- Press 'f' key to skip turn
-			this.isPlayerTurn = true;
-
-		
-		
+		this.isPlayerTurn = true;
 	}
 
 	createScene(){
@@ -264,6 +277,12 @@ export class Game{
 					break;
 				case 'r':	// for debug purpose to skip enemies turn
 					this.setToPlayerTurn(true);
+					break;
+				case 'p':	// for debug purpose to skip enemies turn
+					this.missionCompleted();
+					break;
+				case 'l':
+					this.missionFailed();
 					break;
 				default:
 					console.log(event.key);
