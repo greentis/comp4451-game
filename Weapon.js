@@ -5,6 +5,8 @@ import { Character } from './Character.js';
 import { WeaponProperties } from '/WeaponProperties.js';
 import { infoBox } from './infoBox.js';
 
+const distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
+const lerp = (a, b, t) => {return a + (b - a) * t;}
 export class Weapon{
     constructor(character, typeID, damage = 1){
         this.character = character;
@@ -25,12 +27,19 @@ export class Weapon{
             infoBox.note = "Missed Hit!";
             return;
         }
+
+        function attenuationFunc(damage, radius, dist){
+            let ak = damage - Math.max(0, Math.round(damage * lerp(0.0, 1.0, (dist+0.0)/radius)-0.51));
+            console.log(ak);
+            return ak;
+        }
+
         let affects = tile.getTilesWithinRange(this.blastRadius);
+        console.log(affects);
         affects.forEach(t => {
-            console.log("tile");
             if (!t.character) return;
             if (t.character.constructor == damager.constructor) return;
-            t.character.takeDamage(this.damage);
+            t.character.takeDamage(attenuationFunc(this.damage, this.blastRadius, distance(t, tile)));
             infoBox.note = "Successful Hit!";
         });
         //console.log(this.name, " hits ", tile.mesh.name);

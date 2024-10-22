@@ -279,7 +279,7 @@ export class AIAgent {
             }
         }
         
-        await e.moveTo(bestTile);
+        if (bestTile) await e.moveTo(bestTile);
         
     }
 

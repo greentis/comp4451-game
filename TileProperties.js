@@ -89,6 +89,7 @@ export class TileProperties {
             case TileProperties.TYPE.Water:
                 this.name = 'Water'
                 this.color = 0x3555b5;
+                this.tile.body.position.y=0;
                 this.offsetY = 0;
                 this.offsetYt = 0.15;
                 this.tileScaling = 0.01;
@@ -128,21 +129,21 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE.Default:
             default:
-                this.mesh = new THREE.Object3D();
-                this.tile.mesh.add(this.mesh);
-
-                const loader = new THREE.TextureLoader();
-                const texture = loader.load( './assets/grass.png' );
-                texture.colorSpace = THREE.SRGBColorSpace;
-
-                const labelMaterial = new THREE.SpriteMaterial({
-                    map: texture,
-                  });
-                const label = new THREE.Sprite(labelMaterial);
-                this.tile.body.add(label);
+                if(Math.random()<0.1){
+                    const loader = new THREE.TextureLoader();
+                    const texture = loader.load( './assets/grass.png' );
+                    texture.colorSpace = THREE.SRGBColorSpace;
+    
+                    const labelMaterial = new THREE.SpriteMaterial({
+                        map: texture,
+                      });
+                    const label = new THREE.Sprite(labelMaterial);
+                    this.tile.body.add(label);
+                    this.mesh=label;
+                }
                 break;
         }
-        if(!url) return;
+        if(!url)return;
         const gltfLoader = new GLTFLoader();
         gltfLoader.load(url, (gltf) => {
             var model = gltf.scene;
