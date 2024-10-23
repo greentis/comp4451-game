@@ -41,7 +41,6 @@ export class ActionTracker{
     }
 
     render(){
-        console.log(this.character.q, this.character.r);
         this.mesh.position.y = 0.01 + this.character.getTile().properties.offsetYt;
     }
 }
