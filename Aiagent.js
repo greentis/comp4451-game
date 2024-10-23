@@ -160,6 +160,12 @@ export class AIAgent {
         /* TODO: implement this function */
         var attackPlayerModifier = 1;
 
+        //factor 0: check if it is first action(i.e. actionpoint == 2)
+        if (e.getActionPoint() == 2) {
+            attackPlayerModifier = 0;
+            return 0;
+        }
+
         //factor 1: if the animal can attack the tile where the player is standing
         var player = this.player;
         var playerTile = [];
