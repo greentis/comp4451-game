@@ -124,6 +124,7 @@ export class Board {
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
         this.enemyDensity = 0.01; //control the density of the enemy per tile in the map(suggested value: < 0.05)
+        this.averagePerGroup = 4; //control the average number of enemy per group
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
         this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
 
@@ -710,7 +711,7 @@ export class Board {
         // under above restriction, enemy type(and number) of each group will be selected according to this.seed
         var enemyGroupNumber = Math.max(1, Math.round(this.enemyDensity / 4.4 * this.totalArea));
         this.enemyGroup = {};
-        var Egp = 6.0 + this.levelDifficulty * 2.5;
+        var Egp = (this.averagePerGroup) * 2.0 + (this.levelDifficulty - 1) * 2.5 + 0.5;
         for (let i = 0; i < enemyGroupNumber; i++){
             this.enemyGroup[i] = {};
             var Ep = 0.0;
