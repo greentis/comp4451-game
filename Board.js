@@ -942,27 +942,7 @@ export class Board {
         }
 
 
-        // 7.2 generate the tile based on the annotated map
-        this.forEachGrid((q, r)=>{
-            //skip the tile if it is void tile
-            if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold ) return;
-
-            var x = q * Math.cos(Math.PI / 6);
-            var y = 0;
-            var z = r + q * Math.cos(Math.PI / 3);
-            var tile = new Tile(q, r, x, y, -z,this.game, this.temp[q][r], this.heightMap[q][r]);
-            if(q==-11 && r==0) console.log('q', q, 'r', r, 'type', this.temp[q][r], 'x', x, 'y', y, 'z', z);
-
-            // Add tile to map
-            this.body.add(tile.body);
-            this.grids.set(q.toString()+r.toString(), tile);
-            if(q==-11 && r==0) {//console.log('tile', tile);
-                //print the corrsponding element in grids
-                //console.log('grids', this.grids.get(q.toString()+r.toString()));
-            }
-        });
-        
-        /*
+        // 7.2 generate the tile based on the annotated map   
         for(let q of Object.keys(this.temp)){
             for(let r of Object.keys(this.temp[q])){
                 //console.log('q', q, 'r', r, 'type', this.temp[q][r]);
@@ -972,8 +952,9 @@ export class Board {
                 
                 var x = q * Math.cos(Math.PI / 6);
                 var y = 0;
-                var z = r + q * Math.cos(Math.PI / 3);
+                var z = parseFloat(r) + q * Math.cos(Math.PI / 3);
                 var tile = new Tile(q, r, x, y, -z,this.game, this.temp[q][r]);
+                //console.log('q', q, 'r', r, 'type', this.temp[q][r], 'x', x, 'y', y, 'z', z);
 
                 // Add tile to map
                 this.body.add(tile.body);
@@ -982,7 +963,7 @@ export class Board {
 
             }
         }
-        */
+        
 
     }
 
@@ -990,6 +971,8 @@ export class Board {
     // Private Helper Function
     // 
     forEachGrid(func){
+        console.log('warning: forEachGrid is no longer used');
+        /*
         var vaildGrid = [];
         for (let q = this.qmin; q <= this.qmax; q++){
             for (let r = this.rmin; r <= this.rmax; r++){
@@ -999,6 +982,7 @@ export class Board {
                 func(q, r, s);
             }
         }
+        */
     }
 
 
