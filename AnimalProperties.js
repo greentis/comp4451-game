@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import {Animal} from './Animal.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { Weapon } from './Weapon.js';
 import { WeaponProperties } from './WeaponProperties.js';
@@ -65,10 +64,3 @@ AnimalProperties.ENEMYPOINTS = {
     Monkey: 2
     
 } */
-
-
-
-// Make TileProperties.TYPE Bidirectional
-Object.keys(AnimalProperties.TYPE).forEach(e => {
-    AnimalProperties.TYPE[AnimalProperties.TYPE[e]] = e;
-});

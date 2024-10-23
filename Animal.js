@@ -1,19 +1,16 @@
 import * as THREE from 'three';
 
 import {Character} from './Character.js';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { AnimalProperties } from './AnimalProperties.js';
 import { Hunter } from './Hunter.js';
-import { Weapon } from './Weapon.js';
-import { WeaponProperties } from './WeaponProperties.js';
 
 import { infoBox } from './infoBox.js';
 
 export class Animal extends Character{
     constructor(q, r, typeID, game, name, groupid){
         super(q, r, 1, game, name);
-
         this.setType(AnimalProperties.TYPE.Monkey);
+        
         this.action.setActionPoint(0);
 
         this.groupID = groupid; //groupID is used to determine the group of the animal
@@ -61,7 +58,7 @@ export class Animal extends Character{
 
     ambush(){
         super.ambush();
-        this.weapon.body.visible = false;
+        if (this.weapon) this.weapon.body.visible = false;
     }
 
     //Event handler

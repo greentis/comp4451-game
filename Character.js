@@ -1,11 +1,5 @@
 // Abstract Parent Class of Player character & AI character
 import * as THREE from 'three';
-import {Game} from './main.js';
-import { Tile } from './Tile.js';
-import {Board} from './Board.js';
-import { TileProperties } from './TileProperties.js';
-import { Weapon } from './Weapon.js';
-import { WeaponProperties } from './WeaponProperties.js';
 import { ActionTracker } from './ActionTracker.js';
 import { infoBox } from './infoBox.js';
 
@@ -214,7 +208,6 @@ export class Character{
 
     // This function is visual. What ambush does is hitRateCost*=3
     ambush(){
-        this.weapon.body.visible = false;
         this.body.position.y = -1;
 
     }
@@ -229,7 +222,7 @@ export class Character{
     // for checking an attack hits the tile, use isSolid = true
     // for checking what board elements the players SEES, use isSolid = false
     lineOfSight(tile, isSolid = true, toInfinity = false){
-        console.log("test sight line");
+        //console.log("test sight line");
         var N = distance(this.getTile(), tile) + 0.0;
         var sightRange = toInfinity ? 1000 : this.sightRange;
         if (N > sightRange) return false;
@@ -363,6 +356,7 @@ export class Character{
     }
 
     getTile(){
+        console.log(this.q,this.r);
         return this.game.board.getTile(this.q, this.r);
     }
 
