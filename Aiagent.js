@@ -80,7 +80,7 @@ export class AIAgent {
                         break;
                     }
                 }
-                //console.log(e.name, "chosenAction ", chosenAction, "with Action Point",e.getActionPoint());
+                console.log(e.name, "chosenAction ", chosenAction, "with Action Point",e.getActionPoint());
 
                 //3. carry out the action of the animal
                 switch (chosenAction) {

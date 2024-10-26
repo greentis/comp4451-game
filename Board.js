@@ -957,7 +957,7 @@ export class Board {
                 var y = 0;
                 var z = parseFloat(r) + q * Math.cos(Math.PI / 3);
                 var tile = new Tile(parseFloat(q), parseFloat(r), x, y, -z,this.game, this.temp[q][r]);
-                console.log('q', q, 'r', r, 'type', this.temp[q][r], 'x', x, 'y', y, 'z', z);
+                //console.log('q', q, 'r', r, 'type', this.temp[q][r], 'x', x, 'y', y, 'z', z);
 
                 // Add tile to map
                 this.body.add(tile.body);
