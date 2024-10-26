@@ -17,7 +17,7 @@ export class AnimalProperties {
                 this.animal.health = 5;
                 this.animal.actionPriority = {
                     cover:6,
-                    attack:4,
+                    attack:0, // default 4
                     escape:1
                 };
                 this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);

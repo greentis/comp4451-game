@@ -110,8 +110,8 @@ export class Board {
 
         var printable = false;
         //below variables are for polygonal generation only
-        this.roomLength = 12; //control the Length of the map
-        this.roomWidth = 12; //control the Width of the map
+        this.roomLength = 8; //control the Length of the map
+        this.roomWidth = 8; //control the Width of the map
         this.roomSizeRange = 1; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = 0.7; //control around how many percentage of rock tile in the map will be turned into default tile
         this.wallThreshold = 0.7; //control the threshold of the wall tile conversion from rock tile
@@ -135,8 +135,8 @@ export class Board {
         //generat random map with hexagon grid
         //setting random this.seed
         // cover all the map with rock first
-        //this.seed = 35856;710; 71045; 21481;
-        this.seed = Math.round(Math.random()* 900000 + 100000);
+        this.seed = 37148;710; 71045; 21481;
+        //this.seed = Math.round(Math.random()* 900000 + 100000);
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
         //if(printable) 
             console.log('This board have seed ', this.seed);
