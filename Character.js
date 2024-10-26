@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { ActionTracker } from './ActionTracker.js';
 import { infoBox } from './infoBox.js';
+import { Particle } from './ActionTracker.js';
 
 // private method
 const lerp = (a, b, t) => {return a + (b - a) * t;}
@@ -32,7 +33,6 @@ export class Character{
         this.name = name;
         this.game = game;
         this.board = game.board;
-        
 
         this.health = health;
 
@@ -44,8 +44,9 @@ export class Character{
         this.action = new ActionTracker(this);
         
         this.setActionPoint(0);
-
         this.getTile().characterEnter(this);
+
+        
     }
 
     getActionPoint() {return this.action.actionPoint;}
@@ -181,6 +182,15 @@ export class Character{
 
     takeDamage(damage){
         this.health -= damage;
+
+        /* new Particle((ctx)=>{
+            ctx.font = "48px serif";
+            ctx.textAlign = "center";
+            ctx.fillStyle = "#aa0000";
+            ctx.fillText("-" + damage.toString(), 50, 50);
+            console.log("-" + damage.toString());
+        }, this.body, 1, 200, 0, 2); */
+
         if (this.health <= 0) {
             this.killed();
             /* this.body.visible = false;
@@ -204,9 +214,9 @@ export class Character{
 
     killed(){
         this.body.visible = false;
+        this.game.scene.remove(this.body);
         console.log(this.name, " is dead");
         this.getTile().characterLeave();
-        delete this;
     }
 
     // This function is visual. What ambush does is hitRateCost*=3
@@ -358,6 +368,7 @@ export class Character{
     }
 
     getTile(){
+        //console.log("character getTile", this.q, this.r);
         //console.log("character getTile", this.q, this.r);
         return this.game.board.getTile(this.q, this.r);
     }
