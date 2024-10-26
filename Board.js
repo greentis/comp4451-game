@@ -950,7 +950,7 @@ export class Board {
             for(let r of Object.keys(this.temp[q])){
                 //console.log('q', q, 'r', r, 'type', this.temp[q][r]);
                 //skip the tile if it is void tile
-                //if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold) continue;
+                if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold) continue;
                 //console.log('tile', tile);
                 
                 var x = q * Math.cos(Math.PI / 6);
