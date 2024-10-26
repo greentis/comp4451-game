@@ -37,12 +37,13 @@ export class Game{
 	}
 
 	missionCompleted(){
-		this.setToPlayerTurn(false);
+		console.log("MissionCompleted");
 		infoBox.format = infoBox.FORMAT.UpgradePanel;
 	}
 
 	missionFailed(){
-
+		console.log("Gameover");
+		infoBox.format = infoBox.FORMAT.Gameover;
 	}
 
 	generateMission(){

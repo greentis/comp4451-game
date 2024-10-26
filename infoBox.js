@@ -6,10 +6,11 @@ export var infoBox = {
         HunterStateTrack:"HunterStateTrack",
         CharacterStats:"CharacterStats",
         AttackData:"AttackData",
-        UpgradePanel:"UpgradePanel"
+        UpgradePanel:"UpgradePanel",
+        Gameover:"Gameover"
     },
     
-    format:"MissionInfo",
+    format:"Gameover",
     missionNo:1,
     note:"Find and kill all animals!",
 

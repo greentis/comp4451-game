@@ -129,10 +129,16 @@
 			<div v-if="format == 'HunterStateTrack'" class="container">
 				<div v-for="p in players" class="box">{{p.name}}<br> ❤️{{p.health}}</div>
 			</div>
+			<div v-if="format == 'Gameover'" class="container">
+				<div class="box largeBox">Game Over!</div>
+				<div class="box largeBox">Survived to Mission {{missionNo}}</div>
+				<div class="box">Animals left: {{enemies.size}}</div>
+			</div>
 			<div v-if="format == 'UpgradePanel'" class="{container}">
-
+				You Win!
 			</div>
 		</div>
+		
 		
 	</body>
 </html>

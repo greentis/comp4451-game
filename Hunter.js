@@ -117,6 +117,7 @@ export class Hunter extends Character{
             if (index !== -1) {
                 this.game.player.splice(index, 1);
             }
+            console.log(this.game.player.length, " players remaining")
             if (this.game.player.length == 0) this.game.missionFailed();
             super.killed();
         }

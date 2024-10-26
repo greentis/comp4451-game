@@ -106,7 +106,7 @@ export class AIAgent {
                 timeout++;
                 //console.log(timeout);
             }  
-            console.log("position: ", e.getTile().q, e.getTile().r);
+            //console.log("position: ", e.getTile().q, e.getTile().r);
         }
         this.game.setToPlayerTurn(true);
     }
@@ -286,7 +286,7 @@ export class AIAgent {
             }
 
             //calculate the priority of the target tile
-            var priority = - exposed * 3.0 - minDistance * 0.1 - minDistanceEnemy * 0.2;
+            var priority = - exposed * 3.0 - Math.abs(minDistance - e.sightRange) * 0.1 - minDistance * 0.05 - minDistanceEnemy * 0.5;
             //console.log("t: ", t.q, t.r, "priority: ", priority);
             if (priority > bestPriority) {
                 bestPriority = priority;
