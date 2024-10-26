@@ -9,11 +9,13 @@ const lerp = (a, b, t) => {return a + (b - a) * t;}
 const distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
 const neighboringTile = (tile, game) => {
     var q = tile.q; var r = tile.r;
+    //console.log("neighboringTile", q, r);
     var tiles = [];
     for (let i = -1; i <= 1; i++){
         for (let j = -1; j <= 1; j++){
             if (Math.abs(i + j) == 2 || (i == 0 && j == 0)) continue;
             var t = game.board.getTile(q + i, r + j); 
+            //console.log("neighboringTile t", t);
             if (t) tiles.push(t);
         }
     }
@@ -324,6 +326,7 @@ export class Character{
 
             for (let next of neighboringTile(current, this.game)) {
                 // To reach the tile next, the cost needed:
+                //console.log("1");
                 cost = path_cost[current.mesh.name] + weightedDist(current, next);
                 if (cost > moveRange) continue;
                 // Add or Update the path cost of the next if: 
@@ -363,6 +366,7 @@ export class Character{
     }
 
     getTile(){
+        //console.log("character getTile", this.q, this.r);
         //console.log("character getTile", this.q, this.r);
         return this.game.board.getTile(this.q, this.r);
     }

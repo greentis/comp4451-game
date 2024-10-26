@@ -56,31 +56,33 @@ export class AIAgent {
                 var findCoverModifier = this.findCoverModifier(e);  //TODO: implement this function
                 var attackPlayerModifier = this.attackPlayerModifier(e); //TODO: implement this function
                 var escapeModifier = this.escapeModifier(e); //TODO: implement this function
-                //console.log("findCoverModifier: ", findCoverModifier, "attackPlayerModifier: ", attackPlayerModifier, "escapeModifier: ", escapeModifier);
+                //onsole.log("findCoverModifier: ", findCoverModifier, "attackPlayerModifier: ", attackPlayerModifier, "escapeModifier: ", escapeModifier);
 
                 //calculate the overall priority for each action
                 var overallPriority = [];
-                overallPriority.push(e.actionPriority.cover * findCoverModifier);
-                overallPriority.push(e.actionPriority.attack * attackPlayerModifier);
-                overallPriority.push(e.actionPriority.escape * escapeModifier);
+                overallPriority.push(e.actionPriority.cover * Math.exp(findCoverModifier));
+                overallPriority.push(e.actionPriority.attack * Math.exp(attackPlayerModifier));
+                overallPriority.push(e.actionPriority.escape * Math.exp(escapeModifier));
                 //console.log("overallPriority: ", overallPriority);
 
                 //calculate the probability of taking each action
                 var sum = overallPriority.reduce((a, b) => a + b, 0);
-                var probability = overallPriority.map(e => e / sum);
+                var probability = overallPriority.map( x => x / sum);
                 //console.log("probability: ", probability);
 
                 //randomly choose the action according to the probability
                 let cumulativeSum = 0;
                 let chosenAction = -1;
+                let actionThreshold = Math.random();
                 for (let i = 0; i < probability.length; i++) {
                     cumulativeSum += probability[i];
-                    if (Math.random() < cumulativeSum) {
+                    if (actionThreshold < cumulativeSum) {
                         chosenAction = i;
                         break;
                     }
                 }
-                //console.log(e.name, "chosenAction ", chosenAction, "with Action Point",e.getActionPoint());
+                
+                console.log("timeout in ai control: ", timeout,"name: ", e.name, "chosenAction ", chosenAction, "with Action Point",e.getActionPoint(), "last action: ", e.actionstate);
 
                 //3. carry out the action of the animal
                 switch (chosenAction) {
@@ -104,6 +106,7 @@ export class AIAgent {
                 timeout++;
                 //console.log(timeout);
             }  
+            console.log("position: ", e.getTile().q, e.getTile().r);
         }
         this.game.setToPlayerTurn(true);
     }
@@ -149,10 +152,10 @@ export class AIAgent {
 
         //factor 3: whether the last action is findCover
         if (e.actionstate == "findCover") {
-            findCoverModifier = 0;
+            findCoverModifier = -100000;
         }
 
-        return Math.exp(findCoverModifier);
+        return findCoverModifier;
 
     }
 
@@ -162,7 +165,7 @@ export class AIAgent {
 
         //factor 0: check if it is first action(i.e. actionpoint == 2)
         if (e.getActionPoint() == 2) {
-            attackPlayerModifier = 0;
+            attackPlayerModifier = -100000;
             return 0;
         }
 
@@ -192,7 +195,7 @@ export class AIAgent {
             attackPlayerModifier /= 1.5;
         }
 
-        return Math.exp(attackPlayerModifier);
+        return attackPlayerModifier;
     }
 
     escapeModifier(e) {
@@ -226,7 +229,7 @@ export class AIAgent {
             escapeModifier /= 100;
         }
         //console.log("escapeModifier 3: ", escapeModifier);
-        return Math.exp(escapeModifier);
+        return escapeModifier;
     }
 
     async findCover(e, seed) {
@@ -238,11 +241,14 @@ export class AIAgent {
         var reachableTile = [];
         for( let g of this.game.board.grids){
             var t = g[1];
-            if (t.isVisibleBy(e) && t.character == null) {
+            if (e.findValidPath(t).length > 0 && t.character == null) {    
+                if(t.q == 1 && t.r == -2){
+                    console.log("warning t: ", t.q, t.r);
+                }
                 reachableTile.push(t);
             }
         }
-
+        //console.log("reachableTile: ", reachableTile);
         //step 2: find out which tile is best hiding place for the animal
         //affect factor:
             //(2.1)the target tile will be seen by how many player
@@ -280,13 +286,17 @@ export class AIAgent {
 
             //calculate the priority of the target tile
             var priority = - exposed * 3.0 - minDistance * 0.1 - minDistanceEnemy * 0.2;
+            //console.log("t: ", t.q, t.r, "priority: ", priority);
             if (priority > bestPriority) {
                 bestPriority = priority;
                 bestTile = t;
             }
         }
         
-        if (bestTile) await e.moveTo(bestTile);
+        if (bestTile){
+            console.log("actionpoint: ", e.getActionPoint(), "bestTile: ", bestTile.q, bestTile.r);
+            await e.moveTo(bestTile);
+        }
         
     }
 
@@ -303,7 +313,7 @@ export class AIAgent {
         }
         var attackablePlayer = [];
         for (let p of playerTile) {
-            if (p.isVisibleBy(e)) {
+            if (e.lineOfSight(p)) {
                 attackablePlayer.push(p);
             }
         }
@@ -374,7 +384,7 @@ export class AIAgent {
         for (let g of this.game.board.grids) {
             var t = g[1];
             //console.log("t: ", t);
-            if (t.isVisibleBy(e) && t.character == null) {
+            if (e.findValidPath(t).length > 0 && t.character == null) {
                 var minDistance = 1000;
                 for (let p of playerTile) {
                     //console.log("t: ", t.q, t.r, "p: ", p.q, p.r);
@@ -389,8 +399,9 @@ export class AIAgent {
                 }
             }
         }
-        console.log("maxTile: ", maxTile);
+        
         if (maxTile) {
+            console.log("actionpoint: ", e.getActionPoint(), "maxTile: ", maxTile.q, maxTile.r);
             await e.moveTo(maxTile);
         }
     }
