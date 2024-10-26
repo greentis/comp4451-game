@@ -4,7 +4,7 @@ import {Character} from './Character.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { Weapon } from './Weapon.js';
 import { WeaponProperties } from './WeaponProperties.js';
-
+import { Particle } from './ActionTracker.js';
 import { infoBox } from './infoBox.js';
 
 
@@ -39,6 +39,8 @@ export class Hunter extends Character{
             this.body.add(this.mesh);
         });
         
+        
+
         this.action.setActionPoint(2);
     }
 
