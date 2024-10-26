@@ -290,8 +290,6 @@ export class Character{
             if (t2.character) return 100;
             return t2.properties.passCost;
         }
-        //return this.lineOfSight(tile);
-
 
         // Queue
         var start = this.getTile();
