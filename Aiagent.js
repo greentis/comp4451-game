@@ -251,7 +251,7 @@ export class AIAgent {
         //console.log("reachableTile: ", reachableTile);
         //step 2: find out which tile is best hiding place for the animal
         //affect factor:
-            //(2.1)the target tile will be seen by how many player
+            //(2.1)the difference between the hitRate player & hitRate animal
             //(2.2)the distance between the target tile and the player(close to the player is better)
             //(2.3)will it get too close to enemy of the same group
         var player = this.player;
@@ -260,13 +260,14 @@ export class AIAgent {
         var bestTile = null;
         var bestPriority = -1000;
         for(let t of reachableTile){
-            //(2.1)the target tile will be seen by how many player
-            var exposed = 0;
+            //(2.1)the difference between the hitRate player & hitRate animal
+            var exposed = 0; var advantage = 0;
             for (let p of player) {
-                if (t.isVisibleBy(p)) {
-                    exposed += 1;
-                }
+                exposed = Math.max(exposed, p.getHitRate(e.getTile()));
+                advantage = Math.max(advantage, e.getHitRate(p.getTile()));
             }
+            exposed -= advantage;
+            exposed /= 5.0;
 
             //(2.2)the distance between the target tile and the player(close to the player is better)
             var minDistance = 1000;
