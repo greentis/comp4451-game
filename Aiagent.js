@@ -241,7 +241,7 @@ export class AIAgent {
         var reachableTile = [];
         for( let g of this.game.board.grids){
             var t = g[1];
-            if (e.findValidPath(t) && t.character == null) {    
+            if (e.findValidPath(t).length > 0 && t.character == null) {    
                 if(t.q == 1 && t.r == -2){
                     console.log("warning t: ", t.q, t.r);
                 }
@@ -384,7 +384,7 @@ export class AIAgent {
         for (let g of this.game.board.grids) {
             var t = g[1];
             //console.log("t: ", t);
-            if (e.findValidPath(t) && t.character == null) {
+            if (e.findValidPath(t).length > 0 && t.character == null) {
                 var minDistance = 1000;
                 for (let p of playerTile) {
                     //console.log("t: ", t.q, t.r, "p: ", p.q, p.r);
