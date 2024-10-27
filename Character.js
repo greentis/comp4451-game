@@ -54,6 +54,7 @@ export class Character{
     reduceActionPoint(k) {this.action.reduceActionPoint(k);}
 
     displayInfo(){
+        //console.log(this.game.gameOn, "in displayinfo");
         infoBox.health = this.health;
         infoBox.movementSpeed = this.moveRange;
         infoBox.sightRange = this.sightRange;
@@ -64,6 +65,7 @@ export class Character{
     }
 
     closeInfo(){
+        //console.log(this.game.gameOn, "in closeinfo");
         infoBox.format = infoBox.FORMAT.MissionInfo;
     }
 

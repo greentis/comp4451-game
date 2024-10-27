@@ -7,18 +7,17 @@ export class ActionTracker{
         const material = new THREE.MeshPhongMaterial({emissive:0x000000});
         this.mesh = new THREE.Mesh(geometry, material);
  */
-        this.ctx = document.createElement('canvas').getContext('2d');
-        document.body.appendChild(this.ctx.canvas);
+        const canvas = document.createElement('canvas');
+        this.ctx = canvas.getContext('2d');
         this.ctx.canvas.width = 100;
         this.ctx.canvas.height = 100;
         
-        const texture = new THREE.CanvasTexture(this.ctx.canvas);
+        const texture = new THREE.CanvasTexture(canvas);
         // because our canvas is likely not a power of 2
         // in both dimensions set the filtering appropriately.
         texture.minFilter = THREE.LinearFilter;
         texture.wrapS = THREE.ClampToEdgeWrapping;
         texture.wrapT = THREE.ClampToEdgeWrapping;
-        texture.needsUpdate = true;
         const labelMaterial = new THREE.SpriteMaterial({
             map: texture,
             transparent: true,
@@ -151,6 +150,36 @@ export class Particle{
         });
     }
 }
+
+let ctxs = [];
+for (let i = 0 ; i < 1; i ++){
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.canvas.width = 100;
+    ctx.canvas.height = 100;
+    switch (i){
+        case 0:
+            ctx.fillStyle = "#0000ff";
+            break;
+        case 1:
+            ctx.fillStyle = "#ff7700";
+            break;
+        default:
+            ctx.fillStyle = "#000000";
+            break;
+    }
+    ctx.beginPath();
+    ctx.moveTo(50, 50);
+    ctx.lineTo(25, 0);
+    ctx.lineTo(75, 0);
+    ctx.fill();
+    ctxs.push(ctx);
+}
+
+ActionTracker.INDICATOR = {
+    move:ctxs[0],
+    attack:ctxs[1]
+} 
 
 ActionTracker.STATE = {
     none:0,

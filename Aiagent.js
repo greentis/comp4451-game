@@ -82,7 +82,7 @@ export class AIAgent {
                     }
                 }
                 
-                console.log("timeout in ai control: ", timeout,"name: ", e.name, "chosenAction ", chosenAction, "with Action Point",e.getActionPoint(), "last action: ", e.actionstate);
+                //console.log("timeout in ai control: ", timeout,"name: ", e.name, "chosenAction ", chosenAction, "with Action Point",e.getActionPoint(), "last action: ", e.actionstate);
 
                 //3. carry out the action of the animal
                 switch (chosenAction) {
@@ -266,7 +266,7 @@ export class AIAgent {
                 exposed = Math.max(exposed, p.getHitRate(e.getTile()));
                 advantage = Math.max(advantage, e.getHitRate(p.getTile()));
             }
-            exposed -= advantage;
+            exposed -= advantage * 1.2;
             exposed /= 5.0;
 
             //(2.2)the distance between the target tile and the player(close to the player is better)
@@ -286,7 +286,7 @@ export class AIAgent {
             }
 
             //calculate the priority of the target tile
-            var priority = - exposed * 3.0 - Math.abs(minDistance - e.sightRange) * 0.1 - minDistance * 0.05 - minDistanceEnemy * 0.5;
+            var priority = - exposed * 3.0 + (e.sightRange - minDistance) * 0.1 - minDistance * 0.05 - minDistanceEnemy * 0.5;
             //console.log("t: ", t.q, t.r, "priority: ", priority);
             if (priority > bestPriority) {
                 bestPriority = priority;
@@ -295,7 +295,7 @@ export class AIAgent {
         }
         
         if (bestTile){
-            console.log("actionpoint: ", e.getActionPoint(), "bestTile: ", bestTile.q, bestTile.r);
+            //console.log("actionpoint: ", e.getActionPoint(), "bestTile: ", bestTile.q, bestTile.r);
             await e.moveTo(bestTile);
         }
         

@@ -10,7 +10,7 @@ export var infoBox = {
         Gameover:"Gameover"
     },
     
-    format:"Gameover",
+    format:"UpgradePanel",
     missionNo:1,
     note:"Find and kill all animals!",
 
@@ -32,7 +32,11 @@ export var infoBox = {
         infoBox.players = game.player;
         infoBox.format = infoBox.FORMAT.HunterStateTrack;
         game.setToPlayerTurn(false);
-    }
+    },
+
+    selectUpgrade: (index) => {
+        game;
+    },
 };
 
 new Vue({
