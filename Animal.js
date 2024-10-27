@@ -36,12 +36,13 @@ export class Animal extends Character{
         for(let p of player){
             if(this.lineOfSight(p.getTile(), false)){
                 this.wake = true;
+                this.facing(p.getTile().q,p.getTile().r);
             }
         }
         if(this.health < this.maxHealth){
             this.wake = true;
         }
-
+        if(this.wake) this.action.drawIndicator("!");
     }
 
     killed(){
@@ -52,8 +53,10 @@ export class Animal extends Character{
         }
         this.game.enemy.delete(this);
         infoBox.enemies = this.game.enemy;
-        console.log(this.game.enemy.size, " enemies remaining")
-        if (this.game.enemy.size == 0) this.game.missionCompleted();
+        console.log(this.game.enemy.size, " enemies remaining", this.game.enemy.size == 0)
+        if (this.game.enemy.size == 0) {
+            this.game.missionCompleted();
+        }
         super.killed();
     }
 

@@ -78,6 +78,7 @@ export class Character{
         let x,y,z;
         this.getTile().setState('default');
         for (let t of path){
+            
             // Before Updating coordinate
             this.body.position.x = x = this.getTile().body.position.x;
             this.body.position.y = y = this.getTile().body.position.y;
@@ -120,7 +121,7 @@ export class Character{
                     requestAnimationFrame(animate);
                 })
             }
-
+            
             // The mother function is async to be able to await
             await waitForMoveAnimation();
 

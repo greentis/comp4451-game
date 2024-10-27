@@ -7,7 +7,7 @@ import { WeaponProperties } from './WeaponProperties.js';
 import { Particle } from './ActionTracker.js';
 import { infoBox } from './infoBox.js';
 
-
+const distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
 
 export class Hunter extends Character{
     constructor(q, r, health, weaponType, game, name){
@@ -17,6 +17,18 @@ export class Hunter extends Character{
 
         this.weapon = new Weapon(this, weaponType, 5);
 
+        // Radar Display
+        const material = new THREE.MeshPhongMaterial({color:0x156815, opacity: 0.8, transparent: true,});
+        const radarGeometry = new THREE.RingGeometry(0.74, 0.80);
+        this.radar = new THREE.Mesh(radarGeometry, material);
+        const pointerGeometry = new THREE.RingGeometry(
+            0, 0.80, 32, 1, 0, Math.PI / 3);
+        this.radar.add(new THREE.Mesh(pointerGeometry, material));
+        this.radar.rotateX(-Math.PI/2);
+        this.radar.visible = false;
+        this.game.board.body.add(this.radar);
+
+        // Hunter Model
         const gltfLoader = new GLTFLoader();
         const url = 'assets/low_poly_kyle_crane/scene.gltf';
         gltfLoader.load(url, (gltf) => {
@@ -90,20 +102,24 @@ export class Hunter extends Character{
             switch (this.actionstate) {
                 case Hunter.ACTION.move:
                     this.getTile().setState('selected');
+                    this.updateRadar();
                     this.displayInfo();
                     break;
                 case Hunter.ACTION.attack:
                     this.getTile().setState('aggressive');
+                    this.updateRadar();
                     this.displayInfo();
                     break;
                 case Hunter.ACTION.selected:
                     this.getTile().setState('selected');
+                    this.updateRadar();
                     this.displayInfo();
                     this.game.movingPlayer = null;
                     break; 
                 case Hunter.ACTION.idle:
                 default:
                     super.deselect();
+                    this.closeRadar();
                     this.board.clearMarkings();
                     this.game.movingPlayer = null;
                     infoBox.format = infoBox.FORMAT.MissionInfo;
@@ -122,6 +138,33 @@ export class Hunter extends Character{
             super.killed();
         }
 
+        updateRadar(){
+            this.radar.visible = true;
+            this.radar.position.x = this.getTile().x;
+            this.radar.position.z = this.getTile().z;
+            this.radar.position.y = this.getTile().mesh.position.y + 5.01 + this.getTile().body.position.y;
+            let tile = this.findClosestEnemy().getTile();
+            this.radar.rotation.z = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
+            //this.radar.rotation.z = 0;
+            this.radar.rotation.z -= Math.PI /2 + Math.PI/6;
+            console.log(this.radar.position.y);
+        }
+        findClosestEnemy(){
+            let minDist = 10000; let dist;
+            let closestE = null;
+            for (let e of this.game.enemy){
+                dist = distance(this.getTile(), e.getTile())
+                if (minDist > dist){
+                    minDist = dist;
+                    closestE = e;
+                }
+            };
+            return closestE
+        }
+
+        closeRadar(){
+            this.radar.visible = false;
+        }
 
         hovering(){
             this.getTile().hovering();

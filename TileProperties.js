@@ -129,6 +129,7 @@ export class TileProperties {
     
                     const labelMaterial = new THREE.SpriteMaterial({
                         map: texture,
+                        transparent: true
                       });
                     const label = new THREE.Sprite(labelMaterial);
                     this.tile.body.add(label);

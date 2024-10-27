@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';
 import { MapControls } from 'three/addons/controls/MapControls.js';
 
 import { Hunter } from './Hunter.js';
@@ -38,6 +39,7 @@ export class Game{
 	}
 
 	missionCompleted(){
+		console.log("win");
 		this.gameOn = false;
 		this.missionNo++;
 		infoBox.format = infoBox.FORMAT.UpgradePanel;
@@ -66,6 +68,8 @@ export class Game{
 			new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 1, WeaponProperties.TYPE.Bomb, this, 'Player 2'),
 			new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 1, WeaponProperties.TYPE.Saw, this, 'Player 3')
 		];
+
+		
 		//this.camera.position.set(this.player[0].getTile().x, 5, this.player[0].getTile().z + 5);
 		//this.controls.target = new THREE.Vector3(this.player[0].getTile().x, 5, this.player[0].getTile().z + 5)
 		var enemySpawnPoints = this.board.getEnemySpawnPoint();
@@ -122,10 +126,10 @@ export class Game{
 		this.scene.add( this.ambientLight );
 		//this.scene.fog = new THREE.Fog( 0xdfaaaa, 0.001 , 30);
 
-		this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		this.camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
 		
 		// camera.up.set(x, y, z);
-		this.camera.position.set(0, 5, 5);
+		this.camera.position.set(0, 3, 5);
 		this.renderer = new THREE.WebGLRenderer();
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
 		
@@ -133,6 +137,8 @@ export class Game{
 		this.controls.screenSpacePanning = false;
 		this.controls.maxPolarAngle = Math.PI /3;
 		this.controls.minPolarAngle = Math.PI /3;
+		//this.controls = new FirstPersonControls(this.camera, this.renderer.domElement)
+
 
 		// Animation loop
 		this.renderer.setAnimationLoop(()=>{
@@ -330,12 +336,11 @@ export class Game{
 			this.enemy.forEach((enemy)=>{
 				enemy.setActionPoint(2);
 			});
-
-			this.aiAgent.AIControl();
-
 			if (!this.gameOn) return;
 			// Change what UI displays
 			infoBox.format = infoBox.FORMAT.HunterStateTrack;
+
+			this.aiAgent.AIControl();
 		}
 	}
 }

@@ -55,10 +55,10 @@ export class Tile {
         if (!this.properties.pathfindable && !this.properties.hittable) return;
         if (this.state == 'selected') {
             this.body.position.y += 0.1;
-            this.mesh.material.emissive.set(0x44FF44);
+            this.mesh.material.emissive.set(0x22bb22);
         }
         else if (this.state == 'highlighted') {
-            this.mesh.material.emissive.set(0x0000BB);
+            this.mesh.material.emissive.set(0x0000CC);
         }
         else if (this.state == 'pathed') {
             this.mesh.material.emissive.set(0x00ABDD);

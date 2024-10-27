@@ -9,7 +9,7 @@ export class WeaponProperties {
         this.weapon.name = 'Gun';
 
         this.weapon.blastRadius = 0;
-
+        this.weapon.body.rotation.y = 0;
         let url ="";
         switch (typeID) {
             case WeaponProperties.TYPE.Bomb:
@@ -27,7 +27,7 @@ export class WeaponProperties {
                 url="assets/gun/scene.gltf";
                 this.meshScale = 0.18;
                 this.weapon.body.position.y = 2.3;
-                this.weapon.body.rotation.y = -Math.PI/2;
+                this.weapon.body.rotation.y = Math.PI;
                 break;
             case WeaponProperties.TYPE.Saw:
                 this.weapon.name = 'Saw';
@@ -35,7 +35,7 @@ export class WeaponProperties {
                 url="assets/saw/scene.gltf";
                 this.meshScale = 0.4;
                 this.weapon.body.position.y = 2.3;
-                this.weapon.body.rotation.y = Math.PI;
+                this.weapon.body.rotation.y = Math.PI/2;
                 break;
             default:
                 break;

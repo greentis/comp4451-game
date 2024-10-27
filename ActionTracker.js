@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 
 export class ActionTracker{
-    constructor(char){/* 
-        const geometry = new THREE.RingGeometry(
-            0.3, 0.35, 32);
-        const material = new THREE.MeshPhongMaterial({emissive:0x000000});
-        this.mesh = new THREE.Mesh(geometry, material);
- */
+    constructor(char){
+        this.character = char;
+
+        
+        
+
         const canvas = document.createElement('canvas');
         this.ctx = canvas.getContext('2d');
         this.ctx.canvas.width = 100;
@@ -23,13 +23,13 @@ export class ActionTracker{
             transparent: true,
         });
         const label = new THREE.Sprite(labelMaterial);
-        label.scale.set(0.3,0.3,0.3);
+        label.scale.set(0.4,0.4,0.4);
         
         char.body.add(label)
          
         this.mesh = label;
         this.mesh.visible = false;
-        this.character = char;
+        
         char.body.add(this.mesh);
         
         
@@ -49,7 +49,12 @@ export class ActionTracker{
         this.actionPoint = state;
         switch (state){
             case ActionTracker.STATE.none:      // turnActionState = 0;
-                this.mesh.visible = false;
+                if (this.wake) {
+                    this.drawIndicator("!");
+                }
+                else{
+                    this.mesh.visible = false;
+                }
                 break;
             case ActionTracker.STATE.move:      // turnActionState = 1;
                 this.drawIndicator("#0000ff");
@@ -70,15 +75,26 @@ export class ActionTracker{
         this.mesh.position.y = 2.05// + this.character.getTile().properties.offsetYt;
     }
 
+    
+
     drawIndicator(color){
-        //console.log('draw');
-        this.ctx.clearRect(0, 0, 100, 100);
-        this.ctx.fillStyle = color;
-        this.ctx.beginPath();
-        this.ctx.moveTo(50, 50);
-        this.ctx.lineTo(25, 0);
-        this.ctx.lineTo(75, 0);
-        this.ctx.fill();
+        if (color == "!"){
+            this.ctx.fillStyle = "#ff0000";
+            this.ctx.font = "48px serif";
+            this.ctx.textAlign = "center";
+            this.ctx.fillText("!", 50, 50);
+        }
+        else{
+            //console.log('draw');
+            this.ctx.clearRect(0, 0, 100, 100);
+            this.ctx.fillStyle = color;
+            this.ctx.beginPath();
+            this.ctx.moveTo(50, 50);
+            this.ctx.lineTo(25, 0);
+            this.ctx.lineTo(75, 0);
+            this.ctx.fill();
+        }
+        
 
         const texture = new THREE.CanvasTexture(this.ctx.canvas);
         texture.minFilter = THREE.LinearFilter;
@@ -152,7 +168,7 @@ export class Particle{
 }
 
 let ctxs = [];
-for (let i = 0 ; i < 1; i ++){
+for (let i = 0 ; i < 2; i ++){
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     ctx.canvas.width = 100;
@@ -164,8 +180,13 @@ for (let i = 0 ; i < 1; i ++){
         case 1:
             ctx.fillStyle = "#ff7700";
             break;
+        case 2:
+            ctx.fillStyle = "#ff0000";
+            ctx.font = "48px serif";
+            ctx.textAlign = "center";
+            ctx.fillText("!", 50, 50);
+            break;
         default:
-            ctx.fillStyle = "#000000";
             break;
     }
     ctx.beginPath();
@@ -178,7 +199,8 @@ for (let i = 0 ; i < 1; i ++){
 
 ActionTracker.INDICATOR = {
     move:ctxs[0],
-    attack:ctxs[1]
+    attack:ctxs[1],
+    none:ctxs[2]
 } 
 
 ActionTracker.STATE = {

@@ -46,7 +46,7 @@ export const xxhash = (seed, x, y) => {
 // input: enemy type
 // output: Ep (enemy spawn point)
 var EpTable = {
-    [0] : 2,
+    [0] : 3,
 }
 
 export class Board {
@@ -110,10 +110,10 @@ export class Board {
 
         var printable = false;
         //below variables are for polygonal generation only
-        this.roomLength = 8; //control the Length of the map
-        this.roomWidth = 8; //control the Width of the map
+        this.roomLength = 10; //control the Length of the map
+        this.roomWidth = 10; //control the Width of the map
         this.roomSizeRange = 1; //control the variation of the size of the room(+/- roomSizeRange)
-        this.roomPercentage = 0.7; //control around how many percentage of rock tile in the map will be turned into default tile
+        this.roomPercentage = 0.75; //control around how many percentage of rock tile in the map will be turned into default tile
         this.wallThreshold = 0.7; //control the threshold of the wall tile conversion from rock tile
         this.coverThreshold = 0.4; //control the threshold of the cover tile conversion from rock tile
                                    //not that cover threshold should be smaller than wall threshold
@@ -123,7 +123,7 @@ export class Board {
         this.vegetationCoverage = 0.1; //control the coverage of the vegetation in the map
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
-        this.enemyDensity = 0.01; //control the density of the enemy per tile in the map(suggested value: < 0.05)
+        this.enemyDensity = 0.02; //control the density of the enemy per tile in the map(suggested value: < 0.05)
         this.averagePerGroup = 4; //control the average number of enemy per group
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
         this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
@@ -135,8 +135,8 @@ export class Board {
         //generat random map with hexagon grid
         //setting random this.seed
         // cover all the map with rock first
-        this.seed = 37148;710; 71045; 21481;
-        //this.seed = Math.round(Math.random()* 900000 + 100000);
+        //this.seed = 37148;710; 71045; 21481;
+        this.seed = Math.round(Math.random()* 900000 + 100000);
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
         //if(printable) 
             console.log('This board have seed ', this.seed);
