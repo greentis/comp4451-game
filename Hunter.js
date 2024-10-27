@@ -122,6 +122,7 @@ export class Hunter extends Character{
                     this.closeRadar();
                     this.board.clearMarkings();
                     this.game.movingPlayer = null;
+                    if(!this.game.gameOn) return;
                     infoBox.format = infoBox.FORMAT.MissionInfo;
                     break;
             }

@@ -55,6 +55,7 @@ export class Character{
 
     displayInfo(){
         //console.log(this.game.gameOn, "in displayinfo");
+        if(!this.game.gameOn) return;
         infoBox.health = this.health;
         infoBox.movementSpeed = this.moveRange;
         infoBox.sightRange = this.sightRange;
@@ -66,6 +67,7 @@ export class Character{
 
     closeInfo(){
         //console.log(this.game.gameOn, "in closeinfo");
+        if(!this.game.gameOn) return;
         infoBox.format = infoBox.FORMAT.MissionInfo;
     }
 

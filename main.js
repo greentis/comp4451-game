@@ -39,10 +39,10 @@ export class Game{
 	}
 
 	missionCompleted(){
-		console.log("win");
 		this.gameOn = false;
 		this.missionNo++;
 		infoBox.format = infoBox.FORMAT.UpgradePanel;
+		console.log(infoBox.FORMAT.UpgradePanel);
 	}
 
 	missionFailed(){
