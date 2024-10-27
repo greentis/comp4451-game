@@ -118,9 +118,9 @@ export class Board {
         this.coverThreshold = 0.4; //control the threshold of the cover tile conversion from rock tile
                                    //not that cover threshold should be smaller than wall threshold
             if(this.coverThreshold >= this.wallThreshold) this.coverThreshold = this.wallThreshold;
-        this.rainFall = 0.1; //control the rain fall of the map, tile with height below rain fall will be turned into water tile
-        this.riverSource = 0.8; //control the source of the river, tile with height higher than river source will start the river tracing 
-        this.vegetationCoverage = 0.1; //control the coverage of the vegetation in the map
+        this.rainFall = 0.1;//0.1 //control the rain fall of the map, tile with height below rain fall will be turned into water tile
+        this.riverSource = 0.8;//0.8 //control the source of the river, tile with height higher than river source will start the river tracing 
+        this.vegetationCoverage = 0.1;//0.1 //control the coverage of the vegetation in the map
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
         this.enemyDensity = 0.01; //control the density of the enemy per tile in the map(suggested value: < 0.05)
@@ -135,8 +135,8 @@ export class Board {
         //generat random map with hexagon grid
         //setting random this.seed
         // cover all the map with rock first
-        this.seed = 37148;710; 71045; 21481;
-        //this.seed = Math.round(Math.random()* 900000 + 100000);
+        //this.seed = 37148;710; 71045; 21481;
+        this.seed = Math.round(Math.random()* 900000 + 100000);
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
         //if(printable) 
             console.log('This board have seed ', this.seed);
@@ -760,7 +760,7 @@ export class Board {
                 
                 //condition 3a
                 if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water 
-                    && this.temp[q][r] != TileProperties.TYPE.Tree && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
+                   && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
                 //condition 3d
                 if (!lastResort && distanceQR(this.playerSpawnPoints[0], {q: q, r: r}) < this.enemyToPlayer - 0.01*iteration) continue;
                 
@@ -844,7 +844,7 @@ export class Board {
 
                         //condition 2a
                         if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water
-                            && this.temp[q][r] != TileProperties.TYPE.Tree && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
+                            && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
                         
                         
                         //condition 2b
