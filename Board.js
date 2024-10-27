@@ -46,7 +46,7 @@ export const xxhash = (seed, x, y) => {
 // input: enemy type
 // output: Ep (enemy spawn point)
 var EpTable = {
-    [0] : 3,
+    [0] : 2.5,
 }
 
 export class Board {
@@ -135,8 +135,8 @@ export class Board {
         //generat random map with hexagon grid
         //setting random this.seed
         // cover all the map with rock first
-        //this.seed = 37148;710; 71045; 21481;
-        this.seed = Math.round(Math.random()* 900000 + 100000);
+        this.seed = 42211;37148;710; 71045; 21481;
+        //this.seed = Math.round(Math.random()* 900000 + 100000);
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
         //if(printable) 
             console.log('This board have seed ', this.seed);

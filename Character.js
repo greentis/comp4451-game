@@ -120,8 +120,11 @@ export class Character{
                     // Call the first animation frame
                     requestAnimationFrame(animate);
                 })
+                
             }
-            
+            for (let e of this.game.enemy) {
+                e.updateWake();
+            }
             // The mother function is async to be able to await
             await waitForMoveAnimation();
 

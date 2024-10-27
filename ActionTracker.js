@@ -79,12 +79,12 @@ export class ActionTracker{
 
     drawIndicator(color){
         if (color == "!"){
+            this.ctx.clearRect(0, 0, 100, 100);
             this.ctx.fillStyle = "#ff0000";
             this.ctx.font = "48px serif";
             this.ctx.textAlign = "center";
-            this.ctx.fillText("!", 50, 50);
-        }
-        else{
+            this.ctx.fillText("!", 50, 60);
+        } else {
             //console.log('draw');
             this.ctx.clearRect(0, 0, 100, 100);
             this.ctx.fillStyle = color;
@@ -95,7 +95,7 @@ export class ActionTracker{
             this.ctx.fill();
         }
         
-
+       
         const texture = new THREE.CanvasTexture(this.ctx.canvas);
         texture.minFilter = THREE.LinearFilter;
         texture.wrapS = THREE.ClampToEdgeWrapping;
@@ -106,6 +106,8 @@ export class ActionTracker{
             transparent: true,
         });
         this.mesh.material.copy(labelMaterial);
+
+        this.mesh.visible = true;
     }
 }
 
