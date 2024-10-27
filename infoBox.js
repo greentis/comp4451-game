@@ -10,7 +10,7 @@ export var infoBox = {
         Gameover:"Gameover"
     },
     
-    format:"UpgradePanel",
+    format:"MissionInfo",
     missionNo:1,
     note:"Find and kill all animals!",
 
