@@ -32,20 +32,24 @@ export class Game{
 	//
 	// For each mission
 	//
+		this.gameOn = true;
 		this.generateMission();
 		
 	}
 
 	missionCompleted(){
-		this.setToPlayerTurn(false);
+		this.gameOn = false;
+		this.missionNo++;
 		infoBox.format = infoBox.FORMAT.UpgradePanel;
 	}
 
 	missionFailed(){
-
+		this.gameOn = false;
+		infoBox.format = infoBox.FORMAT.Gameover;
 	}
 
 	generateMission(){
+
 		// Board & Tiles (Development phase)
 		infoBox.missionNo = this.missionNo;
 		this.board = new Board(this);
@@ -153,7 +157,7 @@ export class Game{
 
 		window.addEventListener('click', (event)=>{
 			// You can't click on object if its not player's turn
-			if (!this.isPlayerTurn) return;
+			if (!this.isPlayerTurn || !this.gameOn) return;
 			if (event.clientY <= 100) return;
 			if (infoBox.format == infoBox.FORMAT.UpgradePanel) return;
 
@@ -191,7 +195,7 @@ export class Game{
 		var hoveringObject = null;
 		
 		window.addEventListener('mousemove', (event)=>{
-			if (event.clientY <= 100) return;
+			if (!this.gameOn || event.clientY <= 100 ) return;
 			if (infoBox.format == infoBox.FORMAT.UpgradePanel) return;
 			// Do raycast to find all objects within sight
 			mouseVec.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -299,9 +303,6 @@ export class Game{
 		infoBox.note="Find and kill all animals!";
 		console.log(set?"Player's":"Animal's", "turn");
 		if (set){
-			// Change what UI displays
-			infoBox.format = infoBox.FORMAT.MissionInfo;
-
 			// Deselects everything currently
 			if (this.selectedObject) {
 				this.selectedObject.deselect();
@@ -316,11 +317,12 @@ export class Game{
 			this.enemy.forEach((enemy)=>{
 				enemy.setActionPoint(0);
 			});
+
+			if (!this.gameOn) return;
+			// Change what UI displays
+			infoBox.format = infoBox.FORMAT.MissionInfo;
 		}
 		else{
-			// Change what UI displays
-			infoBox.format = infoBox.FORMAT.HunterStateTrack;
-
 			this.player.forEach((player)=>{
 				player.setActionPoint(0);
 			});
@@ -330,6 +332,10 @@ export class Game{
 			});
 
 			this.aiAgent.AIControl();
+
+			if (!this.gameOn) return;
+			// Change what UI displays
+			infoBox.format = infoBox.FORMAT.HunterStateTrack;
 		}
 	}
 }

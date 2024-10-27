@@ -52,7 +52,8 @@ export class Animal extends Character{
         }
         this.game.enemy.delete(this);
         infoBox.enemies = this.game.enemy;
-        if (this.game.enemy.length == 0) this.game.missionCompleted();
+        console.log(this.game.enemy.size, " enemies remaining")
+        if (this.game.enemy.size == 0) this.game.missionCompleted();
         super.killed();
     }
 

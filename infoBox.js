@@ -6,7 +6,8 @@ export var infoBox = {
         HunterStateTrack:"HunterStateTrack",
         CharacterStats:"CharacterStats",
         AttackData:"AttackData",
-        UpgradePanel:"UpgradePanel"
+        UpgradePanel:"UpgradePanel",
+        Gameover:"Gameover"
     },
     
     format:"MissionInfo",
@@ -31,7 +32,11 @@ export var infoBox = {
         infoBox.players = game.player;
         infoBox.format = infoBox.FORMAT.HunterStateTrack;
         game.setToPlayerTurn(false);
-    }
+    },
+
+    selectUpgrade: (index) => {
+        game;
+    },
 };
 
 new Vue({

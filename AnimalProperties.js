@@ -14,7 +14,7 @@ export class AnimalProperties {
             case AnimalProperties.TYPE.Monkey:
                 url = 'assets/monkey/scene.gltf';
                 this.meshScale = 0.01;
-                this.animal.health = 5;
+                this.animal.health = 3;
                 this.animal.actionPriority = {
                     cover:6,
                     attack:4, // default 4

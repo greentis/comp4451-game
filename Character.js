@@ -54,6 +54,7 @@ export class Character{
     reduceActionPoint(k) {this.action.reduceActionPoint(k);}
 
     displayInfo(){
+        //console.log(this.game.gameOn, "in displayinfo");
         infoBox.health = this.health;
         infoBox.movementSpeed = this.moveRange;
         infoBox.sightRange = this.sightRange;
@@ -64,6 +65,7 @@ export class Character{
     }
 
     closeInfo(){
+        //console.log(this.game.gameOn, "in closeinfo");
         infoBox.format = infoBox.FORMAT.MissionInfo;
     }
 
@@ -138,6 +140,7 @@ export class Character{
 
     attack(tile){
         this.reduceActionPoint(2);
+        this.facing(tile.q, tile.r)
         /* 
             let facingOld = this.body.rotation.y;
             let facingNew = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
