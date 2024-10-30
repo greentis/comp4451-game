@@ -137,9 +137,9 @@ export class Particle{
         particle.scale.set(size, size, size);
         parent.add(particle);
 
-        this.ay = 0;
+        this.ay = -0.001;
         this.vx = 0;
-        this.vy = 0;
+        this.vy = 0.05;
         this.vz = 0;
 
         let time = 0;
@@ -148,8 +148,8 @@ export class Particle{
                 const animate = (timestamp)=>{
                     time++;
                     // ~ Animation ~
-                    this.vy -= this.ay;
-                    particle.position.y -= this.vy;
+                    this.vy += this.ay;
+                    particle.position.y += this.vy;
                     if (time < lifespan) { 
                         requestAnimationFrame(animate);
                     }
