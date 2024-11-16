@@ -14,7 +14,7 @@ Bonus:
 - 1W- Fix the UI color to make it more attractive
 - 1W- Enhance the visuals of the board (Add texture map, new tiles, etc.)
 - 1B- Are there some ways to visualize what the animals are doing? (e.g. when animal is being aggressive, show sth on their head)
-- 1B- Make some sort of particles for the attack
+- (done) 1B- Make some sort of particles for the attack
 - 1B- Make a UI dialog box to guide player through the gameplay
 - 1B each- Make AI able do more thing (e.g. ambush, flee to other group) 
 - 1B- Add sound (not music) to the game
