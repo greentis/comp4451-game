@@ -41,6 +41,7 @@ export class AIAgent {
         
         //2.resource assignment algorithm
         for (let e of this.enemy) {
+            e.playAnimation(1);
             //if the animal is wake, assign the action to the animal
             if (!e.wake) {
                 continue;
@@ -105,8 +106,10 @@ export class AIAgent {
                 }
                 timeout++;
                 //console.log(timeout);
+                
             }  
             //console.log("position: ", e.getTile().q, e.getTile().r);
+            
         }
         this.game.setToPlayerTurn(true);
     }
@@ -422,5 +425,9 @@ export class AIAgent {
 
     printActionPoint(e){
         console.log("ActionPoint: ", e.getActionPoint());
+    }
+
+    playAnimation(e,actionType = 0){
+        e.playAnimation(actionType);
     }
 }

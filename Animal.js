@@ -94,7 +94,7 @@ export class Animal extends Character{
     }
 
     playAnimation(actionName) {
-        const clip = this.animations.find(clip => clip.name === actionName);
+        /*const clip = this.animations.find(clip => clip.name === actionName);
         if (!clip) {
             console.error(`Animation clip '${actionName}' not found`);
             return;
@@ -102,6 +102,7 @@ export class Animal extends Character{
         const action = this.mixer.clipAction(clip);
         action.reset();
         action.play();
+        */
     }
 
 }

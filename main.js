@@ -87,7 +87,7 @@ export class Game{
 			}
 		}
 		//console.log(this.enemy);
-		//this.enemy.add(new Animal(-5, -5, "Monkey", this, name, -1)); //-6, -9
+		this.enemy.add(new Animal(-5, -5, 0, this, name, -1)); //-6, -9
 
 		infoBox.enemies = this.enemy;
 
