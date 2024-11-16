@@ -4,8 +4,8 @@ Basics:
 - Make animal attack more visible to player (add some feedback)
 - Make obstacles & tile destroyable
     Gun: Mainly for killing animals (multishot in a turn)
-    Saw: Destroy obstacles
-    Bomb: Destroy tiles
+    (done)Saw: Destroy obstacles
+    (done)Bomb: Destroy tiles
 - Make 3 rounds of progressive mission
     Board generation: Progressively larger
     Animals: Progressively more, with more variations
