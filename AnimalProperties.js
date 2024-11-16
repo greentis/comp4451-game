@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { Weapon } from './Weapon.js';
 import { WeaponProperties } from './WeaponProperties.js';
+import { AnimationMixer } from 'three';
 
 export class AnimalProperties {
     constructor(animal, typeID){
@@ -14,7 +15,7 @@ export class AnimalProperties {
             case AnimalProperties.TYPE.Monkey:
                 url = 'assets/monkey/scene.gltf';
                 this.meshScale = 0.01;
-                this.meshScaleZ = 0.01;
+                //this.meshScaleZ = 0.01;
                 this.animal.health = 3;
                 this.animal.actionPriority = {
                     cover:6,
@@ -25,8 +26,8 @@ export class AnimalProperties {
                 break;
             case AnimalProperties.TYPE.Bear:
                 url = 'assets/bear_roooaaar/scene.gltf';
-                this.meshScale = 1.01;
-                this.meshScaleZ = 1.01;
+                this.meshScale = 0.85;
+                //this.meshScaleZ = 1.01;
                 this.animal.health = 5;
                 this.animal.actionPriority = {
                     cover:6,
@@ -38,7 +39,7 @@ export class AnimalProperties {
             case AnimalProperties.TYPE.Rabbit:
                 url = 'assets/rabbit_rigged/scene.gltf';
                 this.meshScale = 0.025;
-                this.meshScaleZ = 0.025;
+                //this.meshScaleZ = 0.025;
                 this.animal.health = 2;
                 this.animal.actionPriority = {
                     cover:6,
@@ -61,7 +62,7 @@ export class AnimalProperties {
         let gltfLoader = new GLTFLoader();
         gltfLoader.load(url, (gltf) => {
             var model = gltf.scene;
-            model.scale.set(this.meshScale,this.meshScale,this.meshScaleZ);
+            model.scale.set(this.meshScale,this.meshScale,this.meshScale);
             model.traverse((child) => {
                 if (child.isMesh) {
                     child.userData = this.animal;
@@ -72,10 +73,19 @@ export class AnimalProperties {
             this.animal.mesh=this.mesh;
             this.animal.mesh.name=this.name;
             this.animal.getTile().characterEnter(this.animal);
+
+            this.mixer = new AnimationMixer(model);
+            this.animations = model.animations;
         })
 
         this.animal.maxHealth = this.animal.health;
     }
+
+    /*this.playAnimation = function(actionName) {
+        const action = this.mixer.clipAction(this.animations.find(clip => clip.name === actionName));
+        action.reset();
+        action.play();
+    };*/
 }
 
 AnimalProperties.TYPE = {
