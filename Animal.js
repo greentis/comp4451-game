@@ -9,8 +9,9 @@ import { infoBox } from './infoBox.js';
 export class Animal extends Character{
     constructor(q, r, typeID, game, name, groupid){
         super(q, r, 1, game, name);
-        this.setType(AnimalProperties.TYPE.Monkey);
-        
+        //this.setType(AnimalProperties.TYPE.Monkey);
+        this.setType(typeID);
+
         this.action.setActionPoint(0);
 
         this.groupID = groupid; //groupID is used to determine the group of the animal

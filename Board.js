@@ -47,6 +47,8 @@ export const xxhash = (seed, x, y) => {
 // output: Ep (enemy spawn point)
 var EpTable = {
     [0] : 2.5,
+    [1] : 4.0,
+    [2] : 1.5,
 }
 
 export class Board {
@@ -719,7 +721,8 @@ export class Board {
             var Ep = 0.0;
             var j = 0;
             while(Ep < Egp){
-                var enemyType = Math.round(xxhash(this.seed * 4451, i, Ep) * 1023) % Object.keys(EpTable).length;
+                var enemyType = Math.round(xxhash(this.seed * 4451, i, Ep) * 4451) % Object.keys(EpTable).length;
+                //console.log('enemyType', enemyType);
                 Ep += EpTable[enemyType];
                 if (Ep > Egp) break;
                 //console.log('Ep', Ep, 'Egp', Egp);
@@ -729,6 +732,7 @@ export class Board {
                 j++;
             }
         }
+        //console.log('enemyGroup', this.enemyGroup);
         
         // 6.2 calculate the spawn point of leader of each group
         // for each group, choose a random tile as the spawn point based on below rules:

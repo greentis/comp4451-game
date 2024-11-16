@@ -14,7 +14,32 @@ export class AnimalProperties {
             case AnimalProperties.TYPE.Monkey:
                 url = 'assets/monkey/scene.gltf';
                 this.meshScale = 0.01;
+                this.meshScaleZ = 0.01;
                 this.animal.health = 3;
+                this.animal.actionPriority = {
+                    cover:6,
+                    attack:4, // default 4
+                    escape:1
+                };
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);
+                break;
+            case AnimalProperties.TYPE.Bear:
+                url = 'assets/bear_roooaaar/scene.gltf';
+                this.meshScale = 1.01;
+                this.meshScaleZ = 1.01;
+                this.animal.health = 5;
+                this.animal.actionPriority = {
+                    cover:6,
+                    attack:4, // default 4
+                    escape:1
+                };
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Bomb);
+                break;
+            case AnimalProperties.TYPE.Rabbit:
+                url = 'assets/rabbit_rigged/scene.gltf';
+                this.meshScale = 0.025;
+                this.meshScaleZ = 0.025;
+                this.animal.health = 2;
                 this.animal.actionPriority = {
                     cover:6,
                     attack:4, // default 4
@@ -36,7 +61,7 @@ export class AnimalProperties {
         let gltfLoader = new GLTFLoader();
         gltfLoader.load(url, (gltf) => {
             var model = gltf.scene;
-            model.scale.set(this.meshScale,this.meshScale,0.01);
+            model.scale.set(this.meshScale,this.meshScale,this.meshScaleZ);
             model.traverse((child) => {
                 if (child.isMesh) {
                     child.userData = this.animal;
@@ -54,9 +79,16 @@ export class AnimalProperties {
 }
 
 AnimalProperties.TYPE = {
-    Monkey: 0
+    Monkey: 0, 
+    Bear: 1, 
+    Rabbit: 2
 }
 
+AnimalProperties.TYPEID = {
+    0: "Monkey",
+    1: "Bear",
+    2: "Rabbit"
+}
 
 /* // used for map generation in Board.js
 //WARNING: the mapping move to the Board.js(EpTable), please remember update it whenever you change the animal type

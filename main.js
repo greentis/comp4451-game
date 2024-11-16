@@ -13,6 +13,7 @@ import { WeaponProperties } from './WeaponProperties.js';
 import { Character } from './Character.js';
 
 import { infoBox } from './infoBox.js';
+import { AnimalProperties } from './AnimalProperties.js';
 //global variables
 
 export class Game{
@@ -80,7 +81,8 @@ export class Game{
 				//make a name according to [i][j]
 				var name = 'Enemy ' + i + j;
 				if (enemySpawnPoints[i] && enemySpawnPoints[i][j]) {
-					this.enemy.add(new Animal(enemySpawnPoints[i][j][1].q, enemySpawnPoints[i][j][1].r, "Monkey", this, name, i));
+					console.log("type", enemySpawnPoints[i][j][0], AnimalProperties.TYPEID[enemySpawnPoints[i][j][0]]);
+					this.enemy.add(new Animal(enemySpawnPoints[i][j][1].q, enemySpawnPoints[i][j][1].r, enemySpawnPoints[i][j][0], this, name, i));
 				}
 			}
 		}
