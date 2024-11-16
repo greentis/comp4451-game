@@ -1,3 +1,42 @@
+=================================================================
+Basics: 
+- Implement 2 more types of animals
+- Make animal attack more visible to player (add some feedback)
+- Make obstacles & tile destroyable
+Gun: Mainly for killing animals (multishot in a turn)
+Saw: Destroy obstacles
+Bomb: Destroy tiles
+- Make 3 rounds of progressive mission
+Board generation: Progressively larger
+Animals: Progressively more, with more variations
+ Bonus:
+- 1W- Fix the UI color to make it more attractive
+- 1W- Enhance the visuals of the board (Add texture map, new tiles, etc.)
+- 1B- Are there some ways to visualize what the animals are doing? (e.g. when animal is being aggressive, show sth on their head)
+- 1B- Make some sort of particles for the attack
+- 1B- Make a UI dialog box to guide player through the gameplay
+- 1B each- Make AI able do more thing (e.g. ambush, flee to other group) 
+- 1B- Add sound (not music) to the game
+- 1.5B each - Add some new perceptual system for AI (e.g. hearing, memory)
+- 1.5B- Add the capability to generate a mixed group of animals (one group contains >1 type of animal)
+- 2B- Implement an upgrade system
+Gun: more shots & damage
+Saw: more range & effective to obstacles
+Bomb: more destructive
+- 2B- Add a full particle system with acceleration control
+- 2B- Add a new board generation theme variation (e.g. wetland, savana)
+- 3B- Add a new character to assist player throughout the game (e.g. transportation)
+- 3B- Optimize Board generation - can we make it faster?
+- 3B- Implement some kind of attack animations
+- 3B- Make a radar map on the corner of the game to show where are the enemies
+- 4B- Find a way to show more clearly where the player can see and attack
+- 4B- Add animations to the animals
+
+
+
+
+
+====================================================================
 week 1:
 base game
 class character
