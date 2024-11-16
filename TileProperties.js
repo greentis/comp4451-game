@@ -33,9 +33,9 @@ export class TileProperties {
             case TileProperties.TYPE.Void:
                 this.name = 'Void'
                 this.color = 0x000000;
-                this.offsetY = 0.0;
+                this.offsetY = -0.1;
 
-                this.seeThroughable = false;
+                this.seeThroughable = true;
                 this.hittable = false;
                 this.passCost = 99999;
                 this.hitRateCost = 99999;
@@ -152,6 +152,40 @@ export class TileProperties {
             this.mesh.position.y=this.offsetYm;
             this.mesh.position.z=this.offsetZ;
             this.tile.body.add(this.mesh);
+        });
+    }
+    
+    destroy(){
+        if (!this.mesh) {
+            this.tile.body.remove(this.mesh);
+            return;
+        }
+        let y = this.mesh.position.y;
+        let vy = 0.1;
+        let ay = -0.015;
+        const animate = ()=>{
+            let time = 0;
+            return new Promise((resolve)=>{
+                const animate = (timestamp)=>{
+                    time++;
+                    // ~ Animation ~
+                    vy += ay;
+                    y += vy;
+                    this.mesh.position.y = y;
+    
+                    if (time < 100) { 
+                        requestAnimationFrame(animate);
+                    }
+                    else{
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(animate);
+            })
+        }
+        // The mother function is async to be able to await
+        animate().then(()=>{
+            this.tile.body.remove(this.mesh);
         });
     }
 }

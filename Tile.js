@@ -42,11 +42,12 @@ export class Tile {
     }
 
     setType(typeID){
-        this.board = this.game.board;
-        this.board.grids[this.q.toString()+this.r.toString()] = new Tile(this.q, this.r, this.x, this.y, this.z, this.game, typeID, this.terrainHeight);
-        
-        console.log(this.board.getTile(this.q, this.r));
-        this.body.isVisible = false;
+        this.properties.destroy();
+        this.properties = new TileProperties(this, typeID);
+        this.render();
+    }
+
+    takeDamage(damage){
     }
 
     render(){

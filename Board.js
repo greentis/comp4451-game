@@ -1007,7 +1007,6 @@ export class Board {
 
     getTile(q, r){
         //console.log('getTile: q: ', q, 'r: ', r);
-        
         return this.grids.get(q.toString()+r.toString());
     }
 

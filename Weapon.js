@@ -58,10 +58,9 @@ export class Weapon{
                         p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix,0.05,0.02,0.05));
                     }
                 }
-                return;
-            }
-            else if (this.name === 'Bomb') {
                 t.setType(TileProperties.TYPE.Void);
+                t.takeDamage(attenuationFunc(this.damage, this.blastRadius, distance(t, tile)));
+                return;
             }
             if (t.character.constructor == damager.constructor) return;
             t.character.takeDamage(attenuationFunc(this.damage, this.blastRadius, distance(t, tile)));
