@@ -1068,6 +1068,21 @@ export class Board {
         return false;
     }
 
+    checkBoardBoundariesT(tile){
+        var width = this.qmax;
+        var length = this.rmax;
+        var q = tile.q;
+        var r = tile.r;
+        // return true if the tile locates at exactly the boundary of the board
+        if (q <= -width || q >= width || r <= -length || r >= length) return true;
+        //return true if one of the neighbor of the tile is void tile
+        var adjacent = this.findAdjacent(q, r, width, length, false);
+        for (let i = 0; i < adjacent.length; i++){
+            if (this.temp[adjacent[i].q][adjacent[i].r] == TileProperties.TYPE.Void) return true;
+        }
+        return false;
+    }
+
     findAdjacent(q, r, width, length, checkVoid = true){
         var adjacent = new Array();
         for (let i = 0; i < 6; i++){

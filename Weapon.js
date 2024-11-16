@@ -13,13 +13,14 @@ import { TileProperties } from './TileProperties.js';
 const distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
 const lerp = (a, b, t) => {return a + (b - a) * t;}
 export class Weapon{
-    constructor(character, typeID, damage = 1){
+    constructor(character, typeID, damage = 1,game=null){
         this.character = character;
         this.body = new THREE.Object3D();
         this.setType(typeID);
         
         this.character.body.add(this.body);
         this.damage = damage;
+        this.game = game;
     }
 
     setType(typeID){
@@ -58,7 +59,9 @@ export class Weapon{
                         p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix,0.05,0.02,0.05));
                     }
                 }
-                t.setType(TileProperties.TYPE.Void);
+                if (!this.game.board.checkBoardBoundariesT(t)){
+                    t.setType(TileProperties.TYPE.Default);
+                }
                 t.takeDamage(attenuationFunc(this.damage, this.blastRadius, distance(t, tile)));
                 return;
             }
