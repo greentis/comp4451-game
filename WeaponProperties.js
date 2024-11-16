@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {Tile} from './Tile.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import Particle from './particles/Particle.js';
 
 export class WeaponProperties {
     constructor(weapon, typeID){
@@ -10,6 +11,17 @@ export class WeaponProperties {
 
         this.weapon.blastRadius = 0;
         this.weapon.body.rotation.y = 0;
+
+        this.Pmin = 8;
+                this.Pvar = 4;
+                this.particleMatrix = 
+                Particle.addVelocity(
+                        Particle.addGravity(
+                            Particle.setInitialPosition(
+                                Particle.get3DMatrix()
+                            , 0, 1, 0)
+                        )
+                ,0,0.2,0)
         let url ="";
         switch (typeID) {
             case WeaponProperties.TYPE.Bomb:
@@ -20,6 +32,15 @@ export class WeaponProperties {
                 this.meshScale = 0.036;
                 this.weapon.body.position.y = 2.4;
                 this.weapon.body.rotation.y = Math.PI/2;
+
+                this.Pmin = 1;
+                this.Pvar = 0;
+                this.particleMatrix = 
+                Particle.addVelocity(
+                            Particle.setInitialPosition(
+                                Particle.get3DMatrix()
+                            , 0, 1, 0)
+                ,0,0,0)
                 break;
             case WeaponProperties.TYPE.Gun:
                 this.weapon.name = 'Gun';
@@ -36,6 +57,16 @@ export class WeaponProperties {
                 this.meshScale = 0.4;
                 this.weapon.body.position.y = 2.3;
                 this.weapon.body.rotation.y = Math.PI/2;
+
+                this.Pmin = 10;
+                this.Pvar = 10;
+                this.particleMatrix = 
+                Particle.addVelocity(
+                    Particle.setInitialPosition(
+                        Particle.get3DMatrix()
+                    , 0, 1, 0)
+                ,0,0,0)
+                break;
                 break;
             default:
                 break;

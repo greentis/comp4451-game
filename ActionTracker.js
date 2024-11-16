@@ -111,64 +111,6 @@ export class ActionTracker{
     }
 }
 
-export class Particle{
-    constructor(canvasFunction, parent, size, lifespan, x = 0, y = 0){
-        const ctx = document.createElement('canvas').getContext('2d');
-        document.body.appendChild(ctx.canvas);
-        ctx.canvas.width = 100;
-        ctx.canvas.height = 100;
-
-        const texture = new THREE.CanvasTexture(ctx.canvas);
-        texture.minFilter = THREE.LinearFilter;
-        texture.wrapS = THREE.ClampToEdgeWrapping;
-        texture.wrapT = THREE.ClampToEdgeWrapping;
-        texture.needsUpdate = true;
-        const particleMaterial = new THREE.SpriteMaterial({
-            map: texture,
-            transparent: true,
-        });
-
-        canvasFunction(ctx);
-
-        const particle = new THREE.Sprite(particleMaterial);
-
-        particle.position.x = x;
-        particle.position.y = y;
-        particle.scale.set(size, size, size);
-        parent.add(particle);
-
-        this.ay = -0.001;
-        this.vx = 0;
-        this.vy = 0.05;
-        this.vz = 0;
-
-        let time = 0;
-        const waitForMoveAnimation = async ()=>{
-            return new Promise((resolve)=>{
-                const animate = (timestamp)=>{
-                    time++;
-                    // ~ Animation ~
-                    this.vy += this.ay;
-                    particle.position.y += this.vy;
-                    if (time < lifespan) { 
-                        requestAnimationFrame(animate);
-                    }
-                    else{
-                        resolve();
-                    }
-                }
-                requestAnimationFrame(animate);
-            })
-        }
-
-        // The mother function is async to be able to await
-        waitForMoveAnimation().then(()=>{
-            console.log("dead");
-            parent.remove(particle);
-        });
-    }
-}
-
 let ctxs = [];
 for (let i = 0 ; i < 2; i ++){
     const canvas = document.createElement('canvas');

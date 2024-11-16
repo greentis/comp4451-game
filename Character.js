@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { ActionTracker } from './ActionTracker.js';
 import { infoBox } from './infoBox.js';
-import { Particle } from './ActionTracker.js';
+import Particle from './particles/Particle.js'
 
 // private method
 const lerp = (a, b, t) => {return a + (b - a) * t;}

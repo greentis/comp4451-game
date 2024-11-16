@@ -33,7 +33,8 @@ export class Tile {
         this.mesh.rotateY(Math.PI/6);
         this.mesh.userData = this;
 
-        this.setType(typeID);
+        this.properties = new TileProperties(this, typeID);
+        this.mesh.name = this.properties.name + ' Tile (' + this.q.toString() + ', ' + this.r.toString() + ')';
         
         // render
         this.state = 'default';
@@ -41,9 +42,11 @@ export class Tile {
     }
 
     setType(typeID){
-        this.properties = new TileProperties(this, typeID);
-        this.mesh.name = this.properties.name + ' Tile (' + this.q.toString() + ', ' + this.r.toString() + ')';
-        //this.render();
+        this.board = this.game.board;
+        this.board.grids[this.q.toString()+this.r.toString()] = new Tile(this.q, this.r, this.x, this.y, this.z, this.game, typeID, this.terrainHeight);
+        
+        console.log(this.board.getTile(this.q, this.r));
+        this.body.isVisible = false;
     }
 
     render(){

@@ -4,7 +4,7 @@ import {Character} from './Character.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { Weapon } from './Weapon.js';
 import { WeaponProperties } from './WeaponProperties.js';
-import { Particle } from './ActionTracker.js';
+import Particle from './particles/Particle.js'
 import { infoBox } from './infoBox.js';
 
 const distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
