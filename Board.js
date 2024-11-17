@@ -86,10 +86,10 @@ export class Board {
                 fogColour: 0x000000,
             },
             1: { //desert
-                roomPercentage: 0.65,
+                roomPercentage: 0.72,
                 rainFall: 0.0,
                 riverSource: 1.55,
-                vegetationCoverage: 0.04,
+                vegetationCoverage: 0.085,
                 wallThreshold: 0.65,
                 coverThreshold: 0.58,
                 fogColour: 0x8b7d6b,
@@ -154,7 +154,7 @@ export class Board {
 
         var printable = false;
         //below variables are for polygonal generation only
-        this.theme = 1;parseInt(this.seed,10)%6; //control the theme of the map
+        this.theme = 3;parseInt(this.seed,10)%6; //control the theme of the map
             if (this.theme == 2){ this.theme = 0;}
             else if (this.theme == 4){ this.theme = 1;}
             else if (this.theme == 5){ this.theme = 3;}
@@ -1018,7 +1018,7 @@ export class Board {
             }
         }
         if(themeTable[this.theme].fog != 0x000000){
-            this.game.scene.fog = new THREE.Fog( themeTable[this.theme].fogColour, 5 , 10); //0.001,30
+            this.game.scene.fog = new THREE.Fog( themeTable[this.theme].fogColour, 5 , 16); //0.001,30
         }
 
         // 7.3 generate the tile based on the annotated map   
