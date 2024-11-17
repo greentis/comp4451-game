@@ -60,6 +60,8 @@ export class Hunter extends Character{
     //
     // EventHandler (Overwrite)
     //
+        playAnimation(){}
+
         select(){
             //pop out all playerMove
             this.game.movingPlayer = this;

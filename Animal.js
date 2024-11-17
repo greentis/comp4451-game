@@ -19,6 +19,8 @@ export class Animal extends Character{
         this.wake = false; // wake up when player is near or under attack
         
         this.getTile().characterEnter(this);
+
+        
     }
 
     setType(typeID){
@@ -28,6 +30,19 @@ export class Animal extends Character{
 
     getEnemy(){
         return this.game.enemy;
+    }
+
+    playAnimation(){
+        
+        console.log("checkpoint 1")
+        this.mixer = new THREE.AnimationMixer(this.mesh);
+        console.log("checkpoint 2")
+        this.clips = this.mesh.animations;
+        console.log("checkpoint 3")
+        this.action = this.mixer.clipAction(this.clips[0]);
+        console.log("checkpoint 4")
+        this.action.play();
+        console.log("checkpoint 5")
     }
 
     //helper function of AIControl

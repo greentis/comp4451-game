@@ -69,7 +69,7 @@ export class Character{
     }
 
     async moveTo(tile) {
-        
+        this.playAnimation();
 
         var path = this.findValidPath(tile);
         if (path.length == 0) return false;
@@ -137,9 +137,6 @@ export class Character{
         return true;
     }
 
-    
-      
-      
 
     attack(tile){
         this.reduceActionPoint(2);
@@ -269,7 +266,7 @@ export class Character{
             // Check if this is valid
 
             canHit = t.properties.strength <= this.weapon.convertToObstacleDamage(this.weapon.damage) || t.properties.hittable;
-            console.log(t.properties.strength, this.weapon.convertToObstacleDamage(this.weapon.damage), canHit);
+            //console.log(t.properties.strength, this.weapon.convertToObstacleDamage(this.weapon.damage), canHit);
 
             if (t != this.getTile()){
                 if (!t.properties.seeThroughable && !canHit) return false;

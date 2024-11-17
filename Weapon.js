@@ -75,7 +75,7 @@ export class Weapon{
                 }
                 else if (this.name === 'Saw') {
                     p = new CanvasParticle(t.body, 0.2, 20, "cross");
-                    p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix,0.05,0.02,0.05));
+                    p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix,0.03,0.03,0.03));
                 }
             }
             t.takeDamage(
