@@ -29,7 +29,7 @@ export class Weapon{
         this.game = this.character.game;
         this.damage;
         this.name;
-        this.attackRange;
+        this.range;
         this.blastRadius;
 
     }
@@ -39,10 +39,13 @@ export class Weapon{
         //this.render();
     }
 
+    setDamage(damage){
+        this.damage = damage;
+    }
+
     convertToObstacleDamage(damage){
-        if (this.name === 'Gun') return 1;
-        else if (this.name === 'Bomb') return damage;
-        else if (this.name === 'Saw') return damage*2;
+        let result = damage * this.properties.obstacleDamageMultiplier;
+        return result == 0 ? 1 : result;
     }
 
     dealsDamage(tile, hitRate, damager){

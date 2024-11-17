@@ -9,10 +9,12 @@ export class WeaponProperties {
         this.weapon = weapon;
         this.weapon.name = 'Gun';
 
-
-        this.weapon.attackRage = 8;
+        this.weapon.damage = 5;
+        this.weapon.range = 8;
         this.weapon.blastRadius = 0;
         this.weapon.body.rotation.y = 0;
+
+        this.obstacleDamageMultiplier = 1;
 
         // The particle controller
         // Pmin: minimum number of particles
@@ -39,6 +41,9 @@ export class WeaponProperties {
                 this.meshScale = 0.036;
                 this.weapon.body.position.y = this.weapon.height + 0.4;
                 this.weapon.body.rotation.y = Math.PI/2;
+                this.weapon.damage = 5;
+                this.weapon.range = 6;
+                
 
                 this.Pmin = 1;
                 this.Pvar = 0;
@@ -56,6 +61,9 @@ export class WeaponProperties {
                 this.meshScale = 0.18;
                 this.weapon.body.position.y = this.weapon.height + 0.3;
                 this.weapon.body.rotation.y = Math.PI;
+                this.weapon.damage = 8;
+                this.weapon.range = 10;
+                this.obstacleDamageMultiplier = 0;
                 break;
             case WeaponProperties.TYPE.Saw:
                 this.weapon.name = 'Saw';
@@ -64,6 +72,9 @@ export class WeaponProperties {
                 this.meshScale = 0.4;
                 this.weapon.body.position.y = this.weapon.height + 0.3;
                 this.weapon.body.rotation.y = Math.PI/2;
+                this.weapon.damage = 5;
+                this.weapon.range = 2;
+                this.obstacleDamageMultiplier = 2;
 
                 this.Pmin = 10;
                 this.Pvar = 10;

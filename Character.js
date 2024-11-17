@@ -243,7 +243,7 @@ export class Character{
     lineOfSight(tile, isSolid = true, toInfinity = false){
         //console.log("test sight line");
         var N = distance(this.getTile(), tile) + 0.0;
-        var sightRange = toInfinity ? 1000 : this.sightRange;
+        var sightRange = toInfinity ? 1000 : isSolid? this.weapon.range : this.sightRange;
         if (N > sightRange) return false;
 
         var path = new Set();
@@ -269,7 +269,8 @@ export class Character{
             // Check if this is valid
 
             canHit = t.properties.strength <= this.weapon.convertToObstacleDamage(this.weapon.damage) || t.properties.hittable;
-            
+            console.log(t.properties.strength, this.weapon.convertToObstacleDamage(this.weapon.damage), canHit);
+
             if (t != this.getTile()){
                 if (!t.properties.seeThroughable && !canHit) return false;
                 path.add(t);

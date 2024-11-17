@@ -116,7 +116,7 @@ export class TileProperties {
                 this.tileScaling = 0.01;
 
                 this.seeThroughable = true;
-                this.hittable = false;
+                this.hittable = true;
                 this.passCost = 2.0;
 
                 this.strength = 12;
