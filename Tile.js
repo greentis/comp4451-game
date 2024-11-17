@@ -49,8 +49,11 @@ export class Tile {
 
     takeDamage(damage, weaponType){
         if (damage >= this.properties.strength){
+            let character = null;
+            if (this.character) character = this.characterLeave();
             if (weaponType === "Bomb") this.setType(TileProperties.TYPE.Bombed)
             else this.setType(TileProperties.TYPE.Default);
+            if (character) this.characterEnter(character);
         }
     }
 
@@ -94,7 +97,9 @@ export class Tile {
         this.character.body.position.y = 0;
         this.character.weapon.body.visible = true;
         this.state = 'default';
+        let character = this.character;
         this.character = null;
+        return character;
     }
 
 

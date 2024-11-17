@@ -158,14 +158,14 @@ export class TileProperties {
             case TileProperties.TYPE.TumbleWeed:
                 this.name = 'TumbleWeed';
                 this.color = 0x8b7d6b;
-                this.offsetYm = 0;
+                this.offsetYm = 0.2;
 
                 this.meshScale = 0.003;  
                 this.seeThroughable = true;
                 this.ambushable = true;
                 this.hittable = true;
                 this.passCost = 3.0;
-                this.hitRateCost = 30.0;
+                this.hitRateCost = 25.0;
 
                 this.strength = 3;
 
