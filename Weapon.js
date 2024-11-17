@@ -27,11 +27,18 @@ export class Weapon{
         this.character.body.add(this.body);
         this.damage = damage;
         this.game = game;
+        this.name;
     }
 
     setType(typeID){
         this.properties = new WeaponProperties(this, typeID);
         //this.render();
+    }
+
+    convertToObstacleDamage(damage){
+        if (this.name === 'Gun') return 1;
+        else if (this.name === 'Bomb') return damage;
+        else if (this.name === 'Saw') return damage*2;
     }
 
     dealsDamage(tile, hitRate, damager){
@@ -64,8 +71,10 @@ export class Weapon{
                     p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix,0.05,0.02,0.05));
                 }
             }
-            t.setType(TileProperties.TYPE.Default);
-            t.takeDamage(attenuationFunc(this.damage, this.blastRadius, distance(t, tile)));
+            t.takeDamage(
+                this.convertToObstacleDamage(attenuationFunc(this.damage, this.blastRadius, distance(t, tile))),
+                this.name
+            );
             if (!t.character) {
                 return;
             }

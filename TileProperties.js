@@ -25,6 +25,9 @@ export class TileProperties {
         this.hittable = true;       // Can explosions explode on it?
         this.passCost = 1.0;       // How much does it cost to pass through? (1.0 = normal)
         this.hitRateCost = 5.0;      // How much hitRate point it will reduce if bullet pass throught this tile? (5.0 = normal)
+
+        this.strength = 2;           // The Damage required to destroy this tile
+
                                     // for starting bullet aim cost value: 100
         var url;
 
@@ -40,7 +43,23 @@ export class TileProperties {
                 this.passCost = 99999;
                 this.hitRateCost = 99999;
 
+                this.strength = 99999;
+
                 break;
+            case TileProperties.TYPE.Bombed:
+                    this.name = 'Bombed'
+                    this.color = 0x322217;
+                    this.offsetY = 0.1;
+    
+                    this.seeThroughable = true;
+                    this.hittable = true;
+                    this.passCost = 99999;
+                    this.hitRateCost = 4;
+                    this.tileScaling = 0.01;
+    
+                    this.strength = 99999;
+    
+                    break;
             case TileProperties.TYPE.Wall:
                 this.name = 'Wall'
                 this.color = 0x221114;
@@ -49,6 +68,8 @@ export class TileProperties {
                 this.hittable = false;
                 this.passCost = 99999;
                 this.hitRateCost = 99999;
+
+                this.strength = 6;
                 
                 this.meshScale = 0.85;
                 url = 'assets/high-rock/scene.gltf';
@@ -62,6 +83,8 @@ export class TileProperties {
                 this.hittable = false;
                 this.passCost = 99999;
                 this.hitRateCost = 10;
+
+                this.strength = 99999;
                 
                 //url = 'assets/high-rock/scene.gltf';
                 
@@ -80,6 +103,8 @@ export class TileProperties {
                 //this.offsetX = 0.1;
                 this.offsetYm = 0.3;
                 this.offsetZ = -0.6;
+
+                this.strength = 4;
                 url = 'assets/rock/scene.gltf';
                 break;
             case TileProperties.TYPE.Water:
@@ -87,12 +112,14 @@ export class TileProperties {
                 this.color = 0x3555b5;
                 this.tile.body.position.y=0;
                 this.offsetY = 0;
-                this.offsetYt = 0.15;
+                this.offsetYt = 0.12;
                 this.tileScaling = 0.01;
 
                 this.seeThroughable = true;
                 this.hittable = false;
                 this.passCost = 2.0;
+
+                this.strength = 12;
 
                 break;
             case TileProperties.TYPE.Bush:
@@ -105,6 +132,8 @@ export class TileProperties {
                 this.hittable = true;
                 this.passCost = 3.0;
                 this.hitRateCost = 12.0;
+
+                this.strength = 3;
 
                 url = 'assets/bush/scene.gltf';
                 break;
@@ -119,6 +148,8 @@ export class TileProperties {
 
                 this.meshScale = 0.012;
                 url = 'assets/tree/scene.gltf';
+
+                this.strength = 8;
                 break;
             case TileProperties.TYPE.Default:
             default:
@@ -191,6 +222,7 @@ export class TileProperties {
 }
 
 TileProperties.TYPE = {
+    Bombed: -3,
     Hold: -2, 
     Void: -1,
     Default: 0,

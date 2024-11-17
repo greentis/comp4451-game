@@ -47,7 +47,11 @@ export class Tile {
         this.render();
     }
 
-    takeDamage(damage){
+    takeDamage(damage, weaponType){
+        if (damage > this.properties.strength){
+            if (weaponType === "Bomb") this.setType(TileProperties.TYPE.Bombed)
+            else this.setType(TileProperties.TYPE.Default);
+        }
     }
 
     render(){

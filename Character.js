@@ -270,12 +270,14 @@ export class Character{
 
             // Check if this is valid
 
+            const canHit = t.properties.strength <= this.weapon.convertToObstacleDamage(this.weapon.damage) || t.properties.hittable;
+            
             if (t != this.getTile()){
-                if (!t.properties.seeThroughable && !t.properties.hittable) return false;
+                if (!t.properties.seeThroughable && !canHit) return false;
                 path.add(t);
                 if (isSolid){
                     if (t.character != null) break;
-                    if (!t.properties.seeThroughable && t.properties.hittable) break;
+                    if (!t.properties.seeThroughable && canHit) break;
                 }
                 else {
                     if (!t.properties.seeThroughable) break;
