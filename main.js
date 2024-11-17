@@ -65,7 +65,7 @@ export class Game{
 	generateMission(){
 		// Board & Tiles (Development phase)
 		infoBox.missionNo = this.missionNo;
-		this.board = new Board(this);
+		this.board = new Board(this, this.missionNo);
 		this.board.body.rotation.x = Math.PI * 0;
 		this.board.body.rotation.y = 0;
 		this.scene.add(this.board.body);

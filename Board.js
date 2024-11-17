@@ -52,7 +52,7 @@ var EpTable = {
 }
 
 export class Board {
-    constructor(game){
+    constructor(game,missionNo){
         this.game = game;
         this.body = new THREE.Group();
         var geometry = new THREE.PlaneGeometry( 100, 100 );
@@ -64,44 +64,69 @@ export class Board {
 
         this.mesh.userData = this;
         
-
+        this.missionNo = missionNo;
         this.grids = new Map();
         this.path = [];
         this.lightedGrid = new Array();
         this.adjacentTiles = [[1, 0], [0, 1], [-1, 1], [-1, 0], [0, -1], [1, -1]]; // pre-calculated adjacent tiles coordinates change
 
         this.generatePolygonal();
-
-        
-
-        /* geometry = new THREE.BufferGeometry();
-        const vertices = [];
-
-        //const sprite = new THREE.TextureLoader().load( './assets/grass.png' );
-        //sprite.colorSpace = THREE.SRGBColorSpace;
-
-        for ( let i = 0; i < 2000; i ++ ) {
-
-            const x = 40 * Math.random() - 20;
-            const y = 10 * Math.random();
-            const z = 40 * Math.random() - 20;
-
-            vertices.push( x, y, z );
-
-        }
-
-        geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-
-        material = new THREE.PointsMaterial( { size: 0.5, sizeAttenuation: true, transparent: true } );
-        material.color.setHSL( 1.0, 0.3, 0.7, THREE.SRGBColorSpace );
-
-        const particles = new THREE.Points( geometry, material );
-        this.game.scene.add( particles ); */
     }
     
-    
-
     generatePolygonal(){
+        //theme
+        var themeTable = {
+            0: { //forest
+                roomPercentage: 0.75,
+                rainFall: 0.1,
+                riverSource: 0.8,
+                vegetationCoverage: 0.1,
+                wallThreshold: 0.7,
+                coverThreshold: 0.4,
+            },
+            1: { //desert
+                roomPercentage: 0.85,
+                rainFall: 0.0,
+                riverSource: 1.5,
+                vegetationCoverage: 0.025,
+                wallThreshold: 0.65,
+                coverThreshold: 0.58,
+            },
+            2: { //wetland
+                roomPercentage: 0.95,
+                rainFall: 0.15,
+                riverSource: 0.4,
+                vegetationCoverage: 0.1,
+                wallThreshold: 0.99,
+                coverThreshold: 0.5,
+            },
+            3: { //black forest
+                roomPercentage: 0.75,
+                rainFall: 0.3,
+                riverSource: 1.2,
+                vegetationCoverage: 0.35,
+                wallThreshold: 0.7,
+                coverThreshold: 0.4,
+            },
+
+        };
+
+
+        var treeHashTable = {
+            [TileProperties.TYPE.Rock]: 0.2,
+            [TileProperties.TYPE.Default]: 0.35,
+            [TileProperties.TYPE.Cover]: 0.15,
+            [TileProperties.TYPE.Water]: 0.15,
+            [TileProperties.TYPE.Wall]: 0.15,
+        };
+        var bushHashTable = {
+            [TileProperties.TYPE.Rock]: 0.0,
+            [TileProperties.TYPE.Default]: 0.3,
+            [TileProperties.TYPE.Cover]: 0.2,
+            [TileProperties.TYPE.Water]: 0.5
+        };
+
+
         //generate the map with polygonal grid
         //1. set the size of the map by 3 radius
         //2. make the shape of map become irregular by changing some of the tile to void tile, while keeping remaining tile as rock tile
@@ -111,30 +136,6 @@ export class Board {
         //6. calculate the spawn point of the enemy in the map
         //7. generate the tile based on the annotated map
 
-        var printable = false;
-        //below variables are for polygonal generation only
-        this.roomLength = 10; //control the Length of the map
-        this.roomWidth = 10; //control the Width of the map
-        this.roomSizeRange = 1; //control the variation of the size of the room(+/- roomSizeRange)
-        this.roomPercentage = 0.75; //control around how many percentage of rock tile in the map will be turned into default tile
-        this.wallThreshold = 0.7; //control the threshold of the wall tile conversion from rock tile
-        this.coverThreshold = 0.4; //control the threshold of the cover tile conversion from rock tile
-                                   //not that cover threshold should be smaller than wall threshold
-            if(this.coverThreshold >= this.wallThreshold) this.coverThreshold = this.wallThreshold;
-        this.rainFall = 0.1;//0.1 //control the rain fall of the map, tile with height below rain fall will be turned into water tile
-        this.riverSource = 0.8;//0.8 //control the source of the river, tile with height higher than river source will start the river tracing 
-        this.vegetationCoverage = 0.1;//0.1 //control the coverage of the vegetation in the map
-        
-        this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
-        this.enemyDensity = 0.02; //control the density of the enemy per tile in the map(suggested value: < 0.05)
-        this.averagePerGroup = 4; //control the average number of enemy per group
-        this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
-        this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
-
-        this.levelDifficulty = 1.0; //control the difficulty of the level, the higher the value, the harder the level
-                                    //default value is 1.0
-
-        // 1. set the size of the map by 3 radius
         //generat random map with hexagon grid
         //setting random this.seed
         // cover all the map with rock first
@@ -146,6 +147,33 @@ export class Board {
         var perlinNoise = new noise();
         perlinNoise.seed(this.seed);
 
+
+        var printable = false;
+        //below variables are for polygonal generation only
+        this.theme = 3; //control the theme of the map
+            console.log('Mission No:', this.missionNo, 'Theme:', this.theme);
+        this.roomLength = 10 + 2*(Math.max(this.missionNo,3) - 2); //control the Length of the map
+        this.roomWidth = 10 + 3*(Math.max(this.missionNo,3) - 2); //control the Width of the map
+        this.roomSizeRange = 1; //control the variation of the size of the room(+/- roomSizeRange)
+        this.roomPercentage = themeTable[this.theme].roomPercentage; //0.75; //control the percentage of the default tile in the map
+        this.wallThreshold = themeTable[this.theme].wallThreshold; //0.7; //control the threshold of the wall tile conversion from rock tile
+        this.coverThreshold = themeTable[this.theme].coverThreshold; //0.4; //control the threshold of the cover tile conversion from rock tile
+                                   //not that cover threshold should be smaller than wall threshold
+            if(this.coverThreshold >= this.wallThreshold) this.coverThreshold = this.wallThreshold;
+        this.rainFall = themeTable[this.theme].rainFall; //0.1;//control the rain fall of the map, tile with height below rain fall will be turned into water tile
+        this.riverSource = themeTable[this.theme].riverSource; //0.8;//control the river source of the map, tile with height above river source will be turned into water tile
+        this.vegetationCoverage = themeTable[this.theme].vegetationCoverage; //0.1;//control the vegetation coverage of the map, tile with vegetation coverage below the value will be turned into vegetation tile
+        
+        this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
+        this.enemyDensity = 0.03 + 0.01*(Math.max(this.missionNo,3) - 2); //control the density of the enemy per tile in the map(suggested value: < 0.05)
+        this.averagePerGroup = 4; //control the average number of enemy per group
+        this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
+        this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
+
+        this.levelDifficulty = 1.0 + (this.missionNo)*0.5; //control the difficulty of the level, the higher the value, the harder the level
+                                    //default value is 1.0
+
+        // 1. set the size of the map by 3 radius
         if (this.roomSizeRange == 0) {
             var width = this.roomWidth;
             var length = this.roomLength;
@@ -543,22 +571,7 @@ export class Board {
 
         // 4.4.1 generate the tree tile
         // 4.4.2 generate the bush tile
-        // we consider turning the vegetation tile into tree tile or bush tile based on the tree value and bush value
-        var treeHashTable = {
-            [TileProperties.TYPE.Rock]: 0.2,
-            [TileProperties.TYPE.Default]: 0.35,
-            [TileProperties.TYPE.Cover]: 0.15,
-            [TileProperties.TYPE.Water]: 0.15,
-            [TileProperties.TYPE.Wall]: 0.15,
-        };
-        var bushHashTable = {
-            [TileProperties.TYPE.Rock]: 0.0,
-            [TileProperties.TYPE.Default]: 0.3,
-            [TileProperties.TYPE.Cover]: 0.2,
-            [TileProperties.TYPE.Water]: 0.5
-        };
-        
-        
+        // we consider turning the vegetation tile into tree tile or bush tile based on the tree value and bush value      
         vegetationTile.forEach((t)=>{
             var treeValue = 0.0;
             var bushValue = 0.0;
