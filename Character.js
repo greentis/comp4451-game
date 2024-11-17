@@ -139,50 +139,46 @@ export class Character{
     }
 
 
-    attack(tile){
+    async attack(tile){
         this.reduceActionPoint(2);
         this.facing(tile.q, tile.r)
 
-        /* 
-            let facingOld = this.body.rotation.y;
-            let facingNew = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
-            let duration = 2 * Math.abs(facingOld-facingNew) * 180 / Math.PI;
-            let start;
-            const waitForMoveAnimation = ()=>{
-                return new Promise((resolve)=>{
-                    // the animation frame function
-                    const animate = (timestamp)=>{
-                        // record the starting time
-                        if (!start) start = timestamp;
-                        if (duration < 0.05) {
-                            console.log("skip animation");
-                            resolve();
-                        }
-                        // time represents time passed since start
-                        const time = timestamp - start;
+        let x = -Math.sin(this.body.rotation.y) / 3.0
+        let z = -Math.cos(this.body.rotation.y) / 3.0
+        let start;
+        const waitForMoveAnimation = async ()=>{
+            return new Promise((resolve)=>{
+                // the animation frame function
+                const animate = (timestamp)=>{
+                    // record the starting time
+                    if (!start) start = timestamp;
 
-                        // ~ Animation ~
-                        this.body.rotation.y = lerp(facingOld, facingNew, time/duration);
+                    // time represents time passed since start
+                    const time = timestamp - start;
 
-                        if (time < duration) { 
-                            // Call another animation frame
-                            requestAnimationFrame(animate);
-                        }
-                        else{
-                            // Stop the animation after 0.2 seconds
-                            resolve();
-                        }
+                    // ~ Animation ~
+                    this.body.position.x = lerp(x, 0, time/200);
+                    this.body.position.z = lerp(z, 0, time/200);
+
+                    if (time < 200) { 
+                        // Call another animation frame
+                        requestAnimationFrame(animate);
                     }
+                    else{
+                        // Stop the animation after 0.2 seconds
+                        resolve();
+                    }
+                }
 
-                    // Call the first animation frame
-                    requestAnimationFrame(animate);
-                })
-            } */
-
-            // The mother function is async to be able to await
-            //await waitForMoveAnimation();
-        //console.log(this.name, " is attacking ", tile.mesh.name);
-
+                // Call the first animation frame
+                requestAnimationFrame(animate);
+            })
+            
+        }
+        waitForMoveAnimation().then(()=>{
+            this.body.position.x = 0;
+            this.body.position.z = 0;
+        });
         this.weapon.dealsDamage(this.getHitRate(tile, true), this);
     }
 

@@ -62,7 +62,7 @@ export default class Particle{
             }
             requestAnimationFrame(animate);
         }).then(()=>{
-            console.log("dead");
+            //console.log("dead");
             this.parent.remove(this.particle);
         })
     }
