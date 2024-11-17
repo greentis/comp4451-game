@@ -154,7 +154,7 @@ export class Board {
 
         var printable = false;
         //below variables are for polygonal generation only
-        this.theme = 2; //control the theme of the map
+        this.theme = parseInt(this.seed,10)%4; //control the theme of the map
             console.log('Mission No:', this.missionNo, 'Theme:', this.theme);
         this.roomLength = 10 + 2*(Math.min(this.missionNo,3) - 2); //control the Length of the map
         this.roomWidth = 10 + 3*(Math.min(this.missionNo,3) - 2); //control the Width of the map
