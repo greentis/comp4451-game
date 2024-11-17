@@ -11,7 +11,7 @@ Basics:
     Animals: Progressively more, with more variations
 
 Bonus:
-- 1W- Fix the UI color to make it more attractive
+- (done) 1W- Fix the UI color to make it more attractive
 - 1W- Enhance the visuals of the board (Add texture map, new tiles, etc.)
 - 1B- Are there some ways to visualize what the animals are doing? (e.g. when animal is being aggressive, show sth on their head)
 - (done) 1B- Make some sort of particles for the attack
@@ -22,7 +22,7 @@ Bonus:
 -(done) 1.5B- Add the capability to generate a mixed group of animals (one group contains >1 type of animal)
 - 2B- Implement an upgrade system
     Gun: more shots & damage
-    Saw: more range & effective to obstacles
+    Saw: more effective to obstacles
     Bomb: more destructive
 - 2B- Add a full particle system with acceleration control
 - 2B- Add a new board generation theme variation (e.g. wetland, savana)
