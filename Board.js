@@ -739,11 +739,16 @@ export class Board {
         this.enemyGroup = {};
         var Egp = (this.averagePerGroup) * 2.0 + (this.levelDifficulty - 1) * 2.5 + 0.5;
 
-        if(this.missionNo % this.bossInterval == 0){
-            enemyGroupNumber--;
+        var bossNo = 0;
+        if((this.missionNo % this.bossInterval) == 0){
+            console.log('missionNo', this.missionNo, 'bossInterval', this.bossInterval, 'mod', this.missionNo % this.bossInterval);
+            this.enemyGroup[enemyGroupNumber] = {};
+            this.enemyGroup[enemyGroupNumber][0] = {};
+            this.enemyGroup[enemyGroupNumber][0][0] = 100; //boss enemy
+            bossNo = 1;
         }
 
-        for (let i = 0; i < enemyGroupNumber; i++){
+        for (let i = 0; i < enemyGroupNumber - bossNo; i++){ 
             this.enemyGroup[i] = {};
             var Ep = 0.0;
             var j = 0;
@@ -759,10 +764,7 @@ export class Board {
                 j++;
             }
         }
-        this.enemyGroup[enemyGroupNumber] = {};
-        this.enemyGroup[enemyGroupNumber][0] = {};
-        this.enemyGroup[enemyGroupNumber][0][0] = 100; //boss enemy
-        enemyGroupNumber++;
+        
         //console.log('enemyGroup', this.enemyGroup);
         
         // 6.2 calculate the spawn point of leader of each group
