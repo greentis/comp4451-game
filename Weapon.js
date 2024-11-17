@@ -31,7 +31,7 @@ export class Weapon{
         this.name;
         this.range;
         this.blastRadius;
-
+        
     }
 
     setType(typeID){
