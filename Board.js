@@ -56,7 +56,8 @@ export class Board {
         this.game = game;
         this.body = new THREE.Group();
         var geometry = new THREE.PlaneGeometry( 100, 100 );
-        var material = new THREE.MeshPhongMaterial( {color: 0x054509 ,side: THREE.DoubleSide} );
+        //0x054509
+        var material = new THREE.MeshBasicMaterial( {color: 0x000000 ,side: THREE.DoubleSide} );
         this.mesh = new THREE.Mesh( geometry, material );
         this.body.add(this.mesh);
         this.mesh.rotateX(Math.PI/2);

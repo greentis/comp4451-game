@@ -25,7 +25,7 @@ export class AnimalProperties {
                     attack:4, // default 4
                     escape:1
                 };
-                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
                 break;
             case AnimalProperties.TYPE.Bear:
                 url = 'assets/bear_roooaaar/scene.gltf';
@@ -37,8 +37,8 @@ export class AnimalProperties {
                     attack:4, // default 4
                     escape:1
                 };
-                this.height = 1;
-                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Bomb);
+                this.height = 1.1;
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Bomb, this.height);
                 break;
             case AnimalProperties.TYPE.Rabbit:
                 url = 'assets/rabbit_rigged/scene.gltf';
@@ -51,7 +51,7 @@ export class AnimalProperties {
                     escape:1
                 };
                 this.height = 0.7;
-                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
                 break;
             default:
                 this.animal.health = 1;
@@ -60,7 +60,7 @@ export class AnimalProperties {
                     attack:0,
                     escape:1
                 };
-                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
                 break;
         }
 

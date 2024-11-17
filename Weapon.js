@@ -19,15 +19,19 @@ const destroyableTable = {
     "Saw": [TileProperties.TYPE.Default, TileProperties.TYPE.Wall, TileProperties.TYPE.Rock,TileProperties.TYPE.Cover, TileProperties.TYPE.Bush, TileProperties.TYPE.Tree],
 }
 export class Weapon{
-    constructor(character, typeID, damage = 1,game=null){
+    constructor(character, typeID, height){
         this.character = character;
         this.body = new THREE.Group();
+        this.character.body.add(this.body);
+        this.height = height ? height: 2;
         this.setType(typeID);
         
-        this.character.body.add(this.body);
-        this.damage = damage;
-        this.game = game;
+        this.game = this.character.game;
+        this.damage;
         this.name;
+        this.attackRange;
+        this.blastRadius;
+
     }
 
     setType(typeID){

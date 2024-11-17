@@ -14,7 +14,7 @@ export class Hunter extends Character{
         super(q, r, health, game, name);
         this.actionstate = Hunter.ACTION['idle'];
 
-        this.weapon = new Weapon(this, weaponType, 5, game);
+        this.weapon = new Weapon(this, weaponType);
 
         // Radar Display
         const material = new THREE.MeshPhongMaterial({color:0x156815, opacity: 0.8, transparent: true,});
