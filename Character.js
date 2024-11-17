@@ -369,10 +369,11 @@ export class Character{
         let hitRate = 100;
         let tiles = Array.from(path);
         tiles.shift();
+        tiles.pop();
         tiles.forEach((t)=>{
-            hitRate -= t.properties.hitRateCost;
+            hitRate *= (100.0-t.properties.hitRateCost)/100.0;
         })
-        if (tile.properties.ambushable) hitRate -= tile.properties.hitRateCost * 2;
+        if (tile.properties.ambushable && tile.Character) hitRate *= Math.pow((100.0-tile.properties.hitRateCost)/100.0,2);
         return hitRate < 0 ? 0 : hitRate;
     }
 
