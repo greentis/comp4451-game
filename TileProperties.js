@@ -17,6 +17,9 @@ export class TileProperties {
         this.offsetYm = 0;
         this.offsetYt = 0;
         this.offsetZ = 0;
+        this.rotateX = 0;
+        this.rotateY = 0;
+        this.rotateZ = 0;
         this.tileScaling = 0;
 
         this.pathfindable = true;   // Can we walk on it?
@@ -24,7 +27,7 @@ export class TileProperties {
         this.ambushable = false;    // HitRateCost *= 3 inside. Visual only: Animals hide in it, players gets harder to hit it
         this.hittable = true;       // Can explosions explode on it?
         this.passCost = 1.0;       // How much does it cost to pass through? (1.0 = normal)
-        this.hitRateCost = 5.0;      // How much hitRate point it will reduce if bullet pass throught this tile? (5.0 = normal)
+        this.hitRateCost = 0.0;      // How much hitRate point it will reduce if bullet pass throught this tile? (5.0 = normal)
 
         this.strength = 2;           // The Damage required to destroy this tile
 
@@ -41,7 +44,7 @@ export class TileProperties {
                 this.seeThroughable = true;
                 this.hittable = false;
                 this.passCost = 99999;
-                this.hitRateCost = 99999;
+                this.hitRateCost = 0.0;
 
                 this.strength = 99999;
 
@@ -54,7 +57,7 @@ export class TileProperties {
                     this.seeThroughable = true;
                     this.hittable = true;
                     this.passCost = 99999;
-                    this.hitRateCost = 4;
+                    this.hitRateCost = 0;
                     this.tileScaling = 0.01;
     
                     this.strength = 99999;
@@ -82,7 +85,7 @@ export class TileProperties {
                 this.seeThroughable = true;
                 this.hittable = false;
                 this.passCost = 99999;
-                this.hitRateCost = 10;
+                this.hitRateCost = 20;
 
                 this.strength = 99999;
                 
@@ -97,12 +100,16 @@ export class TileProperties {
                 this.hittable = true;
                 this.seeThroughable = true;
                 this.passCost = 99999;
-                this.hitRateCost = 30.0;
+                const height = Math.random()*0.3
+                this.hitRateCost = parseFloat((40.0 - height * 50).toFixed(2));
 
-                this.meshScale = 3;
-                //this.offsetX = 0.1;
-                this.offsetYm = 0.3;
-                this.offsetZ = -0.6;
+                this.meshScale = 3.3 + Math.random()*0.4;
+                this.offsetX = 0.1;
+                this.offsetYm = -0.50 - height;
+                this.offsetZ = -0.2;
+                this.rotateX = -Math.PI/2+0.1;
+                this.rotateY = Math.random()*Math.PI*2;
+                this.rotateZ = -Math.PI/2+0.5;
 
                 this.strength = 4;
                 url = 'assets/rock/scene.gltf';
@@ -116,7 +123,7 @@ export class TileProperties {
                 this.tileScaling = 0.01;
 
                 this.seeThroughable = true;
-                this.hittable = false;
+                this.hittable = true;
                 this.passCost = 2.0;
 
                 this.strength = 12;
@@ -125,13 +132,14 @@ export class TileProperties {
             case TileProperties.TYPE.Bush:
                 this.name = 'bush';
                 this.color = 0x043606;
-                this.offsetYm = 0.1;
+                this.offsetYm = 0;
 
+                this.meshScale = 1.1;  
                 this.seeThroughable = true;
                 this.ambushable = true;
                 this.hittable = true;
                 this.passCost = 3.0;
-                this.hitRateCost = 12.0;
+                this.hitRateCost = 30.0;
 
                 this.strength = 3;
 
@@ -147,6 +155,7 @@ export class TileProperties {
                 this.hitRateCost = 50;
 
                 this.meshScale = 0.012;
+                this.rotateY = Math.random()*Math.PI*2;
                 url = 'assets/tree/scene.gltf';
 
                 this.strength = 8;
@@ -178,11 +187,17 @@ export class TileProperties {
                     child.userData = this.tile;
                 }
             });
-            this.mesh = model;
-            this.mesh.position.x = this.offsetX;
+            model.rotateX(this.rotateX);
+            model.rotateZ(this.rotateZ);
+            model.position.x = this.offsetX;
+            model.position.z=this.offsetZ;
+
+            this.mesh = new THREE.Group();
+            this.mesh.add(model);
             this.mesh.position.y=this.offsetYm;
-            this.mesh.position.z=this.offsetZ;
+            this.mesh.rotateY(this.rotateY);
             this.tile.body.add(this.mesh);
+            
         });
     }
     

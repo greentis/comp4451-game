@@ -19,15 +19,19 @@ const destroyableTable = {
     "Saw": [TileProperties.TYPE.Default, TileProperties.TYPE.Wall, TileProperties.TYPE.Rock,TileProperties.TYPE.Cover, TileProperties.TYPE.Bush, TileProperties.TYPE.Tree],
 }
 export class Weapon{
-    constructor(character, typeID, damage = 1,game=null){
+    constructor(character, typeID, height){
         this.character = character;
         this.body = new THREE.Group();
+        this.character.body.add(this.body);
+        this.height = height ? height: 2;
         this.setType(typeID);
         
-        this.character.body.add(this.body);
-        this.damage = damage;
-        this.game = game;
+        this.game = this.character.game;
+        this.damage;
         this.name;
+        this.range;
+        this.blastRadius;
+
     }
 
     setType(typeID){
@@ -35,10 +39,13 @@ export class Weapon{
         //this.render();
     }
 
+    setDamage(damage){
+        this.damage = damage;
+    }
+
     convertToObstacleDamage(damage){
-        if (this.name === 'Gun') return 1;
-        else if (this.name === 'Bomb') return damage;
-        else if (this.name === 'Saw') return damage*2;
+        let result = damage * this.properties.obstacleDamageMultiplier;
+        return result == 0 ? 1 : result;
     }
 
     dealsDamage(tile, hitRate, damager){

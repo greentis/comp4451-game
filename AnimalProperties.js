@@ -8,6 +8,7 @@ export class AnimalProperties {
     constructor(animal, typeID){
         this.id = typeID;
         this.animal = animal;
+        this.rotateY = 0;
         //this.animal.name = 'Monkey';
 
         // Height Attribute must be before weapon creation
@@ -25,7 +26,7 @@ export class AnimalProperties {
                     attack:4, // default 4
                     escape:1
                 };
-                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
                 break;
             case AnimalProperties.TYPE.Bear:
                 url = 'assets/bear_roooaaar/scene.gltf';
@@ -37,8 +38,9 @@ export class AnimalProperties {
                     attack:4, // default 4
                     escape:1
                 };
-                this.height = 1;
-                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Bomb);
+                this.height = 1.2;
+                this.rotateY = Math.PI;
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Bomb, this.height);
                 break;
             case AnimalProperties.TYPE.Rabbit:
                 url = 'assets/rabbit_rigged/scene.gltf';
@@ -51,7 +53,7 @@ export class AnimalProperties {
                     escape:1
                 };
                 this.height = 0.7;
-                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
                 break;
             default:
                 this.animal.health = 1;
@@ -60,7 +62,7 @@ export class AnimalProperties {
                     attack:0,
                     escape:1
                 };
-                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
                 break;
         }
 
@@ -74,6 +76,7 @@ export class AnimalProperties {
                 }
             });
             this.mesh = model;
+            this.mesh.rotateY(this.rotateY);
             this.animal.body.add(this.mesh);
             this.animal.mesh=this.mesh;
             this.animal.mesh.name=this.name;

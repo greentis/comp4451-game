@@ -9,19 +9,28 @@ export class WeaponProperties {
         this.weapon = weapon;
         this.weapon.name = 'Gun';
 
+        this.weapon.damage = 5;
+        this.weapon.range = 8;
         this.weapon.blastRadius = 0;
         this.weapon.body.rotation.y = 0;
 
+        this.obstacleDamageMultiplier = 1;
+
+        // The particle controller
+        // Pmin: minimum number of particles
+        // Pvar: varying range of number of particles
+        // particleMatrix: a matrix that maps to:
+        //  [[x, y, z], [vx, vy, vz], [ax, ay, az]]
         this.Pmin = 8;
-                this.Pvar = 4;
-                this.particleMatrix = 
-                Particle.addVelocity(
-                        Particle.addGravity(
-                            Particle.setInitialPosition(
-                                Particle.get3DMatrix()
-                            , 0, 1, 0)
-                        )
-                ,0,0.2,0)
+        this.Pvar = 4;
+        this.particleMatrix = 
+        Particle.addVelocity(
+                Particle.addGravity(
+                    Particle.setInitialPosition(
+                        Particle.get3DMatrix()
+                    , 0, 1, 0)
+                )
+        ,0,0.2,0)
         let url ="";
         switch (typeID) {
             case WeaponProperties.TYPE.Bomb:
@@ -30,8 +39,11 @@ export class WeaponProperties {
 
                 url="assets/grenade/scene.gltf";
                 this.meshScale = 0.036;
-                this.weapon.body.position.y = this.weapon.character.properties.height + 0.4;
+                this.weapon.body.position.y = this.weapon.height + 0.4;
                 this.weapon.body.rotation.y = Math.PI/2;
+                this.weapon.damage = 5;
+                this.weapon.range = 6;
+                
 
                 this.Pmin = 1;
                 this.Pvar = 0;
@@ -47,16 +59,22 @@ export class WeaponProperties {
 
                 url="assets/gun/scene.gltf";
                 this.meshScale = 0.18;
-                this.weapon.body.position.y = this.weapon.character.properties.height + 0.3;
+                this.weapon.body.position.y = this.weapon.height + 0.3;
                 this.weapon.body.rotation.y = Math.PI;
+                this.weapon.damage = 8;
+                this.weapon.range = 10;
+                this.obstacleDamageMultiplier = 0;
                 break;
             case WeaponProperties.TYPE.Saw:
                 this.weapon.name = 'Saw';
 
                 url="assets/saw/scene.gltf";
                 this.meshScale = 0.4;
-                this.weapon.body.position.y = this.weapon.character.properties.height + 0.3;
+                this.weapon.body.position.y = this.weapon.height + 0.3;
                 this.weapon.body.rotation.y = Math.PI/2;
+                this.weapon.damage = 5;
+                this.weapon.range = 2;
+                this.obstacleDamageMultiplier = 2;
 
                 this.Pmin = 10;
                 this.Pvar = 10;
