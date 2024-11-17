@@ -998,6 +998,7 @@ export class Board {
             }
         }
         if(themeTable[this.theme].fog != 0x000000){
+            
             this.game.scene.fog = new THREE.Fog( themeTable[this.theme].fogColour, 0.001 , 30);
         }
 
