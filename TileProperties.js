@@ -204,6 +204,38 @@ export class TileProperties {
 
                 this.strength = 8;
                 break;
+            case TileProperties.TYPE.spookyTree:
+                this.name = 'spookyTree';
+                this.color = 0x343F61;
+
+                this.seeThroughable = true;
+                this.hittable = true;
+                this.passCost = 1000.0;
+                this.hitRateCost = 50;
+
+                this.meshScale = 0.7;
+                this.offsetYm = -0.6;
+                this.rotateY = Math.random()*Math.PI*2;
+                url = 'assets/spooky_tree/scene.gltf';
+
+                this.strength = 8;
+                break;
+            case TileProperties.TYPE.pumkin:
+                this.name = 'pumkin';
+                this.color = 0x343F61;
+                this.offsetYm = 0;
+
+                this.meshScale = 1.1;  
+                this.seeThroughable = true;
+                this.ambushable = true;
+                this.hittable = true;
+                this.passCost = 3.0;
+                this.hitRateCost = 30.0;
+
+                this.strength = 1;
+
+                url = 'assets/pumkin/scene.gltf';
+                break;
             case TileProperties.TYPE.Default:
                 if(Math.random()<0.1){
                     const loader = new THREE.TextureLoader();
@@ -231,7 +263,7 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE.DefaultBlackForest:
                 this.name = 'BlackForest'
-                this.color = 0x083606; //dark green
+                this.color = 0x343F61; //dark green
                 this.tileScaling = 0.002;
 
                 this.meshScale = 0.03;
@@ -360,6 +392,8 @@ TileProperties.TYPE = {
     TumbleWeed: 105,
     TumbleWeedTree: 106,
     mangrove: 206,
+    spookyTree: 306,
+    Pumkin:307,
     
 }
 
