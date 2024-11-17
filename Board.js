@@ -86,10 +86,10 @@ export class Board {
                 fogColour: 0x000000,
             },
             1: { //desert
-                roomPercentage: 0.65,
+                roomPercentage: 0.72,
                 rainFall: 0.0,
-                riverSource: 1.5,
-                vegetationCoverage: 0.035,
+                riverSource: 1.55,
+                vegetationCoverage: 0.085,
                 wallThreshold: 0.65,
                 coverThreshold: 0.58,
                 fogColour: 0x8b7d6b,
@@ -154,7 +154,7 @@ export class Board {
 
         var printable = false;
         //below variables are for polygonal generation only
-        this.theme = 1;parseInt(this.seed,10)%6; //control the theme of the map
+        this.theme = 3;parseInt(this.seed,10)%6; //control the theme of the map
             if (this.theme == 2){ this.theme = 0;}
             else if (this.theme == 4){ this.theme = 1;}
             else if (this.theme == 5){ this.theme = 3;}
@@ -995,18 +995,22 @@ export class Board {
                     this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Default;
                 }
                 else if ( this.temp[q][r] == TileProperties.TYPE.Bush){
-                    if (this.theme == 3){ //replace some of the bush tile to pumpkin tile if the theme is darkForest
+                    if(this.theme == 1){ //replace some of the bush tile to cactus tile if the theme is desert
+                        if (xxhash(this.seed, q, r) > 0.75){
+                            this.temp[q][r] = TileProperties.TYPE.Cactus;
+                            continue;
+                            //console.log('Cactus Tile: q', q, 'r', r);
+                        }
+                    }
+                    else if (this.theme == 3){ //replace some of the bush tile to pumpkin tile if the theme is darkForest
                         if (xxhash(this.seed, q, r) > 0.2){
                             this.temp[q][r] = TileProperties.TYPE.Pumkin;
+                            continue;
                             //console.log('Pumpkin Tile: q', q, 'r', r);
                         }
-                        else{
-                            this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Bush;
-                        }
                     }
-                    else{
-                        this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Bush;
-                    }
+                    this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Bush;
+                    
                 }
                 else if ( this.temp[q][r] == TileProperties.TYPE.Tree){
                     this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Tree;
@@ -1014,8 +1018,7 @@ export class Board {
             }
         }
         if(themeTable[this.theme].fog != 0x000000){
-            
-            this.game.scene.fog = new THREE.Fog( themeTable[this.theme].fogColour, 0.001 , 30);
+            this.game.scene.fog = new THREE.Fog( themeTable[this.theme].fogColour, 5 , 16); //0.001,30
         }
 
         // 7.3 generate the tile based on the annotated map   
