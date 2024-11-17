@@ -154,7 +154,7 @@ export class Board {
 
         var printable = false;
         //below variables are for polygonal generation only
-        this.theme = 3;parseInt(this.seed,10)%6; //control the theme of the map
+        this.theme = parseInt(this.seed,10)%6; //control the theme of the map
             if (this.theme == 2){ this.theme = 0;}
             else if (this.theme == 4){ this.theme = 1;}
             else if (this.theme == 5){ this.theme = 3;}
