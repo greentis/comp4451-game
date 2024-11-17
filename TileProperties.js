@@ -155,7 +155,6 @@ export class TileProperties {
 
                 url = 'assets/bush/scene.gltf';
                 break;
-            case TileProperties.TYPE.TumbleWeedTree:
             case TileProperties.TYPE.TumbleWeed:
                 this.name = 'TumbleWeed';
                 this.color = 0x8b7d6b;
@@ -204,6 +203,23 @@ export class TileProperties {
 
                 this.strength = 8;
                 break;
+            case TileProperties.TYPE.Cactus:
+                this.name = 'cactus';
+                this.color = 0x8b7d6b;
+                this.offsetYm = 0;
+
+                this.seeThroughable = true;
+                this.hittable = true;
+                this.passCost = 1000.0;
+                this.hitRateCost = 50;
+                
+                this.meshScale = 0.012;
+                this.rotateY = Math.random()*Math.PI*2;
+                url = 'assets/cactus_2/scene.gltf';
+
+                this.strength = 6;
+                break;
+
             case TileProperties.TYPE.spookyTree:
                 this.name = 'spookyTree';
                 this.color = 0x343F61;
@@ -214,18 +230,18 @@ export class TileProperties {
                 this.hitRateCost = 50;
 
                 this.meshScale = 0.7;
-                this.offsetYm = -0.6;
+                this.offsetYm = -0.75;
                 this.rotateY = Math.random()*Math.PI*2;
                 url = 'assets/spooky_tree/scene.gltf';
 
                 this.strength = 8;
                 break;
-            case TileProperties.TYPE.pumkin:
+            case TileProperties.TYPE.Pumkin:
                 this.name = 'pumkin';
                 this.color = 0x343F61;
                 this.offsetYm = 0;
 
-                this.meshScale = 1.1;  
+                this.meshScale = 0.4;  
                 this.seeThroughable = true;
                 this.ambushable = true;
                 this.hittable = true;
@@ -234,6 +250,7 @@ export class TileProperties {
 
                 this.strength = 1;
 
+                this.rotateY = Math.random()*Math.PI*2;
                 url = 'assets/pumkin/scene.gltf';
                 break;
             case TileProperties.TYPE.Default:
@@ -389,8 +406,8 @@ TileProperties.TYPE = {
     DefaultDesert: 100,
     DefaultWetland: 200,
     DefaultBlackForest: 300,
-    TumbleWeed: 105,
-    TumbleWeedTree: 106,
+    TumbleWeed: 106,
+    Cactus: 105,
     mangrove: 206,
     spookyTree: 306,
     Pumkin:307,
