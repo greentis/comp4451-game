@@ -19,7 +19,7 @@ export default class CanvasParticle extends Particle{
         return new THREE.MeshBasicMaterial({
             color: color,
             transparent: true,
-            opacity: 0.5
+            opacity: 0.4
         });
     }
 }

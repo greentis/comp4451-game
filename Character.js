@@ -180,7 +180,8 @@ export class Character{
             // The mother function is async to be able to await
             //await waitForMoveAnimation();
         //console.log(this.name, " is attacking ", tile.mesh.name);
-        this.weapon.dealsDamage(tile, this.getHitRate(tile), this);
+
+        this.weapon.dealsDamage(this.getHitRate(tile, true), this);
     }
 
     takeDamage(damage){
@@ -360,18 +361,38 @@ export class Character{
         return [];
     }
 
-    getHitRate(tile){
+    // If simulate is true,
+    //    the function returns the hit rate of the character to the target tile
+    // If simulate is false,
+    //    the function returns the tile that gets hitted
+    getHitRate(tile, simulate = false){
         let path = this.lineOfSight(tile, true, true);
         if (!path) return 0;
         let hitRate = 100;
         let tiles = Array.from(path);
         tiles.shift();
         tiles.pop();
-        tiles.forEach((t)=>{
-            hitRate *= (100.0-t.properties.hitRateCost)/100.0;
-        })
-        if (tile.properties.ambushable && tile.Character) hitRate *= Math.pow((100.0-tile.properties.hitRateCost)/100.0,2);
-        return hitRate < 0 ? 0 : hitRate;
+        if (!simulate) {
+            tiles.forEach((t)=>{
+                hitRate *= (100.0-t.properties.hitRateCost)/100.0;
+            })
+            if (tile.properties.ambushable && tile.Character) hitRate *= Math.pow((100.0-tile.properties.hitRateCost)/100.0,2);
+            return hitRate < 0 ? 0 : hitRate;
+        }
+        else {
+            let t;
+            infoBox.note = "Missed Hit!";
+            for (t of tiles){
+                if (Math.random() * 100 < t.properties.hitRateCost) return t;
+            }
+            if (tile.properties.ambushable && tile.Character) {
+                for (let i = 0; i < 2; i++){
+                    if (Math.random() * 100 < tile.properties.hitRateCost) return t;
+                }
+            }
+            infoBox.note = "Successful Hit!";
+            return tile;
+        }
     }
 
     getTile(){

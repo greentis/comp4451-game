@@ -48,11 +48,7 @@ export class Weapon{
         return result == 0 ? 1 : result;
     }
 
-    dealsDamage(tile, hitRate, damager){
-        if (hitRate < Math.random() * 100) {
-            infoBox.note = "Missed Hit!";
-            return;
-        }
+    dealsDamage(tile, damager){
 
         function attenuationFunc(damage, radius, dist){
             if (radius == 0) return damage;
@@ -87,7 +83,6 @@ export class Weapon{
             }
             if (t.character.constructor == damager.constructor) return;
             t.character.takeDamage(attenuationFunc(this.damage, this.blastRadius, distance(t, tile)));
-            infoBox.note = "Successful Hit!";
         });
         //console.log(this.name, " hits ", tile.mesh.name);
         
