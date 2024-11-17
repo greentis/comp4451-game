@@ -7,13 +7,7 @@ import { xxhash } from './Board.js';
 
 
 export class AIAgent {
-    static instance = null;
-
     constructor(game){
-        if (AIAgent.instance) {
-            return AIAgent.instance;
-        }
-
         this.game = game;
         this.enemy = game.enemy;
         this.player = game.player;
@@ -43,11 +37,9 @@ export class AIAgent {
         for (let e of this.enemy) {
             //e.playAnimation(1);
             //if the animal is wake, assign the action to the animal
-            console.log("checkpoint 1")
             if (!e.wake) {
                 continue;
             }
-            console.log("checkpoint 2")
             let timeout = 0;
             while (e.getActionPoint() > 0 && e.actionstate != "localMinima" && timeout < 10) {
                 //the action will be assigned according to the overall priority, calculated as below:
