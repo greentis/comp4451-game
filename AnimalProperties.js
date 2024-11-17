@@ -53,7 +53,22 @@ export class AnimalProperties {
                     escape:1
                 };
                 this.height = 0.7;
-                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Saw, this.height);
+                break;
+            case AnimalProperties.TYPE.Boss:
+                url = 'assets/bear_roooaaar/scene.gltf';
+                this.meshScale = 1.25;
+                //this.meshScaleZ = 0.01;
+                this.animal.health = 12;
+                this.animal.actionPriority = {
+                    cover:6,
+                    attack:4, // default 4
+                    escape:0
+                };
+                this.height = 2;
+                this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Saw, this.height);
+                this.animal.weapon.damage = 8;
+                this.animal.moveRange = 12;
                 break;
             default:
                 this.animal.health = 1;
@@ -101,13 +116,15 @@ export class AnimalProperties {
 AnimalProperties.TYPE = {
     Monkey: 0, 
     Bear: 1, 
-    Rabbit: 2
+    Rabbit: 2,
+    Boss: 100
 }
 
 AnimalProperties.TYPEID = {
     0: "Monkey",
     1: "Bear",
-    2: "Rabbit"
+    2: "Rabbit",
+    100: "Boss",
 }
 
 /* // used for map generation in Board.js

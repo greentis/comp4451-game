@@ -154,8 +154,10 @@ export class Board {
 
         var printable = false;
         //below variables are for polygonal generation only
-        this.theme = parseInt(this.seed,10)%4; //control the theme of the map
-            if (this.theme == 2) this.theme = 0;
+        this.theme = parseInt(this.seed,10)%6; //control the theme of the map
+            if (this.theme == 2){ this.theme = 0;}
+            else if (this.theme == 4){ this.theme = 1;}
+            else if (this.theme == 5){ this.theme = 3;}
             console.log('Mission No:', this.missionNo, 'Theme:', this.theme);
         this.roomLength = 10 + 2*(Math.min(this.missionNo,3) - 2); //control the Length of the map
         this.roomWidth = 10 + 3*(Math.min(this.missionNo,3) - 2); //control the Width of the map
@@ -174,6 +176,7 @@ export class Board {
         this.averagePerGroup = 4; //control the average number of enemy per group
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
         this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
+        this.bossInterval = 3; //control the interval of the boss appearance
 
         this.levelDifficulty = 1.0 + (this.missionNo)*0.5; //control the difficulty of the level, the higher the value, the harder the level
                                     //default value is 1.0
@@ -410,12 +413,12 @@ export class Board {
         }
 
         if(printable){
-        //console.log('iteration at step 3.1', expandIteration);
-        console.log('room percentage', this.roomPercentage, "total area", this.totalArea, "range", (this.seed % 67)/1000.0);
-        console.log('# of default tile', defaultTile.size);
-        console.log('target area', (this.roomPercentage + (this.seed % 67)/1000.0) * this.totalArea);
-        //console.log('min area', (this.roomPercentage - (this.seed % 67)/1000.0) * this.totalArea);
-        //console.log('wallTile size(before 4.1):', wallTile.size);
+            //console.log('iteration at step 3.1', expandIteration);
+            console.log('room percentage', this.roomPercentage, "total area", this.totalArea, "range", (this.seed % 67)/1000.0);
+            console.log('# of default tile', defaultTile.size);
+            console.log('target area', (this.roomPercentage + (this.seed % 67)/1000.0) * this.totalArea);
+            //console.log('min area', (this.roomPercentage - (this.seed % 67)/1000.0) * this.totalArea);
+            //console.log('wallTile size(before 4.1):', wallTile.size);
         }
         
         // 4. generate other type of tile(wall, cover, water e.t.c) based on the default tile
@@ -443,9 +446,9 @@ export class Board {
             rockIteration++;
         }   
         if(printable){
-        //console.log('wallTile size(after 4.1):', wallTile.size);
-        console.log('rockTile size:', rockTile.size);
-        //console.log('rockTile', rockTile);
+            //console.log('wallTile size(after 4.1):', wallTile.size);
+            console.log('rockTile size:', rockTile.size);
+            //console.log('rockTile', rockTile);
         }
 
         // 4.2 convert some of the rock tile to cover tile
@@ -470,10 +473,10 @@ export class Board {
             coverIteration++;
         }
         if(printable){
-        //console.log('coverIteration', coverIteration);
-        console.log('wallTile size(after 4.2):', wallTile.size);
-        console.log('coverTile size:', coverTile.size);
-        //console.log('coverTile', coverTile);
+            //console.log('coverIteration', coverIteration);
+            console.log('wallTile size(after 4.2):', wallTile.size);
+            console.log('coverTile size:', coverTile.size);
+            //console.log('coverTile', coverTile);
         }
 
         // 4.3.0 generate the height map of the tile
@@ -732,9 +735,14 @@ export class Board {
         // each type of enemy have different enemy point(Ep)
         // the sum up of the Ep of all of the enemy in the group should be less than the Egp
         // under above restriction, enemy type(and number) of each group will be selected according to this.seed
-        var enemyGroupNumber = Math.max(1, Math.round(this.enemyDensity / 4.4 * this.totalArea));
+        var enemyGroupNumber = parseInt(Math.max(1, Math.round(this.enemyDensity / 4.4 * this.totalArea)),10);
         this.enemyGroup = {};
         var Egp = (this.averagePerGroup) * 2.0 + (this.levelDifficulty - 1) * 2.5 + 0.5;
+
+        if(this.missionNo % this.bossInterval == 0){
+            enemyGroupNumber--;
+        }
+
         for (let i = 0; i < enemyGroupNumber; i++){
             this.enemyGroup[i] = {};
             var Ep = 0.0;
@@ -751,6 +759,10 @@ export class Board {
                 j++;
             }
         }
+        this.enemyGroup[enemyGroupNumber] = {};
+        this.enemyGroup[enemyGroupNumber][0] = {};
+        this.enemyGroup[enemyGroupNumber][0][0] = 100; //boss enemy
+        enemyGroupNumber++;
         //console.log('enemyGroup', this.enemyGroup);
         
         // 6.2 calculate the spawn point of leader of each group
@@ -942,7 +954,7 @@ export class Board {
                 }
             }
         }
-        if(printable) console.log('enemy spawn points', this.enemyGroup);
+        if(true || printable) console.log('enemy spawn points', this.enemyGroup);
         
         // 7.1 turn all void tile which adjacent to non-rock tile to rock tile
         // the void tile which adjacent to the non-rock tile will be turned into rock tile
