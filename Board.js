@@ -147,7 +147,7 @@ export class Board {
         this.seed = Math.round(Math.random()* 900000 + 100000);
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
         //if(printable) 
-            console.log('This board have seed ', this.seed);
+        console.log('This board have seed ', this.seed);
         var perlinNoise = new noise();
         perlinNoise.seed(this.seed);
 
@@ -159,9 +159,9 @@ export class Board {
             else if (this.theme == 4){ this.theme = 1;}
             else if (this.theme == 5){ this.theme = 3;}
             console.log('Mission No:', this.missionNo, 'Theme:', this.theme);
-        this.roomLength = 10 + 2*(Math.min(this.missionNo,3) - 2); //control the Length of the map
-        this.roomWidth = 10 + 3*(Math.min(this.missionNo,3) - 2); //control the Width of the map
-        this.roomSizeRange = 1; //control the variation of the size of the room(+/- roomSizeRange)
+        this.roomLength = 8 + 1*(Math.min(this.missionNo,2)-1); //control the Length of the map
+        this.roomWidth = 8 + 1*(Math.min(this.missionNo,2)-1); //control the Width of the map
+        this.roomSizeRange = 0; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = themeTable[this.theme].roomPercentage; //0.75; //control the percentage of the default tile in the map
         this.wallThreshold = themeTable[this.theme].wallThreshold; //0.7; //control the threshold of the wall tile conversion from rock tile
         this.coverThreshold = themeTable[this.theme].coverThreshold; //0.4; //control the threshold of the cover tile conversion from rock tile
