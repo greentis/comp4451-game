@@ -232,9 +232,9 @@ export class Tile {
             else if (this.game.movingPlayer.actionstate == Hunter.ACTION.attack){
                 var path = this.game.movingPlayer.lineOfSight(this, true);
                 if (!path) return;
-                infoBox.hitRate = this.game.movingPlayer.getHitRate(this);
-                infoBox.target = this.character ? this.character : undefined;
-                infoBox.format = infoBox.FORMAT.AttackData;
+                //infoBox.hitRate = this.game.movingPlayer.getHitRate(this);
+                //infoBox.target = this.character ? this.character : undefined;
+                //infoBox.format = infoBox.FORMAT.AttackData;
 
                 this.game.board.addMarkings(this.getTilesWithinRange(this.game.movingPlayer.weapon.blastRadius),'blasted');
                 this.game.board.addMarkings(path,'pathed');

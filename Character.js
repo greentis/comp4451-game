@@ -185,7 +185,7 @@ export class Character{
     takeDamage(damage){
         this.health -= damage;
         //console.log( "-" + damage.toString());
-        let p = new NumberParticle(this.getTile().body, 0.3, 20, "-" + damage.toString());
+        let p = new NumberParticle(this.getTile().body, 0.4, 20, "-" + damage.toString());
         p.setMatrix(Particle.addRandomVelocity(
             Particle.addVelocity(
                 Particle.addGravity(
@@ -243,7 +243,7 @@ export class Character{
     lineOfSight(tile, isSolid = true, toInfinity = false){
         //console.log("test sight line");
         var N = distance(this.getTile(), tile) + 0.0;
-        var sightRange = toInfinity ? 1000 : isSolid? this.weapon.range : this.sightRange;
+        var sightRange = toInfinity ? 1000 : isSolid? Math.min(this.weapon.range, this.sightRange) : this.sightRange;
         if (N > sightRange) return false;
 
         var path = new Set();

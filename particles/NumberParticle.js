@@ -27,7 +27,7 @@ export default class NumberParticle extends Particle{
         ctx.canvas.height = 100;
 
         ctx.fillStyle = "#ff0000";
-        ctx.font = "128px serif";
+        ctx.font = "64px serif";
         ctx.textAlign = "center";
         console.log(text);
         ctx.fillText(text, 50, 100);

@@ -151,7 +151,7 @@ export class Hunter extends Character{
             this.radar.rotation.z = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
             //this.radar.rotation.z = 0;
             this.radar.rotation.z -= Math.PI /2 + Math.PI/6;
-            console.log(this.radar.position.y);
+            //console.log(this.radar.position.y);
         }
         findClosestEnemy(){
             let minDist = 10000; let dist;

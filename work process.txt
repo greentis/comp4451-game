@@ -1,7 +1,7 @@
 =================================================================
 Basics: 
 -(done) Implement 2 more types of animals
-- Make animal attack more visible to player (add some feedback)
+- (done) Make animal attack more visible to player (add some feedback)
 - Make obstacles & tile destroyable
     Gun: Mainly for killing animals (multishot in a turn)
     (done)Saw: Destroy obstacles
@@ -24,7 +24,7 @@ Bonus:
     Gun: more shots & damage
     Saw: more effective to obstacles
     Bomb: more destructive
-- 2B- Add a full particle system with acceleration control
+- (done) 2B- Add a full particle system with acceleration control
 - 2B- Add a new board generation theme variation (e.g. wetland, savana)
 - 3B- Add a new character to assist player throughout the game (e.g. transportation)
 - 3B- Optimize Board generation - can we make it faster?

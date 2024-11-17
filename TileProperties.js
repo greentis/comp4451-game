@@ -86,6 +86,7 @@ export class TileProperties {
                 this.hittable = false;
                 this.passCost = 99999;
                 this.hitRateCost = 20;
+                this.tileScaling = 0.005;
 
                 this.strength = 99999;
                 
