@@ -66,6 +66,8 @@ export class AnimalProperties {
                 break;
         }
 
+        this.animal.maxHealth = this.animal.health;
+
         let gltfLoader = new GLTFLoader();
         gltfLoader.load(url, (gltf) => {
             var model = gltf.scene;
@@ -75,6 +77,8 @@ export class AnimalProperties {
                     child.userData = this.animal;
                 }
             });
+            
+
             this.mesh = model;
             this.mesh.rotateY(this.rotateY);
             this.animal.body.add(this.mesh);
@@ -82,11 +86,8 @@ export class AnimalProperties {
             this.animal.mesh.name=this.name;
             this.animal.getTile().characterEnter(this.animal);
 
-            this.mixer = new AnimationMixer(model);
-            this.animations = model.animations;
         })
 
-        this.animal.maxHealth = this.animal.health;
     }
 
     /*this.playAnimation = function(actionName) {
