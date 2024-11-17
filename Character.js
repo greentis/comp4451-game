@@ -2,7 +2,8 @@
 import * as THREE from 'three';
 import { ActionTracker } from './ActionTracker.js';
 import { infoBox } from './infoBox.js';
-import Particle from './particles/Particle.js'
+import Particle from './particles/Particle.js';
+import NumberParticle from './particles/NumberParticle.js';
 
 // private method
 const lerp = (a, b, t) => {return a + (b - a) * t;}
@@ -138,61 +139,63 @@ export class Character{
     }
 
 
-    attack(tile){
+    async attack(tile){
         this.reduceActionPoint(2);
         this.facing(tile.q, tile.r)
-        /* 
-            let facingOld = this.body.rotation.y;
-            let facingNew = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
-            let duration = 2 * Math.abs(facingOld-facingNew) * 180 / Math.PI;
-            let start;
-            const waitForMoveAnimation = ()=>{
-                return new Promise((resolve)=>{
-                    // the animation frame function
-                    const animate = (timestamp)=>{
-                        // record the starting time
-                        if (!start) start = timestamp;
-                        if (duration < 0.05) {
-                            console.log("skip animation");
-                            resolve();
-                        }
-                        // time represents time passed since start
-                        const time = timestamp - start;
 
-                        // ~ Animation ~
-                        this.body.rotation.y = lerp(facingOld, facingNew, time/duration);
+        let x = -Math.sin(this.body.rotation.y) / 3.0
+        let z = -Math.cos(this.body.rotation.y) / 3.0
+        let start;
+        const waitForMoveAnimation = async ()=>{
+            return new Promise((resolve)=>{
+                // the animation frame function
+                const animate = (timestamp)=>{
+                    // record the starting time
+                    if (!start) start = timestamp;
 
-                        if (time < duration) { 
-                            // Call another animation frame
-                            requestAnimationFrame(animate);
-                        }
-                        else{
-                            // Stop the animation after 0.2 seconds
-                            resolve();
-                        }
+                    // time represents time passed since start
+                    const time = timestamp - start;
+
+                    // ~ Animation ~
+                    this.body.position.x = lerp(x, 0, time/200);
+                    this.body.position.z = lerp(z, 0, time/200);
+
+                    if (time < 200) { 
+                        // Call another animation frame
+                        requestAnimationFrame(animate);
                     }
+                    else{
+                        // Stop the animation after 0.2 seconds
+                        resolve();
+                    }
+                }
 
-                    // Call the first animation frame
-                    requestAnimationFrame(animate);
-                })
-            } */
-
-            // The mother function is async to be able to await
-            //await waitForMoveAnimation();
-        //console.log(this.name, " is attacking ", tile.mesh.name);
-        this.weapon.dealsDamage(tile, this.getHitRate(tile), this);
+                // Call the first animation frame
+                requestAnimationFrame(animate);
+            })
+            
+        }
+        waitForMoveAnimation().then(()=>{
+            this.body.position.x = 0;
+            this.body.position.z = 0;
+        });
+        this.weapon.dealsDamage(this.getHitRate(tile, true), this);
     }
 
     takeDamage(damage){
         this.health -= damage;
-
-        /* new Particle((ctx)=>{
-            ctx.font = "48px serif";
-            ctx.textAlign = "center";
-            ctx.fillStyle = "#aa0000";
-            ctx.fillText("-" + damage.toString(), 50, 50);
-            console.log("-" + damage.toString());
-        }, this.body, 1, 200, 0, 2); */
+        //console.log( "-" + damage.toString());
+        let p = new NumberParticle(this.getTile().body, 0.3, 20, "-" + damage.toString());
+        p.setMatrix(Particle.addRandomVelocity(
+            Particle.addVelocity(
+                Particle.addGravity(
+                    Particle.setInitialPosition(
+                        Particle.get3DMatrix()
+                    , 0, 1, 0)
+                )
+            ,0,0.2,0)
+        ,0.03,0.03,0.03));
+                
 
         if (this.health <= 0) {
             this.killed();
@@ -360,18 +363,38 @@ export class Character{
         return [];
     }
 
-    getHitRate(tile){
+    // If simulate is true,
+    //    the function returns the hit rate of the character to the target tile
+    // If simulate is false,
+    //    the function returns the tile that gets hitted
+    getHitRate(tile, simulate = false){
         let path = this.lineOfSight(tile, true, true);
         if (!path) return 0;
         let hitRate = 100;
         let tiles = Array.from(path);
         tiles.shift();
         tiles.pop();
-        tiles.forEach((t)=>{
-            hitRate *= (100.0-t.properties.hitRateCost)/100.0;
-        })
-        if (tile.properties.ambushable && tile.Character) hitRate *= Math.pow((100.0-tile.properties.hitRateCost)/100.0,2);
-        return hitRate < 0 ? 0 : hitRate;
+        if (!simulate) {
+            tiles.forEach((t)=>{
+                hitRate *= (100.0-t.properties.hitRateCost)/100.0;
+            })
+            if (tile.properties.ambushable && tile.Character) hitRate *= Math.pow((100.0-tile.properties.hitRateCost)/100.0,2);
+            return hitRate < 0 ? 0 : hitRate;
+        }
+        else {
+            let t;
+            infoBox.note = "Missed Hit!";
+            for (t of tiles){
+                if (Math.random() * 100 < t.properties.hitRateCost) return t;
+            }
+            if (tile.properties.ambushable && tile.Character) {
+                for (let i = 0; i < 2; i++){
+                    if (Math.random() * 100 < tile.properties.hitRateCost) return t;
+                }
+            }
+            infoBox.note = "Successful Hit!";
+            return tile;
+        }
     }
 
     getTile(){

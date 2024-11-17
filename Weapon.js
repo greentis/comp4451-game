@@ -48,11 +48,7 @@ export class Weapon{
         return result == 0 ? 1 : result;
     }
 
-    dealsDamage(tile, hitRate, damager){
-        if (hitRate < Math.random() * 100) {
-            infoBox.note = "Missed Hit!";
-            return;
-        }
+    dealsDamage(tile, damager){
 
         function attenuationFunc(damage, radius, dist){
             if (radius == 0) return damage;
@@ -66,7 +62,7 @@ export class Weapon{
             for (let i = 0; i < Math.random() * this.properties.Pvar + this.properties.Pmin; i++) {
                 let p
                 if (this.name === 'Gun') {
-                    p = new CanvasParticle(t.body, 0.2, 100);
+                    p = new CanvasParticle(t.body, 0.1, 100);
                     p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix));
                 }
                 else if (this.name === 'Bomb') {
@@ -87,7 +83,6 @@ export class Weapon{
             }
             if (t.character.constructor == damager.constructor) return;
             t.character.takeDamage(attenuationFunc(this.damage, this.blastRadius, distance(t, tile)));
-            infoBox.note = "Successful Hit!";
         });
         //console.log(this.name, " hits ", tile.mesh.name);
         

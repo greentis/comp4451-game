@@ -39,7 +39,7 @@ export class WeaponProperties {
 
                 url="assets/grenade/scene.gltf";
                 this.meshScale = 0.036;
-                this.weapon.body.position.y = this.weapon.height + 0.4;
+                this.weapon.body.position.y = this.weapon.height + 0.5;
                 this.weapon.body.rotation.y = Math.PI/2;
                 this.weapon.damage = 5;
                 this.weapon.range = 6;
@@ -59,7 +59,7 @@ export class WeaponProperties {
 
                 url="assets/gun/scene.gltf";
                 this.meshScale = 0.18;
-                this.weapon.body.position.y = this.weapon.height + 0.3;
+                this.weapon.body.position.y = this.weapon.height + 0.4;
                 this.weapon.body.rotation.y = Math.PI;
                 this.weapon.damage = 8;
                 this.weapon.range = 10;
@@ -70,7 +70,7 @@ export class WeaponProperties {
 
                 url="assets/saw/scene.gltf";
                 this.meshScale = 0.4;
-                this.weapon.body.position.y = this.weapon.height + 0.3;
+                this.weapon.body.position.y = this.weapon.height + 0.4;
                 this.weapon.body.rotation.y = Math.PI/2;
                 this.weapon.damage = 5;
                 this.weapon.range = 2;

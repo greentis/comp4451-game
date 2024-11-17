@@ -78,9 +78,10 @@ export class AnimalProperties {
                 }
             });
             
+            model.rotateY(this.rotateY);
 
-            this.mesh = model;
-            this.mesh.rotateY(this.rotateY);
+            this.mesh = new THREE.Group();
+            this.mesh.add(model);
             this.animal.body.add(this.mesh);
             this.animal.mesh=this.mesh;
             this.animal.mesh.name=this.name;

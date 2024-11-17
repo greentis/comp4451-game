@@ -65,7 +65,7 @@ export class TileProperties {
     
                     this.seeThroughable = true;
                     this.hittable = true;
-                    this.passCost = 99999;
+                    this.passCost = 1.0;
                     this.hitRateCost = 0;
                     this.tileScaling = 0.01;
     

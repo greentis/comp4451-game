@@ -47,7 +47,7 @@ export class AIAgent {
                 continue;
             }
             let timeout = 0;
-            while (e.getActionPoint() > 0 && e.actionstate != "localMinima" && timeout < 20) {
+            while (e.getActionPoint() > 0 && e.actionstate != "localMinima" && timeout < 10) {
                 //the action will be assigned according to the overall priority, calculated as below:
                 // overall priority(for each action) = basic priority * e^(priority modifier)
                 // probability of taking each action = overall priority of action t / sum of overall priority
@@ -304,7 +304,7 @@ export class AIAgent {
         
     }
 
-    attackPlayer(e, seed) {
+    async attackPlayer(e, seed) {
         /* TODO: implement this function */
         e.actionstate = "attackPlayer";
         console.log(e.name, " attackPlayer");
@@ -360,7 +360,7 @@ export class AIAgent {
         }
         //console.log("maxIndex: ", maxIndex);
         if (maxIndex != -1) {
-            e.attack(attackablePlayer[maxIndex]);
+            await e.attack(attackablePlayer[maxIndex]);
         }
     }
 
