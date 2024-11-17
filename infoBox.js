@@ -37,6 +37,10 @@ export var infoBox = {
     selectUpgrade: (index) => {
         game;
     },
+
+    passMission: () => {
+        game.startNewMission();infoBox.format = infoBox.FORMAT.MissionInfo;
+    },
 };
 
 new Vue({

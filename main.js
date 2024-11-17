@@ -34,7 +34,6 @@ export class Game{
 	//
 	// For each mission
 	//
-		this.gameOn = true;
 		this.generateMission();
 		
 	}
@@ -51,8 +50,19 @@ export class Game{
 		infoBox.format = infoBox.FORMAT.Gameover;
 	}
 
-	generateMission(){
+	startNewMission(){
+		this.clearScene();
+		this.generateMission();
+	}
 
+	clearScene(){
+		// Remove all objects from the scene
+		this.scene.remove(this.board.body);
+		
+		this.camera.position.set(0, 3, 5);
+	}
+
+	generateMission(){
 		// Board & Tiles (Development phase)
 		infoBox.missionNo = this.missionNo;
 		this.board = new Board(this);
@@ -65,9 +75,9 @@ export class Game{
 		// Players (Development phase)
 		var playerSpawnPoints = this.board.getPlayerSpawnPoint();
 		this.player = [
-			new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 1, WeaponProperties.TYPE.Gun, this, 'Player 1'),
-			new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 1, WeaponProperties.TYPE.Bomb, this, 'Player 2'),
-			new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 1, WeaponProperties.TYPE.Saw, this, 'Player 3')
+			new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 10, WeaponProperties.TYPE.Gun, this, 'Player 1'),
+			new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 10, WeaponProperties.TYPE.Bomb, this, 'Player 2'),
+			new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 10, WeaponProperties.TYPE.Saw, this, 'Player 3')
 		];
 
 		
@@ -87,7 +97,7 @@ export class Game{
 			}
 		}
 		//console.log(this.enemy);
-		this.enemy.add(new Animal(-5, -5, 0, this, name, -1)); //-6, -9
+		//this.enemy.add(new Animal(-5, -5, 0, this, name, -1)); //-6, -9
 
 		infoBox.enemies = this.enemy;
 
@@ -108,6 +118,7 @@ export class Game{
 		// turn iteration
 		// ---- Press 'f' key to skip turn
 		this.isPlayerTurn = true;
+		this.gameOn = true;
 	}
 
 	createScene(){

@@ -42,24 +42,24 @@ export class Weapon{
         let affects = tile.getTilesWithinRange(this.blastRadius);
         
         affects.forEach(t => {
-            if (!t.character) {
-                for (let i = 0; i < Math.random() * this.properties.Pvar + this.properties.Pmin; i++) {
-                    let p
-                    if (this.name === 'Gun') {
-                        p = new CanvasParticle(t.body, 0.2, 100);
-                        p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix));
-                    }
-                    else if (this.name === 'Bomb') {
-                        p = new SphereParticle(t.body, 2, 100);
-                        p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix));
-                    }
-                    else if (this.name === 'Saw') {
-                        p = new CanvasParticle(t.body, 0.2, 20, "cross");
-                        p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix,0.05,0.02,0.05));
-                    }
+            for (let i = 0; i < Math.random() * this.properties.Pvar + this.properties.Pmin; i++) {
+                let p
+                if (this.name === 'Gun') {
+                    p = new CanvasParticle(t.body, 0.2, 100);
+                    p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix));
                 }
-                t.setType(TileProperties.TYPE.Void);
-                t.takeDamage(attenuationFunc(this.damage, this.blastRadius, distance(t, tile)));
+                else if (this.name === 'Bomb') {
+                    p = new SphereParticle(t.body, 2, 100);
+                    p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix));
+                }
+                else if (this.name === 'Saw') {
+                    p = new CanvasParticle(t.body, 0.2, 20, "cross");
+                    p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix,0.05,0.02,0.05));
+                }
+            }
+            t.setType(TileProperties.TYPE.Default);
+            t.takeDamage(attenuationFunc(this.damage, this.blastRadius, distance(t, tile)));
+            if (!t.character) {
                 return;
             }
             if (t.character.constructor == damager.constructor) return;

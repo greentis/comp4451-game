@@ -6,11 +6,17 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Forest Hunter by Group 9 Curtis & Timothy</title>
 		
+		<!-- Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 		
+		<!-- Vue.js -->
         <script src="https://unpkg.com/vue@3"></script>
 		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 		<script type='text/javascript' src='node_modules/three-nebula/build/three-nebula.js'></script>
 		
+		<!-- Scripts -->
 		<script type="module" src="/main.js"></script>
 		<script type="module" src="/infoBox.js"></script>
 		
@@ -37,7 +43,7 @@
 				color: white;
 				background-color: black;
 				width: 100%;
-				height:50px;
+				height:0px;
 				display: flex;
 				flex-direction: column;
 				position: absolute;
@@ -49,16 +55,20 @@
 			
 
 			.container {
-				color: white;
-				
-				height: 50px;
+				color: rgb(215, 198, 176);
+				width:100%;
+				height: 40px;
 				display: flex;
 				flex-direction: row;
 				position: relative;
-				flex-wrap:nowrap;
+				flex-wrap:wrap;
+				flex-shrink: 0;
     			justify-content:space-evenly;
 				gap:0px;
 				z-index:1;
+			}
+			.container > .tall{
+				height: 80px;
 			}
 
 			.container::after{
@@ -67,13 +77,13 @@
 				width:100%;
 				height:100%;
 				background-color: black;
-				opacity:0.75;
+				opacity:0.7;
 				z-index:-1;
 			}
 
 			.container.panel{
 				background-color:transparent;
-				top:50px;
+				top:0px;
 				width:100%;
 				flex-direction: column;
 				position: absolute;
@@ -91,34 +101,88 @@
 				opacity:0.2;
 				z-index:-1;
 			}
-
+			
 			.box{
 				border-radius: 0%;
 				position:relative;
 				width:100px;
-				height:50px;
+				height:40px;
 				flex-grow: 1;
-				flex-shrink: 1;
 				text-align: center;
 				align-content:center;
+				transition: 0.5s;
+			}
+			.box:hover{
+				flex-grow: 1.5;
+				color:rgb(235, 176, 37)
+			}
+			#gameover:hover{
+				flex-grow: 2;
+				color:rgb(229, 74, 57)
 			}
 
 			.box.largeBox{
 				width:200px;
-				height:50px;
 				flex-grow: 2;
 			}
+			.box.largeBox:hover{
+				flex-grow: 3;
+			}
 
-			.controller{
-				flex-grow: 0;
+			.box.tall{
+				height:80px;
+			}
+
+			.interactive{
+				cursor: pointer;
+				border-radius: 20px;
+				color:rgb(194, 203, 125);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				opacity: 0.8;
+			}
+			.interactive::after{
+				content:"";
+				width:90%;
+				border-radius: 2px;
+				height:90%;
+				position:absolute;
+				border: 4px solid rgb(235, 176, 37);
+				opacity:0.5;
+			}
+			.interactive:hover{
+				opacity:1;
+				color:rgb(232, 235, 37);
+			}
+			.interactive:hover::after{
+				opacity:0.8;
+			}
+
+			.sour-gummy{
+				font-family: "Sour Gummy", sans-serif;
+				font-optical-sizing: auto;
+				font-weight: 400;
+				font-style: normal;
+				font-variation-settings:
+				"wdth" 150;
+			}
+			#title{
+				font-size:xx-large;
+				transition-property: color, font-weight;
+				transition-duration: 0.4s;
+			}
+			#title:hover{
+				color:rgb(217, 120, 238);
+				font-weight: 500;
 			}
 		</style>
 	</head>
 	<body>
-		<div id='infoBox' :class="{'extended':format == 'UpgradePanel'}">
+		<div id='infoBox' :class="{'extended':format == 'UpgradePanel'}" class="sour-gummy">
 			<div class="container">
-				<div class="box" style="font-size:x-large; color:rgb(46, 198, 120)">
-					<strong>Forest Hunter</strong> 
+				<div class="box" style="color:rgb(46, 198, 120)">
+					<strong id="title" class="sour-gummy">Forest Hunter</strong> 
 				</div>
 			</div>
 			<div v-if="format == 'MissionInfo'" class="container">
@@ -131,8 +195,8 @@
 				<div class="box">
 					Animals left: {{enemies.size}}
 				</div>
-				<div v-on:click="passRound" class="box controller" style="color:red">
-					End Round
+				<div v-on:click="passRound" class="box controller interactive">
+					<Strong>End Round</Strong>
 				</div>
 			</div>
 			<div v-if="format == 'CharacterStats'" class="container">
@@ -157,15 +221,16 @@
 				<div v-for="p in players" class="box">{{p.name}}<br> ❤️{{p.health}}</div>
 			</div>
 			<div v-if="format == 'Gameover'" class="container panel">
-				<div class="box largeBox"><h1>Game Over!</h1></div>
-				<div class="container">
-					<div class="box largeBox"><h3>Survived to Mission {{missionNo}}</h3></div>
-					<div class="box largeBox"><h3>Animals left: {{enemies.size}}</h3></div>
+				<div class="box largeBox" id="gameover"><h1>Game Over!</h1></div>
+				<div class="container tall">
+					<div class="box largeBox tall"><h3>Survived to Mission {{missionNo}}</h3></div>
+					<div class="box largeBox tall"><h3>Animals left: {{enemies.size}}</h3></div>
 				</div>
 			</div>
 			<div v-if="format == 'UpgradePanel'" class="container panel">
 				<h1>You Win!</h1>
 				<h3>Reached Mission {{missionNo}}</h3>
+				<h3 @click="passMission" class="interactive">Next Mission</h3>
 			</div>
 		</div>
 		
