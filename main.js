@@ -16,6 +16,26 @@ import { infoBox } from './infoBox.js';
 import { AnimalProperties } from './AnimalProperties.js';
 //global variables
 
+export function disposeNode( node, recursive = false ) {
+	//console.log("disposeNode");
+	if ( !node ) return;
+	if ( recursive && node.children)
+	  for ( const child of node.children )
+		disposeNode( child , recursive );
+	node.geometry && node.geometry.dispose();
+	if ( !node.material ) return;
+	const materials = node.material.length === undefined ? [ node.material ] : node.material
+	for ( const material of materials ) {
+		for ( const key in material ) {
+		  const value = material[key];
+		  if ( value && typeof value === 'object' && 'minFilter' in value )
+			value.dispose();
+		}
+		material && material.dispose();    
+	}
+
+  }
+
 export class Game{
 	constructor(){
 	//
@@ -53,14 +73,24 @@ export class Game{
 	startNewMission(){
 		this.clearScene();
 		this.generateMission();
+		this.gameOn = true;
 	}
 
 	clearScene(){
+		this.selectedObject = null;
+		this.previousObject = null;
+		this.hoveringObject = null;
+
 		// Remove all objects from the scene
+		
 		this.scene.remove(this.board.body);
+		disposeNode(this.board.body, true);
 		
 		this.camera.position.set(0, 3, 5);
 	}
+
+
+	
 
 	generateMission(){
 		// Board & Tiles (Development phase)
@@ -137,7 +167,7 @@ export class Game{
 
 		this.ambientLight = new THREE.AmbientLight( 0xBBBBBB ); // soft white light, 0x000000
 		this.scene.add( this.ambientLight );
-		
+
 		//this.scene.fog = new THREE.Fog( 0xdfaaaa, 0.001 , 30);
 
 		this.camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -190,29 +220,29 @@ export class Game{
 			var intersects = raycaster.intersectObjects(this.scene.children);
 			
 			// Deactivate objects that is activated in previous call
-			var previousObject = this.selectedObject;
+			this.previousObject = this.selectedObject;
 			this.selectedObject = null;
 		
 			// Try activating the object in ascending order
 			for (var i = 0; i < intersects.length; i++) {
 				this.selectedObject = intersects[i].object.userData;
 				if (!this.selectedObject.select) continue;
-				if (this.selectedObject == previousObject) {
-					if (previousObject) this.selectedObject = previousObject.deselect();
+				if (this.selectedObject == this.previousObject) {
+					if (this.previousObject) this.selectedObject = this.previousObject.deselect();
 					break;
 				}
 				this.selectedObject.select();
-				if (this.selectedObject != null && this.selectedObject == previousObject) {
+				if (this.selectedObject != null && this.selectedObject == this.previousObject) {
 					this.selectedObject = this.selectedObject.deselect();
 					break;
 				}
-				if (previousObject) previousObject.deselect();
+				if (this.previousObject) this.previousObject.deselect();
 				break;
 			}
 			//console.log(this.selectedObject);
 		}, false);
 		
-		var hoveringObject = null;
+		this.hoveringObject = null;
 		
 		window.addEventListener('mousemove', (event)=>{
 			if (!this.gameOn || event.clientY <= 100 ) return;
@@ -229,11 +259,11 @@ export class Game{
 			for (var i = 0; i < intersects.length; i++) {
 				var newObject = intersects[i].object.userData;
 				if (!newObject.hovering) continue;
-				if (hoveringObject) {
-					if (hoveringObject == newObject) break;
-					hoveringObject.deHovering();
+				if (this.hoveringObject) {
+					if (this.hoveringObject == newObject) break;
+					this.hoveringObject.deHovering();
 				}
-				hoveringObject = newObject;
+				this.hoveringObject = newObject;
 				newObject.hovering();
 				break;
 			}
@@ -304,6 +334,9 @@ export class Game{
 					break;
 				case 'p':	// for debug purpose to skip enemies turn
 					this.missionCompleted();
+					break;
+				case 'o':	// for debug purpose to skip enemies turn
+					this.startNewMission();
 					break;
 				case 'l':
 					this.missionFailed();
