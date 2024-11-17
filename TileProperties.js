@@ -155,6 +155,7 @@ export class TileProperties {
                 this.hitRateCost = 50;
 
                 this.meshScale = 0.012;
+                this.rotateY = Math.random()*Math.PI*2;
                 url = 'assets/tree/scene.gltf';
 
                 this.strength = 8;
@@ -186,15 +187,17 @@ export class TileProperties {
                     child.userData = this.tile;
                 }
             });
-            this.mesh = model;
-            this.mesh.rotateX(this.rotateX);
-            this.mesh.rotateZ(this.rotateZ);
-            this.mesh.position.x = this.offsetX;
+            model.rotateX(this.rotateX);
+            model.rotateZ(this.rotateZ);
+            model.position.x = this.offsetX;
+            model.position.z=this.offsetZ;
+
+            this.mesh = new THREE.Group();
+            this.mesh.add(model);
             this.mesh.position.y=this.offsetYm;
-            this.mesh.position.z=this.offsetZ;
-            
+            this.mesh.rotateY(this.rotateY);
             this.tile.body.add(this.mesh);
-            this.tile.body.rotateY(this.rotateY);
+            
         });
     }
     

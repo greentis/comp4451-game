@@ -8,6 +8,7 @@ export class AnimalProperties {
     constructor(animal, typeID){
         this.id = typeID;
         this.animal = animal;
+        this.rotateY = 0;
         //this.animal.name = 'Monkey';
 
         // Height Attribute must be before weapon creation
@@ -37,7 +38,8 @@ export class AnimalProperties {
                     attack:4, // default 4
                     escape:1
                 };
-                this.height = 1.1;
+                this.height = 1.2;
+                this.rotateY = Math.PI;
                 this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Bomb, this.height);
                 break;
             case AnimalProperties.TYPE.Rabbit:
@@ -74,6 +76,7 @@ export class AnimalProperties {
                 }
             });
             this.mesh = model;
+            this.mesh.rotateY(this.rotateY);
             this.animal.body.add(this.mesh);
             this.animal.mesh=this.mesh;
             this.animal.mesh.name=this.name;
