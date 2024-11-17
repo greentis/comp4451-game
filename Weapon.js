@@ -12,14 +12,21 @@ import { TileProperties } from './TileProperties.js';
 
 const distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
 const lerp = (a, b, t) => {return a + (b - a) * t;}
+
+const destroyableTable = {
+    "Gun": [TileProperties.TYPE.Default, TileProperties.TYPE.Cover, TileProperties.TYPE.Bush],
+    "Bomb": [TileProperties.TYPE.Default, TileProperties.TYPE.Wall, TileProperties.TYPE.Rock,TileProperties.TYPE.Cover, TileProperties.TYPE.Bush, TileProperties.TYPE.Tree],
+    "Saw": [TileProperties.TYPE.Default, TileProperties.TYPE.Wall, TileProperties.TYPE.Rock,TileProperties.TYPE.Cover, TileProperties.TYPE.Bush, TileProperties.TYPE.Tree],
+}
 export class Weapon{
-    constructor(character, typeID, damage = 1){
+    constructor(character, typeID, damage = 1,game=null){
         this.character = character;
         this.body = new THREE.Object3D();
         this.setType(typeID);
         
         this.character.body.add(this.body);
         this.damage = damage;
+        this.game = game;
     }
 
     setType(typeID){
