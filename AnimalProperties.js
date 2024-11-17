@@ -9,6 +9,9 @@ export class AnimalProperties {
         this.id = typeID;
         this.animal = animal;
         //this.animal.name = 'Monkey';
+
+        // Height Attribute must be before weapon creation
+        this.height = 2;
         
         var url = 'assets/monkey/scene.gltf';
         switch (typeID) {
@@ -34,6 +37,7 @@ export class AnimalProperties {
                     attack:4, // default 4
                     escape:1
                 };
+                this.height = 1;
                 this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Bomb);
                 break;
             case AnimalProperties.TYPE.Rabbit:
@@ -46,6 +50,7 @@ export class AnimalProperties {
                     attack:4, // default 4
                     escape:1
                 };
+                this.height = 0.7;
                 this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun);
                 break;
             default:

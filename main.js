@@ -135,11 +135,12 @@ export class Game{
 		
 
 
-		this.ambientLight = new THREE.AmbientLight( 0xAAAAAA ); // soft white light, 0x000000
+		this.ambientLight = new THREE.AmbientLight( 0xBBBBBB ); // soft white light, 0x000000
 		this.scene.add( this.ambientLight );
+		
 		//this.scene.fog = new THREE.Fog( 0xdfaaaa, 0.001 , 30);
 
-		this.camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		this.camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHeight, 0.1, 1000 );
 		
 		// camera.up.set(x, y, z);
 		this.camera.position.set(0, 3, 5);

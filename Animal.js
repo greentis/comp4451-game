@@ -12,13 +12,13 @@ export class Animal extends Character{
         //this.setType(AnimalProperties.TYPE.Monkey);
         this.setType(typeID);
 
-        this.action.setActionPoint(0);
+        this.setActionPoint(0);
 
         this.groupID = groupid; //groupID is used to determine the group of the animal
         this.actionstate = null;
         this.wake = false; // wake up when player is near or under attack
         
-        
+        this.getTile().characterEnter(this);
     }
 
     setType(typeID){

@@ -27,7 +27,9 @@ export class Character{
     constructor(q, r, health, game, name = 'Steve'){
         // This is an ABSTRACT CLASS now
         if (this.constructor == Character) throw new Error("Abstract classes can't be instantiated.");
-        
+        this.properties={
+            height:2
+        }
         this.q = q; 
         this.r = r;
         this.name = name;
@@ -42,11 +44,6 @@ export class Character{
         this.sightRange = 8;
         this.body = new THREE.Group();
         this.action = new ActionTracker(this);
-        
-        this.setActionPoint(0);
-        this.getTile().characterEnter(this);
-
-        
     }
 
     getActionPoint() {return this.action.actionPoint;}
@@ -251,6 +248,7 @@ export class Character{
 
         var path = new Set();
         var t;
+        let canHit;
         for (let i = 1; i <= N; i++){
             // Progression
             var q = lerp(this.q, tile.q, i/N);
@@ -270,7 +268,7 @@ export class Character{
 
             // Check if this is valid
 
-            const canHit = t.properties.strength <= this.weapon.convertToObstacleDamage(this.weapon.damage) || t.properties.hittable;
+            canHit = t.properties.strength <= this.weapon.convertToObstacleDamage(this.weapon.damage) || t.properties.hittable;
             
             if (t != this.getTile()){
                 if (!t.properties.seeThroughable && !canHit) return false;
@@ -290,6 +288,7 @@ export class Character{
         
         if (path.size == 0 || !path.has(tile)) return false;
 
+        if (!canHit) return false;
         // Return the Path
         return path;
     }

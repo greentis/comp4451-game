@@ -12,7 +12,6 @@ const distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1
 export class Hunter extends Character{
     constructor(q, r, health, weaponType, game, name){
         super(q, r, health, game, name);
-
         this.actionstate = Hunter.ACTION['idle'];
 
         this.weapon = new Weapon(this, weaponType, 5, game);
@@ -27,7 +26,11 @@ export class Hunter extends Character{
         this.radar.rotateX(-Math.PI/2);
         this.radar.visible = false;
         this.game.board.body.add(this.radar);
+        this.sightRange = 12;
+        
 
+        this.setActionPoint(2);
+        this.getTile().characterEnter(this);
         // Hunter Model
         const gltfLoader = new GLTFLoader();
         const url = 'assets/low_poly_kyle_crane/scene.gltf';
@@ -41,9 +44,9 @@ export class Hunter extends Character{
                 }
             });
             this.mesh = model;
-            this.light = new THREE.PointLight(0xc08844, 40);
+            this.light = new THREE.PointLight(0xd08a40, 40);
             this.light.position.y = 2;
-            this.light.decay = 1;
+            this.light.decay = 0.8;
             this.light.distance = this.sightRange - 1;
             this.light.castShadow = true;
             this.mesh.add(this.light);
@@ -52,8 +55,6 @@ export class Hunter extends Character{
         });
         
         
-
-        this.action.setActionPoint(2);
     }
 
     //

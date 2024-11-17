@@ -23,7 +23,7 @@ export class ActionTracker{
             transparent: true,
         });
         const label = new THREE.Sprite(labelMaterial);
-        label.scale.set(0.4,0.4,0.4);
+        label.scale.set(0.3,0.3,0.3);
         
         char.body.add(label)
          
@@ -32,8 +32,6 @@ export class ActionTracker{
         
         char.body.add(this.mesh);
         
-        
-        this.render();
         this.mesh.rotateX(-Math.PI/2);
         
         this.mesh.name = "indicator";
@@ -50,7 +48,7 @@ export class ActionTracker{
         switch (state){
             case ActionTracker.STATE.none:      // turnActionState = 0;
                 if (this.wake) {
-                    this.drawIndicator("!");
+                    this.drawIndicator("!", 1.2);
                 }
                 else{
                     this.mesh.visible = false;
@@ -72,12 +70,12 @@ export class ActionTracker{
     }
 
     render(){
-        this.mesh.position.y = 2.05// + this.character.getTile().properties.offsetYt;
+        this.mesh.position.y = this.character.properties.height + 0.05// + this.character.getTile().properties.offsetYt;
     }
 
     
 
-    drawIndicator(color){
+    drawIndicator(color, scale=0.3){
         if (color == "!"){
             this.ctx.clearRect(0, 0, 100, 100);
             this.ctx.fillStyle = "#ff0000";
@@ -108,6 +106,8 @@ export class ActionTracker{
         this.mesh.material.copy(labelMaterial);
 
         this.mesh.visible = true;
+        
+        this.mesh.scale.set(scale, scale, scale);
     }
 }
 

@@ -21,7 +21,7 @@ const destroyableTable = {
 export class Weapon{
     constructor(character, typeID, damage = 1,game=null){
         this.character = character;
-        this.body = new THREE.Object3D();
+        this.body = new THREE.Group();
         this.setType(typeID);
         
         this.character.body.add(this.body);

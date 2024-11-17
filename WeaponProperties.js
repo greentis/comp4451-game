@@ -30,7 +30,7 @@ export class WeaponProperties {
 
                 url="assets/grenade/scene.gltf";
                 this.meshScale = 0.036;
-                this.weapon.body.position.y = 2.4;
+                this.weapon.body.position.y = this.weapon.character.properties.height + 0.4;
                 this.weapon.body.rotation.y = Math.PI/2;
 
                 this.Pmin = 1;
@@ -47,7 +47,7 @@ export class WeaponProperties {
 
                 url="assets/gun/scene.gltf";
                 this.meshScale = 0.18;
-                this.weapon.body.position.y = 2.3;
+                this.weapon.body.position.y = this.weapon.character.properties.height + 0.3;
                 this.weapon.body.rotation.y = Math.PI;
                 break;
             case WeaponProperties.TYPE.Saw:
@@ -55,7 +55,7 @@ export class WeaponProperties {
 
                 url="assets/saw/scene.gltf";
                 this.meshScale = 0.4;
-                this.weapon.body.position.y = 2.3;
+                this.weapon.body.position.y = this.weapon.character.properties.height + 0.3;
                 this.weapon.body.rotation.y = Math.PI/2;
 
                 this.Pmin = 10;
@@ -66,7 +66,6 @@ export class WeaponProperties {
                         Particle.get3DMatrix()
                     , 0, 1, 0)
                 ,0,0,0)
-                break;
                 break;
             default:
                 break;
