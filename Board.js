@@ -83,6 +83,7 @@ export class Board {
                 vegetationCoverage: 0.1,
                 wallThreshold: 0.7,
                 coverThreshold: 0.4,
+                fogColour: 0x000000,
             },
             1: { //desert
                 roomPercentage: 0.85,
@@ -91,6 +92,7 @@ export class Board {
                 vegetationCoverage: 0.025,
                 wallThreshold: 0.65,
                 coverThreshold: 0.58,
+                fogColour: 0x8b7d6b,
             },
             2: { //wetland
                 roomPercentage: 0.95,
@@ -99,14 +101,16 @@ export class Board {
                 vegetationCoverage: 0.1,
                 wallThreshold: 0.99,
                 coverThreshold: 0.5,
+                fogColour: 0x000000,
             },
             3: { //black forest
                 roomPercentage: 0.75,
-                rainFall: 0.3,
-                riverSource: 1.2,
+                rainFall: 0.35,
+                riverSource: 1.4,
                 vegetationCoverage: 0.35,
-                wallThreshold: 0.7,
-                coverThreshold: 0.4,
+                wallThreshold: 0.95,
+                coverThreshold: 0.5,
+                fogColour: 0x1F2920,
             },
 
         };
@@ -962,8 +966,27 @@ export class Board {
             }
         }
 
+        //7.2 turn all the default tile into target default tile with suitable theme
+        // the default tile will be turned into target default tile based on the theme
+        // the theme is based on the this.theme
+        for(let q of Object.keys(this.temp)){
+            for(let r of Object.keys(this.temp[q])){
+                if (this.temp[q][r] == TileProperties.TYPE.Default){
+                    this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Default;
+                }
+                else if ( this.temp[q][r] == TileProperties.TYPE.Bush){
+                    this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Bush;
+                }
+                else if ( this.temp[q][r] == TileProperties.TYPE.Tree){
+                    this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Tree;
+                }
+            }
+        }
+        if(themeTable[this.theme].fog != 0x000000){
+            this.game.scene.fog = new THREE.Fog( themeTable[this.theme].fogColour, 0.001 , 30);
+        }
 
-        // 7.2 generate the tile based on the annotated map   
+        // 7.3 generate the tile based on the annotated map   
         for(let q of Object.keys(this.temp)){
             for(let r of Object.keys(this.temp[q])){
                 //console.log('q', q, 'r', r, 'type', this.temp[q][r]);
