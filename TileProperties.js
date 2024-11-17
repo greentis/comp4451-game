@@ -186,6 +186,23 @@ export class TileProperties {
 
                 this.strength = 8;
                 break;
+            case TileProperties.TYPE.mangrove:
+                this.name = 'mangrove';
+                this.color = 0x615630;
+                this.offsetYt = 0.3;
+
+                this.seeThroughable = true;
+                this.hittable = true;
+                this.passCost = 1000.0;
+                this.hitRateCost = 50;
+
+                this.meshScale = 0.0025;
+                this.offsetYm = -1.0;
+                this.rotateY = Math.random()*Math.PI*2;
+                url = 'assets/red-mangrove-tree/scene.gltf';
+
+                this.strength = 8;
+                break;
             case TileProperties.TYPE.Default:
                 if(Math.random()<0.1){
                     const loader = new THREE.TextureLoader();
@@ -205,6 +222,11 @@ export class TileProperties {
                 this.name = 'Desert'
                 this.color = 0x8b7d6b;
                 this.tileScaling = 0.006;
+                break;
+            case TileProperties.TYPE.DefaultWetland:
+                this.name = 'Wetland'
+                this.color = 0x2D8766;
+                this.tileScaling = 0.002;
                 break;
             case TileProperties.TYPE.DefaultBlackForest:
                 this.name = 'BlackForest'
@@ -336,6 +358,7 @@ TileProperties.TYPE = {
     DefaultBlackForest: 300,
     TumbleWeed: 105,
     TumbleWeedTree: 106,
+    mangrove: 206,
     
 }
 

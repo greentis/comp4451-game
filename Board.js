@@ -64,7 +64,7 @@ export class Board {
 
         this.mesh.userData = this;
         
-        this.missionNo = missionNo;
+        this.missionNo = parseInt(missionNo, 10);
         this.grids = new Map();
         this.path = [];
         this.lightedGrid = new Array();
@@ -154,10 +154,10 @@ export class Board {
 
         var printable = false;
         //below variables are for polygonal generation only
-        this.theme = 0; //control the theme of the map
+        this.theme = 2; //control the theme of the map
             console.log('Mission No:', this.missionNo, 'Theme:', this.theme);
-        this.roomLength = 10 + 2*(Math.max(this.missionNo,3) - 2); //control the Length of the map
-        this.roomWidth = 10 + 3*(Math.max(this.missionNo,3) - 2); //control the Width of the map
+        this.roomLength = 10 + 2*(Math.min(this.missionNo,3) - 2); //control the Length of the map
+        this.roomWidth = 10 + 3*(Math.min(this.missionNo,3) - 2); //control the Width of the map
         this.roomSizeRange = 1; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = themeTable[this.theme].roomPercentage; //0.75; //control the percentage of the default tile in the map
         this.wallThreshold = themeTable[this.theme].wallThreshold; //0.7; //control the threshold of the wall tile conversion from rock tile
@@ -169,7 +169,7 @@ export class Board {
         this.vegetationCoverage = themeTable[this.theme].vegetationCoverage; //0.1;//control the vegetation coverage of the map, tile with vegetation coverage below the value will be turned into vegetation tile
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
-        this.enemyDensity = 0.03 + 0.01*(Math.max(this.missionNo,3) - 2); //control the density of the enemy per tile in the map(suggested value: < 0.05)
+        this.enemyDensity = 0.03 + 0.01*(Math.min(this.missionNo,3) - 2); //control the density of the enemy per tile in the map(suggested value: < 0.05)
         this.averagePerGroup = 4; //control the average number of enemy per group
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
         this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
