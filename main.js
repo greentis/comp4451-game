@@ -6,11 +6,10 @@ import { MapControls } from 'three/addons/controls/MapControls.js';
 import { Hunter } from './Hunter.js';
 import { Animal } from './Animal.js';
 import { AIAgent } from './Aiagent.js';
-
+import { Character } from './Character.js';
 import { Board } from './Board.js';
 import { TileProperties } from './TileProperties.js';
 import { WeaponProperties } from './WeaponProperties.js';
-import { Character } from './Character.js';
 
 import { infoBox } from './infoBox.js';
 import { AnimalProperties } from './AnimalProperties.js';
@@ -84,7 +83,7 @@ export class Game{
 		// Remove all objects from the scene
 		
 		this.scene.remove(this.board.body);
-		disposeNode(this.board.body, true);
+		//disposeNode(this.board.body, true);
 		
 		this.camera.position.set(0, 3, 5);
 	}
@@ -383,10 +382,11 @@ export class Game{
 			this.enemy.forEach((enemy)=>{
 				enemy.setActionPoint(2);
 			});
+			console.log(this.gameOn)
 			if (!this.gameOn) return;
 			// Change what UI displays
 			infoBox.format = infoBox.FORMAT.HunterStateTrack;
-
+			console.log("cgheck", this.aiAgent);
 			this.aiAgent.AIControl();
 		}
 	}

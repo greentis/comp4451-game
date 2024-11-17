@@ -176,7 +176,7 @@ export class Board {
         this.averagePerGroup = 4; //control the average number of enemy per group
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
         this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
-        this.bossInterval = 3; //control the interval of the boss appearance
+        this.bossInterval = 100; //control the interval of the boss appearance
 
         this.levelDifficulty = 1.0 + (this.missionNo)*0.5; //control the difficulty of the level, the higher the value, the harder the level
                                     //default value is 1.0

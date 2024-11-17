@@ -38,7 +38,6 @@ export class AIAgent {
         }
         this.reinforcement();
 
-        
         //2.resource assignment algorithm
         for (let e of this.enemy) {
             e.playAnimation(1);
