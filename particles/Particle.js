@@ -5,6 +5,7 @@ export default class Particle{
         this.parent = parent;
         this.size = size;
         this.lifespan = lifespan;
+        this.dsize = 0;
 
         this.setMatrix(matrix);
     }
@@ -48,6 +49,9 @@ export default class Particle{
                 this.particle.position.x = this.x;
                 this.particle.position.y = this.y;
                 this.particle.position.z = this.z;
+                this.size += this.dsize;
+                if (this.size < 0) this.size = 0;
+                if (this.dsize != 0) this.particle.scale.set(this.size, this.size, this.size);
 
                 if (time < this.lifespan) { 
                     requestAnimationFrame(animate);

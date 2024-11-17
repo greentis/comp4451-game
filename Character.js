@@ -2,7 +2,8 @@
 import * as THREE from 'three';
 import { ActionTracker } from './ActionTracker.js';
 import { infoBox } from './infoBox.js';
-import Particle from './particles/Particle.js'
+import Particle from './particles/Particle.js';
+import NumberParticle from './particles/NumberParticle.js';
 
 // private method
 const lerp = (a, b, t) => {return a + (b - a) * t;}
@@ -141,6 +142,7 @@ export class Character{
     attack(tile){
         this.reduceActionPoint(2);
         this.facing(tile.q, tile.r)
+
         /* 
             let facingOld = this.body.rotation.y;
             let facingNew = Math.atan2(tile.x - this.getTile().x, tile.z - this.getTile().z);
@@ -186,14 +188,18 @@ export class Character{
 
     takeDamage(damage){
         this.health -= damage;
-
-        /* new Particle((ctx)=>{
-            ctx.font = "48px serif";
-            ctx.textAlign = "center";
-            ctx.fillStyle = "#aa0000";
-            ctx.fillText("-" + damage.toString(), 50, 50);
-            console.log("-" + damage.toString());
-        }, this.body, 1, 200, 0, 2); */
+        //console.log( "-" + damage.toString());
+        let p = new NumberParticle(this.getTile().body, 0.3, 20, "-" + damage.toString());
+        p.setMatrix(Particle.addRandomVelocity(
+            Particle.addVelocity(
+                Particle.addGravity(
+                    Particle.setInitialPosition(
+                        Particle.get3DMatrix()
+                    , 0, 1, 0)
+                )
+            ,0,0.2,0)
+        ,0.03,0.03,0.03));
+                
 
         if (this.health <= 0) {
             this.killed();

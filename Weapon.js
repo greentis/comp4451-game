@@ -62,7 +62,7 @@ export class Weapon{
             for (let i = 0; i < Math.random() * this.properties.Pvar + this.properties.Pmin; i++) {
                 let p
                 if (this.name === 'Gun') {
-                    p = new CanvasParticle(t.body, 0.2, 100);
+                    p = new CanvasParticle(t.body, 0.1, 100);
                     p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix));
                 }
                 else if (this.name === 'Bomb') {

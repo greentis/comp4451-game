@@ -12,6 +12,7 @@ export default class CanvasParticle extends Particle{
         this.makeParticle(mesh);
 
         // The mother function is async to be able to await
+        this.dsize = -0.05;
         this.waitForMoveAnimation()
     }
 
@@ -19,7 +20,7 @@ export default class CanvasParticle extends Particle{
         return new THREE.MeshBasicMaterial({
             color: color,
             transparent: true,
-            opacity: 0.4
+            opacity: 0.3
         });
     }
 }
