@@ -86,10 +86,10 @@ export class Board {
                 fogColour: 0x000000,
             },
             1: { //desert
-                roomPercentage: 0.85,
+                roomPercentage: 0.65,
                 rainFall: 0.0,
                 riverSource: 1.5,
-                vegetationCoverage: 0.025,
+                vegetationCoverage: 0.035,
                 wallThreshold: 0.65,
                 coverThreshold: 0.58,
                 fogColour: 0x8b7d6b,
@@ -105,9 +105,9 @@ export class Board {
             },
             3: { //black forest
                 roomPercentage: 0.75,
-                rainFall: 0.35,
-                riverSource: 1.4,
-                vegetationCoverage: 0.35,
+                rainFall: 0.1,
+                riverSource: 2.2,
+                vegetationCoverage: 0.15,
                 wallThreshold: 0.95,
                 coverThreshold: 0.5,
                 fogColour: 0x1F2920,
@@ -154,7 +154,7 @@ export class Board {
 
         var printable = false;
         //below variables are for polygonal generation only
-        this.theme = 3;parseInt(this.seed,10)%6; //control the theme of the map
+        this.theme = 1;parseInt(this.seed,10)%6; //control the theme of the map
             if (this.theme == 2){ this.theme = 0;}
             else if (this.theme == 4){ this.theme = 1;}
             else if (this.theme == 5){ this.theme = 3;}
@@ -182,6 +182,10 @@ export class Board {
                                     //default value is 1.0
 
         // 1. set the size of the map by 3 radius
+        if(this.theme == 1){//set a larger room size for desert theme
+            this.roomLength += 2;
+            this.roomWidth += 1;
+        }
         if (this.roomSizeRange == 0) {
             var width = this.roomWidth;
             var length = this.roomLength;
@@ -194,6 +198,7 @@ export class Board {
         this.qmin = -width, this.qmax = width;
         this.rmin = -length, this.rmax = length;
         //this.smin = -length, this.smax = boundary;
+
 
         this.temp = {};
         this.totalArea = 0;
@@ -991,9 +996,9 @@ export class Board {
                 }
                 else if ( this.temp[q][r] == TileProperties.TYPE.Bush){
                     if (this.theme == 3){ //replace some of the bush tile to pumpkin tile if the theme is darkForest
-                        if (xxhash(this.seed, q, r) > 0.5){
-                            this.temp[q][r] = TileProperties.TYPE.Pumpkin;
-                            console.log('Pumpkin Tile: q', q, 'r', r);
+                        if (xxhash(this.seed, q, r) > 0.2){
+                            this.temp[q][r] = TileProperties.TYPE.Pumkin;
+                            //console.log('Pumpkin Tile: q', q, 'r', r);
                         }
                         else{
                             this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Bush;
