@@ -48,7 +48,7 @@ export const xxhash = (seed, x, y) => {
 var EpTable = {
     [0] : 2.5,
     [1] : 4.0,
-    [2] : 1.5,
+    [2] : 1.0,
 }
 
 export class Board {
@@ -154,7 +154,7 @@ export class Board {
 
         var printable = false;
         //below variables are for polygonal generation only
-        this.theme = parseInt(this.seed,10)%6; //control the theme of the map
+        this.theme = 3;parseInt(this.seed,10)%6; //control the theme of the map
             if (this.theme == 2){ this.theme = 0;}
             else if (this.theme == 4){ this.theme = 1;}
             else if (this.theme == 5){ this.theme = 3;}
@@ -990,7 +990,18 @@ export class Board {
                     this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Default;
                 }
                 else if ( this.temp[q][r] == TileProperties.TYPE.Bush){
-                    this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Bush;
+                    if (this.theme == 3){ //replace some of the bush tile to pumpkin tile if the theme is darkForest
+                        if (xxhash(this.seed, q, r) > 0.5){
+                            this.temp[q][r] = TileProperties.TYPE.Pumpkin;
+                            console.log('Pumpkin Tile: q', q, 'r', r);
+                        }
+                        else{
+                            this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Bush;
+                        }
+                    }
+                    else{
+                        this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Bush;
+                    }
                 }
                 else if ( this.temp[q][r] == TileProperties.TYPE.Tree){
                     this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Tree;

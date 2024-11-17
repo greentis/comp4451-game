@@ -82,8 +82,8 @@ export class AIAgent {
                     }
                 }
                 
-                //console.log("timeout in ai control: ", timeout,"name: ", e.name, "chosenAction ", chosenAction, "with Action Point",e.getActionPoint(), "last action: ", e.actionstate);
-                //console.log("actionpoint: ", e.getActionPoint());
+                console.log("timeout in ai control: ", timeout,"name: ", e.name, "chosenAction ", chosenAction, "with Action Point",e.getActionPoint(), "last action: ", e.actionstate);
+                console.log("actionpoint: ", e.getActionPoint());
 
                 //3. carry out the action of the animal
                 switch (chosenAction) {
