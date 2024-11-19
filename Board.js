@@ -92,7 +92,7 @@ export class Board {
                 vegetationCoverage: 0.085,
                 wallThreshold: 0.65,
                 coverThreshold: 0.58,
-                fogColour: 0x8b7d6b,
+                fogColour: 0x000000//0x8b7d6b,
             },
             2: { //wetland
                 roomPercentage: 0.95,
@@ -110,7 +110,7 @@ export class Board {
                 vegetationCoverage: 0.15,
                 wallThreshold: 0.95,
                 coverThreshold: 0.5,
-                fogColour: 0x1F2920,
+                fogColour: 0x000000//0x1F2920,
             },
 
         };
