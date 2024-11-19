@@ -9,6 +9,7 @@ export class AnimalProperties {
         this.id = typeID;
         this.animal = animal;
         this.rotateY = 0;
+        this.y = 0;
         //this.animal.name = 'Monkey';
 
         // Height Attribute must be before weapon creation
@@ -55,6 +56,20 @@ export class AnimalProperties {
                 this.height = 0.7;
                 this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Saw, this.height);
                 break;
+            case AnimalProperties.TYPE.Pumpkin:
+                    url = 'assets/pumkin/scene.gltf';
+                    this.meshScale = 0.4;
+                    //this.meshScaleZ = 0.025;
+                    this.animal.health = 2;
+                    this.animal.actionPriority = {
+                        cover:6,
+                        attack:4, // default 4
+                        escape:1
+                    };
+                    this.y = 0.4
+                    this.height = 0.7;
+                    this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
+                    break;
             case AnimalProperties.TYPE.Boss:
                 url = 'assets/bear_roooaaar/scene.gltf';
                 this.meshScale = 1.25;
@@ -94,6 +109,7 @@ export class AnimalProperties {
             });
             
             model.rotateY(this.rotateY);
+            model.position.y = this.y;
 
             this.mesh = new THREE.Group();
             this.mesh.add(model);
@@ -117,6 +133,7 @@ AnimalProperties.TYPE = {
     Monkey: 0, 
     Bear: 1, 
     Rabbit: 2,
+    Pumpkin: 3,
     Boss: 100
 }
 
