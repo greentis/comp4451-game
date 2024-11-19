@@ -143,7 +143,8 @@ export class Board {
         //generat random map with hexagon grid
         //setting random this.seed
         // cover all the map with rock first
-        //this.seed = 42211;37148;710; 71045; 21481;
+        //this.seed = 44699;
+        //this.missionNo = 1;
         this.seed = Math.round(Math.random()* 900000 + 100000);
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
         //if(printable) 
@@ -152,7 +153,7 @@ export class Board {
         perlinNoise.seed(this.seed);
 
 
-        var printable = false;
+        var printable = true;
         //below variables are for polygonal generation only
         if(true || this.missionNo == 1){this.theme = parseInt(this.seed,10)%3;} //control the theme of the map
         //else{this.theme = (this.theme + 1)%3;}
@@ -366,7 +367,7 @@ export class Board {
 
             while (expandedTile.size > 0 && defaultTile.size < (this.roomPercentage + (this.seed % 7)/100.0) * this.totalArea){ //bug1
                 
-                //console.log('default tile', defaultTile.size, 'expanded tile', expandedTile.size);
+                console.log('default tile', defaultTile.size, 'expanded tile', expandedTile.size);
                 expandedTile.forEach((t)=>{
                     if (defaultTile.size >= (this.roomPercentage + (this.seed % 67)/1000.0) * this.totalArea){
                         //console.log('default tile', defaultTile.size, 'expanded tile', expandedTile.size);
@@ -374,12 +375,15 @@ export class Board {
                         return;
                     } 
                     
+                    console.log("do the expansion");
                     var adjacent = this.findAdjacent(t.q, t.r, width, length);
                     adjacent.forEach((a)=>{
                         if (this.checkBoardBoundaries(a.q, a.r, width, length,this.temp)) return; //skip the tile if it is at the boundary of the board
-                        //console.log('a',a);
+                        //console.log('a1',a);
                         if (this.temp[a.q][a.r] == TileProperties.TYPE.Wall) return;
+                        //console.log('a2',a,'type',this.temp[a.q][a.r]);
                         if (this.temp[a.q][a.r] == TileProperties.TYPE.Default) return;
+                        //console.log('a3',a);
 
                         //checkValues should based on the this.seed, but not math.random()
                         //so that the map is generated same every time if same this.seed
@@ -387,7 +391,7 @@ export class Board {
                         //to have a lenient check on the tile to be turned into default tile
                         //so that avoid too few default tile in the map
                         var checkingValues = (expandIteration - 1) / 250.0 + xxhash(this.seed, a.q, a.r);
-                        //console.log('q', a.q, 'r', a.r, 'checkingValues', checkingValues);
+                        console.log('q', a.q, 'r', a.r, 'checkingValues', checkingValues);
 
                         if (this.temp[a.q][a.r] != TileProperties.TYPE.Default && checkingValues > (1-this.roomPercentage)){
                             this.temp[a.q][a.r] = TileProperties.TYPE.Default;
@@ -417,7 +421,7 @@ export class Board {
         }
 
         if(printable){
-            //console.log('iteration at step 3.1', expandIteration);
+            console.log('iteration at step 3.1', expandIteration);
             console.log('room percentage', this.roomPercentage, "total area", this.totalArea, "range", (this.seed % 67)/1000.0);
             console.log('# of default tile', defaultTile.size);
             console.log('target area', (this.roomPercentage + (this.seed % 67)/1000.0) * this.totalArea);
@@ -685,11 +689,13 @@ export class Board {
         // 5. repeat the process until find the spawn point
         
         var player0 = this.playerSpawnPoints[0];
+        var playerLastResort = false;
         for (let i = 1; i < 3; i++){
             var playerFound = false;
             var ring = 1;
             while(!playerFound){
                 var ringTiles = this.ringTiles(player0, ring);
+                //console.log('player0', player0, 'ring', ring, 'ringTiles', ringTiles);
                 for (let j = 0; j < ringTiles.length; j++){
                     var q = ringTiles[j].q;
                     var r = ringTiles[j].r;
@@ -718,12 +724,17 @@ export class Board {
                 }
                 ring++;
                 if(ring > 3){
-                    //set the spawn point to the starting tile nearby as the last resort
+                    //set the spawn point to the player 0 spawn point as the last resort
                     //force turning that tile into default tile
-                    this.playerSpawnPoints[i] = {q: startingTile.q-i, r: startingTile.r+i};
-                    this.temp[startingTile.q-i][startingTile.r+i] = TileProperties.TYPE.Default;
+                    this.playerSpawnPoints[1] = {q: player0.q-1, r: player0.r+1};
+                    this.temp[startingTile.q-1][startingTile.r+1] = TileProperties.TYPE.Default;
+                    this.playerSpawnPoints[2] = {q: player0.q+1, r: player0.r-1};
+                    this.temp[startingTile.q+1][startingTile.r-1] = TileProperties.TYPE.Default;
+                    console.log('temp (q-1,r+1)', this.temp[startingTile.q-1][startingTile.r+1], 'temp (q+1,r-1)', this.temp[startingTile.q+1][startingTile.r-1]);
+                    playerLastResort = true;
                     break;
                 }
+                if (playerLastResort) break;
             }
         }
         //console.log('testing for ringTiles1', this.ringTiles({q: 0, r: 0}, 1));
@@ -969,6 +980,37 @@ export class Board {
         var voidTile = new Set();
         for (let q = -width; q <= width; q++){
             for (let r = -length; r <= length; r++){
+                //skip the tile if it is player spawn point or enemy spawn point
+                var skip = false;
+                for (let i = 0; i < 3; i++){
+                    if (this.playerSpawnPoints[i].q == q && this.playerSpawnPoints[i].r == r){
+                        skip = true;
+                        this.temp[q][r] = TileProperties.TYPE.Default;
+
+                        //turning the adjacent void tile to rock tile
+                        var adjacent = this.findAdjacent(q, r, width, length);
+                        adjacent.forEach((a)=>{
+                            //console.log('(q,r)', q, r, 'adjacent', a.q, a.r, 'temp', this.temp[a.q][a.r]);
+                            if (this.temp[a.q][a.r] == TileProperties.TYPE.Void){
+                                this.temp[a.q][a.r] = TileProperties.TYPE.Rock;
+                            }
+                        });
+
+                        break;
+                    }
+                }
+                for (let i = 0; i < enemyGroupNumber; i++){
+                    for (let j = 0; j < Object.keys(this.enemyGroup[i]).length; j++){
+                        if (this.enemyGroup[i][j][1].q == q && this.enemyGroup[i][j][1].r == r){
+                            skip = true;
+                            this.temp[q][r] = TileProperties.TYPE.Default;
+                            break;
+                        }
+                    }
+                }
+                if (skip) continue;
+
+
                 if (this.temp[q][r] == TileProperties.TYPE.Void){
                     var adjacent = this.findAdjacent(q, r, width, length);
                     var defaultAdjacent = false;
@@ -992,7 +1034,7 @@ export class Board {
         for(let q of Object.keys(this.temp)){
             for(let r of Object.keys(this.temp[q])){
                 if (this.temp[q][r] == TileProperties.TYPE.Default){
-                    this.temp[q][r] = this.getDefaultThemeTileID();
+                    this.temp[q][r] = this.theme*100;
                 }
                 else if ( this.temp[q][r] == TileProperties.TYPE.Bush){
                     if(this.theme == 1){ //replace some of the bush tile to cactus tile if the theme is desert
@@ -1015,13 +1057,50 @@ export class Board {
                 else if ( this.temp[q][r] == TileProperties.TYPE.Tree){
                     this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Tree;
                 }
+
+                //replace the tile to default tile if it is enemy spawn point && is pumpkin tile
+                for (let i = 0; i < enemyGroupNumber; i++){
+                    for (let j = 0; j < Object.keys(this.enemyGroup[i]).length; j++){
+                        if (this.enemyGroup[i][j][1].q == q && this.enemyGroup[i][j][1].r == r){
+                            //console.log('enemy spawn point: q', q, 'r', r, 'type', this.temp[q][r]);
+                            if(this.temp[q][r] == TileProperties.TYPE.Pumkin){
+                                this.temp[q][r] = this.theme*100;
+                            }
+                        }
+                    }
+                }
             }
         }
         if(themeTable[this.theme].fog !== 0x000000){
             //this.game.scene.fog = new THREE.Fog( themeTable[this.theme].fogColour, 5 , 16); //0.001,30
         }
 
-        // 7.3 generate the tile based on the annotated map   
+        //7.3 add a outer layer to the temp map
+        // the outer layer is used to avoid the out of boundary error
+        // the outer layer is the void tile, unless that tile have adjacent tile which is not void tile or rock tiles
+        for (let q = -width - 1; q <= width + 1; q++){
+            for(let r = -length - 1; r <= length + 1; r++){
+                if (this.temp[q] == undefined) this.temp[q] = {};
+                if (this.temp[q][r] != undefined) continue;
+                this.temp[q][r] = TileProperties.TYPE.Void;
+                //console.log('outer: q', q, 'r', r, 'type', this.temp[q][r]);
+
+                var adjacent = this.findAdjacent(q, r, width + 1, length + 1);
+                var defaultAdjacent = false;
+                adjacent.forEach((a)=>{
+                    if (this.temp[a.q][a.r] == TileProperties.TYPE.Void || this.temp[a.q][a.r] == TileProperties.TYPE.Hold) return;
+                    if (this.temp[a.q][a.r] == TileProperties.TYPE.Rock) return;
+                    if (this.temp[a.q][a.r] == undefined) return;
+                    defaultAdjacent = true;
+                });
+                if (defaultAdjacent){
+                    this.temp[q][r] = TileProperties.TYPE.Rock;
+                    //console.log('q', q, 'r', r, 'defaultAdjacent', defaultAdjacent);
+                }
+            }
+        }
+
+        // 7.4 generate the tile based on the annotated map   
         for(let q of Object.keys(this.temp)){
             for(let r of Object.keys(this.temp[q])){
                 //console.log('q', q, 'r', r, 'type', this.temp[q][r]);
@@ -1165,6 +1244,8 @@ export class Board {
             var q1 = q + this.adjacentTiles[i][0];
             var r1 = r + this.adjacentTiles[i][1];
             //cant use getTile here
+            if(this.temp[q1] == undefined) continue;
+            if(this.temp[q1][r1] == undefined) continue;
             if (q1 < -width || q1 > width || r1 < -length || r1 > length) continue;
             if(checkVoid && this.temp[q1][r1] == TileProperties.TYPE.Void) continue;
             adjacent.push({q: q1, r: r1});
