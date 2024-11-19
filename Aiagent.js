@@ -55,10 +55,10 @@ export class AIAgent {
 
                 //calculate the overall priority for each action
                 var overallPriority = [];
-                overallPriority.push(e.actionPriority.cover * Math.exp(findCoverModifier));
-                overallPriority.push(e.actionPriority.attack * Math.exp(attackPlayerModifier));
-                overallPriority.push(e.actionPriority.escape * Math.exp(escapeModifier));
-                //console.log("overallPriority: ", overallPriority);
+                overallPriority.push(e.actionPriority.cover * findCoverModifier);
+                overallPriority.push(e.actionPriority.attack * attackPlayerModifier);
+                overallPriority.push(e.actionPriority.escape * escapeModifier);
+                console.log("overallPriority: ", overallPriority);
 
                 //calculate the probability of taking each action
                 var sum = overallPriority.reduce((a, b) => a + b, 0);
@@ -77,8 +77,8 @@ export class AIAgent {
                     }
                 }
                 
-                console.log("timeout in ai control: ", timeout,"name: ", e.name, "chosenAction ", chosenAction, "with Action Point",e.getActionPoint(), "last action: ", e.actionstate);
-                console.log("actionpoint: ", e.getActionPoint());
+                //console.log("timeout in ai control: ", timeout,"name: ", e.name, "chosenAction ", chosenAction, "with Action Point",e.getActionPoint(), "last action: ", e.actionstate);
+                //console.log("actionpoint: ", e.getActionPoint());
 
                 //3. carry out the action of the animal
                 switch (chosenAction) {
@@ -128,6 +128,12 @@ export class AIAgent {
         /* TODO: implement this function */
         var findCoverModifier = 1;
 
+        //factor 0: check if it is first action(i.e. actionpoint == 2)
+        if (e.getActionPoint() < 2) {
+            findCoverModifier = 0;
+            return 0;
+        }
+
         //factor 1: the health of the animal
         findCoverModifier += (0.8 - e.health / e.maxHealth) * 1.5;
         //console.log("findCoverModifier 1: ", findCoverModifier);
@@ -150,11 +156,15 @@ export class AIAgent {
 
         //factor 3: whether the last action is findCover
         if (e.actionstate == "findCover") {
-            findCoverModifier = -100000;
+            findCoverModifier = 0;
         }
 
-        return findCoverModifier;
-
+        if (findCoverModifier == 0) {
+            return 0;
+        }
+        else {
+            return Math.exp(findCoverModifier);
+        }
     }
 
     attackPlayerModifier(e) {
@@ -162,10 +172,10 @@ export class AIAgent {
         var attackPlayerModifier = 1;
 
         //factor 0: check if it is first action(i.e. actionpoint == 2)
-        if (e.getActionPoint() == 2) {
-            attackPlayerModifier = -100000;
+        /*if (e.getActionPoint() == 2) {
+            attackPlayerModifier = 0;
             return 0;
-        }
+        }*/
 
         //factor 1: if the animal can attack the tile where the player is standing
         var player = this.player;
@@ -193,12 +203,23 @@ export class AIAgent {
             attackPlayerModifier /= 1.5;
         }
 
-        return attackPlayerModifier;
+        if (attackPlayerModifier == 0) {
+            return 0;
+        }
+        else {
+            return Math.exp(attackPlayerModifier);
+        }
     }
 
     escapeModifier(e) {
         var escapeModifier = 1;
         //console.log("e: ", e);
+
+        //factor 0: check if it is first action(i.e. actionpoint == 2)
+        if (e.getActionPoint() < 2) {
+            escapeModifier = 0;
+            return 0;
+        }
 
         //factor 1: the health of the animal
         escapeModifier += (0.66 - e.health / e.maxHealth) * 3.5;
@@ -227,7 +248,13 @@ export class AIAgent {
             escapeModifier /= 100;
         }
         //console.log("escapeModifier 3: ", escapeModifier);
-        return escapeModifier;
+       
+        if (escapeModifier == 0) {
+            return 0;
+        }
+        else {
+            return Math.exp(escapeModifier);
+        }
     }
 
     async findCover(e, seed) {
