@@ -52,7 +52,7 @@ export class Tile {
             let character = null;
             if (this.character) character = this.characterLeave();
             if (weaponType === "Bomb") this.setType(TileProperties.TYPE.Bombed)
-            else this.setType(TileProperties.TYPE.Default);
+            else this.setType(this.game.board.getDefaultThemeTileID());
             if (character) this.characterEnter(character);
         }
     }

@@ -154,13 +154,13 @@ export class Board {
 
         var printable = false;
         //below variables are for polygonal generation only
-        this.theme = parseInt(this.seed,10)%6; //control the theme of the map
+        this.theme = 3//parseInt(this.seed,10)%6; //control the theme of the map
             if (this.theme == 2){ this.theme = 0;}
             else if (this.theme == 4){ this.theme = 1;}
             else if (this.theme == 5){ this.theme = 3;}
             console.log('Mission No:', this.missionNo, 'Theme:', this.theme);
-        this.roomLength = 8 + 1*(Math.min(this.missionNo,2)-1); //control the Length of the map
-        this.roomWidth = 8 + 1*(Math.min(this.missionNo,2)-1); //control the Width of the map
+        this.roomLength = 9 + 1*(Math.min(this.missionNo,2)-1); //control the Length of the map
+        this.roomWidth = 9 + 1*(Math.min(this.missionNo,2)-1); //control the Width of the map
         this.roomSizeRange = 0; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = themeTable[this.theme].roomPercentage; //0.75; //control the percentage of the default tile in the map
         this.wallThreshold = themeTable[this.theme].wallThreshold; //0.7; //control the threshold of the wall tile conversion from rock tile
@@ -759,6 +759,7 @@ export class Board {
             var j = 0;
             while(Ep < Egp){
                 var enemyType = Math.round(xxhash(this.seed * 4451, i, Ep) * 4451) % Object.keys(EpTable).length;
+                if (this.theme == 3 && enemyType == 2) enemyType = 3; 
                 //console.log('enemyType', enemyType);
                 Ep += EpTable[enemyType];
                 if (Ep > Egp) break;
@@ -992,11 +993,11 @@ export class Board {
         for(let q of Object.keys(this.temp)){
             for(let r of Object.keys(this.temp[q])){
                 if (this.temp[q][r] == TileProperties.TYPE.Default){
-                    this.temp[q][r] = this.theme*100 + TileProperties.TYPE.Default;
+                    this.temp[q][r] = this.getDefaultThemeTileID();
                 }
                 else if ( this.temp[q][r] == TileProperties.TYPE.Bush){
                     if(this.theme == 1){ //replace some of the bush tile to cactus tile if the theme is desert
-                        if (xxhash(this.seed, q, r) > 0.75){
+                        if (xxhash(this.seed, q, r) > 0.75){;
                             this.temp[q][r] = TileProperties.TYPE.Cactus;
                             continue;
                             //console.log('Cactus Tile: q', q, 'r', r);
@@ -1044,6 +1045,10 @@ export class Board {
         }
         
 
+    }
+
+    getDefaultThemeTileID(){
+        return this.theme*100 + TileProperties.TYPE.Default
     }
 
     //

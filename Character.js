@@ -227,7 +227,7 @@ export class Character{
 
     // This function is visual. What ambush does is hitRateCost*=3
     ambush(){
-        this.body.position.y = -this.properties.height + 1;
+        this.body.position.y = -this.properties.height + 1.1;
     }
 
     facing(q, r){

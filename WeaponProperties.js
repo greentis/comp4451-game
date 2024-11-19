@@ -73,7 +73,7 @@ export class WeaponProperties {
                 this.weapon.body.position.y = this.weapon.height + 0.4;
                 this.weapon.body.rotation.y = Math.PI/2;
                 this.weapon.damage = 5;
-                this.weapon.range = 2;
+                this.weapon.range = 3;
                 this.obstacleDamageMultiplier = 2;
 
                 this.Pmin = 10;
