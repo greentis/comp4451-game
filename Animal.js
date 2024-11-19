@@ -61,7 +61,7 @@ export class Animal extends Character{
         if(this.wake) this.action.drawIndicator("!");
     }
 
-    killed(){
+    killed(damager){
         for(let e of this.game.enemy){
             if(e.group == this.groupID){
                 e.wake = true;
@@ -73,7 +73,7 @@ export class Animal extends Character{
         if (this.game.enemy.size == 0) {
             this.game.missionCompleted();
         }
-        super.killed();
+        super.killed(damager);
     }
 
     ambush(){

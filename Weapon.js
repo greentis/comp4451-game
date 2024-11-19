@@ -48,7 +48,7 @@ export class Weapon{
         return result == 0 ? 1 : result;
     }
 
-    dealsDamage(tile, damager){
+    dealsDamage(tile){
 
         function attenuationFunc(damage, radius, dist){
             if (radius == 0) return damage;
@@ -81,8 +81,8 @@ export class Weapon{
             if (!t.character) {
                 return;
             }
-            if (t.character.constructor == damager.constructor) return;
-            t.character.takeDamage(attenuationFunc(this.damage, this.blastRadius, distance(t, tile)));
+            if (t.character.constructor == this.character.constructor) return;
+            t.character.takeDamage(attenuationFunc(this.damage, this.blastRadius, distance(t, tile)), this.character);
         });
         //console.log(this.name, " hits ", tile.mesh.name);
         

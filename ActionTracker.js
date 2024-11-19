@@ -47,8 +47,8 @@ export class ActionTracker{
         this.actionPoint = state;
         switch (state){
             case ActionTracker.STATE.none:      // turnActionState = 0;
-                if (this.wake) {
-                    this.drawIndicator("!", 1.2);
+                if (this.character.wake) {
+                    this.drawIndicator("!");
                 }
                 else{
                     this.mesh.visible = false;

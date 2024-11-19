@@ -158,8 +158,8 @@ export class Board {
         //else{this.theme = (this.theme + 1)%3;}
             if (this.theme == 2){ this.theme = 3;}
             console.log('Mission No:', this.missionNo, 'Theme:', this.theme);
-        this.roomLength = 9 + 1*(Math.min(this.missionNo,2)-1); //control the Length of the map
-        this.roomWidth = 9 + 1*(Math.min(this.missionNo,2)-1); //control the Width of the map
+        this.roomLength = 7 + 1*(Math.min(this.missionNo,2)); //control the Length of the map
+        this.roomWidth = 7 + 1*(Math.min(this.missionNo,2)); //control the Width of the map
         this.roomSizeRange = 0; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = themeTable[this.theme].roomPercentage; //0.75; //control the percentage of the default tile in the map
         this.wallThreshold = themeTable[this.theme].wallThreshold; //0.7; //control the threshold of the wall tile conversion from rock tile
@@ -171,7 +171,7 @@ export class Board {
         this.vegetationCoverage = themeTable[this.theme].vegetationCoverage; //0.1;//control the vegetation coverage of the map, tile with vegetation coverage below the value will be turned into vegetation tile
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
-        this.enemyDensity = 0.03 + 0.01*(Math.min(this.missionNo,3) - 2); //control the density of the enemy per tile in the map(suggested value: < 0.05)
+        this.enemyDensity = 0.04 + 0.003*(Math.min(this.missionNo,1) - 1); //control the density of the enemy per tile in the map(suggested value: < 0.05)
         this.averagePerGroup = 4; //control the average number of enemy per group
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
         this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
@@ -1017,8 +1017,8 @@ export class Board {
                 }
             }
         }
-        if(themeTable[this.theme].fog != 0x000000){
-            this.game.scene.fog = new THREE.Fog( themeTable[this.theme].fogColour, 5 , 16); //0.001,30
+        if(themeTable[this.theme].fog !== 0x000000){
+            //this.game.scene.fog = new THREE.Fog( themeTable[this.theme].fogColour, 5 , 16); //0.001,30
         }
 
         // 7.3 generate the tile based on the annotated map   

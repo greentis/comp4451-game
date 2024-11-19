@@ -131,7 +131,7 @@ export class Hunter extends Character{
             }
         }
 
-        killed(){
+        killed(damager){
             console.log(this.game.player);
             const index = this.game.player.findIndex(obj => obj.name == this.name);
             if (index !== -1) {
@@ -139,7 +139,7 @@ export class Hunter extends Character{
             }
             console.log(this.game.player.length, " players remaining")
             if (this.game.player.length == 0) this.game.missionFailed();
-            super.killed();
+            super.killed(damager);
         }
 
         updateRadar(){

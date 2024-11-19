@@ -95,11 +95,12 @@
 				flex-grow: 1;
 				text-align: center;
 				align-content:center;
+				transition-property: flex-grow, color;
 				transition: 0.5s;
 			}
 			.box:hover{
 				flex-grow: 1.5;
-				color:rgb(235, 176, 37)
+				color:rgb(235, 176, 37);
 			}
 			#gameover:hover{
 				flex-grow: 2;
@@ -169,11 +170,19 @@
 				color:rgb(101, 83, 219);
 				font-weight: 500;
 			}
+
+			.header{
+				overflow: hidden;
+				transition: 1s;
+			}
+			.shrink{
+				height: 0px;
+			}
 		</style>
 	</head>
 	<body>
 		<div id='infoBox' :class="{'extended':format == 'UpgradePanel'}" class="sour-gummy">
-			<div class="container">
+			<div :class="{'shrink':format == 'HunterStateTrack'}" class="container header" >
 				<div class="box">
 					<strong id="title" class="sour-gummy">Forest Hunter</strong> 
 				</div>

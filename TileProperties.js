@@ -267,6 +267,26 @@ export class TileProperties {
                     this.tile.body.add(label);
                     this.mesh=label;
                 }
+                else if (Math.random()<0.05){
+                    const loader = new THREE.TextureLoader();
+                    const texture = loader.load( './assets/flower.svg' );
+                    texture.colorSpace = THREE.SRGBColorSpace;
+    
+                    const labelMaterial = new THREE.SpriteMaterial({
+                        map: texture,
+                        transparent: true
+                      });
+                      for (let i =0; i < 1; i++){
+                        const label = new THREE.Sprite(labelMaterial);
+                        label.scale.set(0.2,0.2,0.2);
+                        label.position.y=0.1;
+                        label.position.x=Math.random()*0.5-0.25;
+                        label.position.z=Math.random()*0.5-0.25;
+                        this.tile.body.add(label);
+                        this.mesh=label;
+                      }
+                    
+                }
                 break;
             case TileProperties.TYPE.DefaultDesert:
                 this.name = 'Desert'

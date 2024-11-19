@@ -34,6 +34,8 @@ export class AIAgent {
 
         console.log(this.enemy)
         //2.resource assignment algorithm
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         for (let e of this.enemy) {
             //e.playAnimation(1);
             //if the animal is wake, assign the action to the animal

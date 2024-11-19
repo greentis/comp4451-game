@@ -182,7 +182,8 @@ export class Character{
         this.weapon.dealsDamage(this.getHitRate(tile, true), this);
     }
 
-    takeDamage(damage){
+    takeDamage(damage, damager){
+        console.log(damager);
         this.health -= damage;
         //console.log( "-" + damage.toString());
         let p = new NumberParticle(this.getTile().body, 0.4, 20, "-" + damage.toString());
@@ -198,7 +199,7 @@ export class Character{
                 
 
         if (this.health <= 0) {
-            this.killed();
+            this.killed(damager);
             /* this.body.visible = false;
             if (this.game.enemy.has(this)) {
                 for(let e of this.game.enemy){
@@ -218,11 +219,43 @@ export class Character{
         }
     }
 
-    killed(){
-        this.body.visible = false;
-        this.game.scene.remove(this.body);
-        console.log(this.name, " is dead");
+    killed(damager){
+        this.facing(damager.q, damager.r);
         this.getTile().characterLeave();
+        this.getTile().body.add(this.body);
+        let y = this.body.position.y;
+        let vy = 0.08;
+        let vx = -Math.sin(this.body.rotation.y) / 9.0
+        let vz = -Math.cos(this.body.rotation.y) / 9.0
+        let ay = -0.02;
+        const animate = ()=>{
+            let time = 0;
+            return new Promise((resolve)=>{
+                const animate = (timestamp)=>{
+                    time++;
+                    // ~ Animation ~
+                    vy += ay;
+                    y += vy;
+                    this.body.position.x += vx;
+                    this.body.position.z += vz;
+                    this.body.position.y = y;
+    
+                    if (time < 100) { 
+                        requestAnimationFrame(animate);
+                    }
+                    else{
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(animate);
+            })
+        }
+        animate().then(()=>{
+            
+            this.body.visible = false;
+            this.getTile().body.remove(this.body);
+            console.log(this.name, " is dead");
+        });
     }
 
     // This function is visual. What ambush does is hitRateCost*=3

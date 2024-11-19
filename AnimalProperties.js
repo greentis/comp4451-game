@@ -66,8 +66,8 @@ export class AnimalProperties {
                         attack:4, // default 4
                         escape:1
                     };
-                    this.y = 0.4
-                    this.height = 0.7;
+                    this.y = 0.3
+                    this.height = 1.4;
                     this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
                     break;
             case AnimalProperties.TYPE.Boss:
