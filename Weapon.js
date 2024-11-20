@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 
 import { Tile } from './Tile.js';
-import { Character } from './Character.js';
 import { WeaponProperties } from '/WeaponProperties.js';
 import { infoBox } from './infoBox.js';
 import Particle from './particles/Particle.js'
@@ -13,11 +12,6 @@ import { TileProperties } from './TileProperties.js';
 const distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1.r - t2.r), Math.abs(t1.s - t2.s));}
 const lerp = (a, b, t) => {return a + (b - a) * t;}
 
-const destroyableTable = {
-    "Gun": [TileProperties.TYPE.Default, TileProperties.TYPE.Cover, TileProperties.TYPE.Bush],
-    "Bomb": [TileProperties.TYPE.Default, TileProperties.TYPE.Wall, TileProperties.TYPE.Rock,TileProperties.TYPE.Cover, TileProperties.TYPE.Bush, TileProperties.TYPE.Tree],
-    "Saw": [TileProperties.TYPE.Default, TileProperties.TYPE.Wall, TileProperties.TYPE.Rock,TileProperties.TYPE.Cover, TileProperties.TYPE.Bush, TileProperties.TYPE.Tree],
-}
 export class Weapon{
     constructor(character, typeID, height){
         this.character = character;

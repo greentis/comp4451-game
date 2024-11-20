@@ -53,7 +53,6 @@ export class TileProperties {
                 this.seeThroughable = true;
                 this.hittable = false;
                 this.passCost = 99999;
-                this.hitRateCost = 0.0;
 
                 this.strength = 99999;
 
@@ -66,7 +65,6 @@ export class TileProperties {
                     this.seeThroughable = true;
                     this.hittable = true;
                     this.passCost = 1.0;
-                    this.hitRateCost = 0;
                     this.tileScaling = 0.01;
     
                     this.strength = 99999;
@@ -111,7 +109,7 @@ export class TileProperties {
                 this.seeThroughable = true;
                 this.passCost = 99999;
                 const height = Math.random()*0.3
-                this.hitRateCost = parseFloat((40.0 - height * 50).toFixed(2));
+                this.hitRateCost = parseFloat((50.0 - height * 50).toFixed(2));
 
                 this.meshScale = 3.3 + Math.random()*0.4;
                 this.offsetX = 0.1;
@@ -149,7 +147,7 @@ export class TileProperties {
                 this.ambushable = true;
                 this.hittable = true;
                 this.passCost = 3.0;
-                this.hitRateCost = 30.0;
+                this.hitRateCost = 40.0;
 
                 this.strength = 3;
 
@@ -178,7 +176,7 @@ export class TileProperties {
                 this.seeThroughable = true;
                 this.hittable = true;
                 this.passCost = 1000.0;
-                this.hitRateCost = 50;
+                this.hitRateCost = 80;
 
                 this.meshScale = 0.012;
                 this.rotateY = Math.random()*Math.PI*2;
@@ -194,7 +192,7 @@ export class TileProperties {
                 this.seeThroughable = true;
                 this.hittable = true;
                 this.passCost = 1000.0;
-                this.hitRateCost = 50;
+                this.hitRateCost = 80;
 
                 this.meshScale = 0.0025;
                 this.offsetYm = -1.0;
@@ -211,7 +209,7 @@ export class TileProperties {
                 this.seeThroughable = true;
                 this.hittable = true;
                 this.passCost = 1000.0;
-                this.hitRateCost = 50;
+                this.hitRateCost = 55;
                 
                 this.meshScale = 0.012;
                 this.rotateY = Math.random()*Math.PI*2;
@@ -227,7 +225,7 @@ export class TileProperties {
                 this.seeThroughable = true;
                 this.hittable = true;
                 this.passCost = 1000.0;
-                this.hitRateCost = 50;
+                this.hitRateCost = 80;
 
                 this.meshScale = 0.7;
                 this.offsetYm = -0.75;

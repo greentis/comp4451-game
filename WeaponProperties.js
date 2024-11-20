@@ -28,7 +28,7 @@ export class WeaponProperties {
                 Particle.addGravity(
                     Particle.setInitialPosition(
                         Particle.get3DMatrix()
-                    , 0, 1, 0)
+                    , 0, 0.8, 0)
                 )
         ,0,0.2,0)
         let url ="";
@@ -51,7 +51,7 @@ export class WeaponProperties {
                 Particle.addVelocity(
                             Particle.setInitialPosition(
                                 Particle.get3DMatrix()
-                            , 0, 1, 0)
+                            , 0, 0.8, 0)
                 ,0,0,0)
                 break;
             case WeaponProperties.TYPE.Gun:
@@ -82,7 +82,7 @@ export class WeaponProperties {
                 Particle.addVelocity(
                     Particle.setInitialPosition(
                         Particle.get3DMatrix()
-                    , 0, 1, 0)
+                    , 0, 0.8, 0)
                 ,0,0,0)
                 break;
             default:
