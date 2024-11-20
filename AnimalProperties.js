@@ -13,15 +13,18 @@ export class AnimalProperties {
         //this.animal.name = 'Monkey';
 
         // Height Attribute must be before weapon creation
-        this.height = 2;
+        this.height = 1.3;
+        this.hitRateCost = 50;
         
         var url = 'assets/monkey/scene.gltf';
         switch (typeID) {
             case AnimalProperties.TYPE.Monkey:
                 url = 'assets/monkey/scene.gltf';
-                this.meshScale = 0.01;
+                this.meshScale = 0.0065;
                 //this.meshScaleZ = 0.01;
                 this.animal.health = 3;
+                this.hitRateCost = 70;
+                
                 this.animal.actionPriority = {
                     cover:6,
                     attack:4, // default 4
@@ -31,7 +34,7 @@ export class AnimalProperties {
                 break;
             case AnimalProperties.TYPE.Bear:
                 url = 'assets/bear_roooaaar/scene.gltf';
-                this.meshScale = 0.85;
+                this.meshScale = 0.65;
                 //this.meshScaleZ = 1.01;
                 this.animal.health = 5;
                 this.animal.actionPriority = {
@@ -39,8 +42,9 @@ export class AnimalProperties {
                     attack:4, // default 4
                     escape:1
                 };
-                this.height = 1.2;
+                this.height = 0.9;
                 this.rotateY = Math.PI;
+                this.hitRateCost = 50;
                 this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Bomb, this.height);
                 break;
             case AnimalProperties.TYPE.Rabbit:
@@ -53,12 +57,13 @@ export class AnimalProperties {
                     attack:4, // default 4
                     escape:1
                 };
-                this.height = 0.7;
+                this.height = 0.5;
+                this.hitRateCost = 20;
                 this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Saw, this.height);
                 break;
             case AnimalProperties.TYPE.Pumpkin:
                     url = 'assets/pumkin/scene.gltf';
-                    this.meshScale = 0.4;
+                    this.meshScale = 0.3;
                     //this.meshScaleZ = 0.025;
                     this.animal.health = 2;
                     this.animal.actionPriority = {
@@ -66,13 +71,13 @@ export class AnimalProperties {
                         attack:4, // default 4
                         escape:1
                     };
-                    this.y = 0.3
-                    this.height = 1.4;
+                    this.y = 0.2
+                    this.height = 1.0;
                     this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
                     break;
             case AnimalProperties.TYPE.Boss:
                 url = 'assets/bear_roooaaar/scene.gltf';
-                this.meshScale = 1.25;
+                this.meshScale = 1.2;
                 //this.meshScaleZ = 0.01;
                 this.animal.health = 12;
                 this.animal.actionPriority = {

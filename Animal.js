@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import {Character} from './Character.js';
+import { Character } from './Character.js';
 import { AnimalProperties } from './AnimalProperties.js';
 import { Hunter } from './Hunter.js';
 
@@ -70,15 +70,14 @@ export class Animal extends Character{
         this.game.enemy.delete(this);
         infoBox.enemies = this.game.enemy;
         console.log(this.game.enemy.size, " enemies remaining", this.game.enemy.size == 0)
-        if (this.game.enemy.size == 0) {
-            this.game.missionCompleted();
-        }
-        super.killed(damager);
+        
+        super.killed(damager).then(() => {
+            if (this.game.enemy.size == 0) this.game.missionCompleted();
+        });
     }
 
     ambush(){
         super.ambush();
-        if (this.weapon) this.weapon.body.visible = false;
     }
 
     //Event handler

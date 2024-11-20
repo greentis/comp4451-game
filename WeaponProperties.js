@@ -28,7 +28,7 @@ export class WeaponProperties {
                 Particle.addGravity(
                     Particle.setInitialPosition(
                         Particle.get3DMatrix()
-                    , 0, 0.8, 0)
+                    , 0, 0.6, 0)
                 )
         ,0,0.2,0)
         let url ="";
@@ -38,8 +38,8 @@ export class WeaponProperties {
                 this.weapon.blastRadius = 2;
 
                 url="assets/grenade/scene.gltf";
-                this.meshScale = 0.036;
-                this.weapon.body.position.y = this.weapon.height + 0.5;
+                this.meshScale = 0.030;
+                this.weapon.body.position.y = this.weapon.height + 0.4;
                 this.weapon.body.rotation.y = Math.PI/2;
                 this.weapon.damage = 5;
                 this.weapon.range = 6;
@@ -51,16 +51,17 @@ export class WeaponProperties {
                 Particle.addVelocity(
                             Particle.setInitialPosition(
                                 Particle.get3DMatrix()
-                            , 0, 0.8, 0)
+                            , 0, 0.6, 0)
                 ,0,0,0)
                 break;
             case WeaponProperties.TYPE.Gun:
                 this.weapon.name = 'Gun';
 
                 url="assets/gun/scene.gltf";
-                this.meshScale = 0.18;
-                this.weapon.body.position.y = this.weapon.height + 0.4;
+                this.meshScale = 0.15;
+                this.weapon.body.position.y = this.weapon.height + 0.3;
                 this.weapon.body.rotation.y = Math.PI;
+                this.weapon.body.rotation.x = Math.PI/13;
                 this.weapon.damage = 8;
                 this.weapon.range = 10;
                 this.obstacleDamageMultiplier = 0;
@@ -69,9 +70,10 @@ export class WeaponProperties {
                 this.weapon.name = 'Saw';
 
                 url="assets/saw/scene.gltf";
-                this.meshScale = 0.4;
-                this.weapon.body.position.y = this.weapon.height + 0.4;
+                this.meshScale = 0.35;
+                this.weapon.body.position.y = this.weapon.height + 0.2;
                 this.weapon.body.rotation.y = Math.PI/2;
+                this.weapon.body.rotation.x = 0;
                 this.weapon.damage = 5;
                 this.weapon.range = 3;
                 this.obstacleDamageMultiplier = 2;
@@ -82,7 +84,7 @@ export class WeaponProperties {
                 Particle.addVelocity(
                     Particle.setInitialPosition(
                         Particle.get3DMatrix()
-                    , 0, 0.8, 0)
+                    , 0, 0.6, 0)
                 ,0,0,0)
                 break;
             default:

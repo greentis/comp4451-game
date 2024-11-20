@@ -4,14 +4,15 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { contain } from 'three/src/extras/TextureUtils.js';
 
 export class TileProperties {
-    constructor(tile, typeID){
+    constructor(tile, typeID, themeId){
         this.id = typeID;
         this.tile = tile;
 
         this.name = 'Default'
 
         this.emissive = 0x000000;
-        this.color = 0x054509;
+        console.log(themeId);
+        this.color = TileProperties.THEMECOLOR[themeId];
         
         this.offsetY = 0.25;
         this.offsetX = 0;
@@ -72,22 +73,21 @@ export class TileProperties {
                     break;
             case TileProperties.TYPE.Wall:
                 this.name = 'Wall'
-                this.color = 0x221114;
 
                 this.seeThroughable = false; 
                 this.hittable = false;
                 this.passCost = 99999;
-                this.hitRateCost = 99999;
+                this.hitRateCost = 90;
 
                 this.strength = 6;
                 
-                this.meshScale = 0.85;
+                this.meshScale = 0.55;
                 url = 'assets/high-rock/scene.gltf';
                 break;
             case TileProperties.TYPE.Rock:
                 this.name = 'Rock'
                 this.color = 0x666666;
-                this.offsetY = 0.5;
+                this.offsetY = 0.42;
 
                 this.seeThroughable = true;
                 this.hittable = false;
@@ -102,18 +102,17 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE.Cover:
                 this.name = 'Cover'
-                this.color = 0x1b2410;
 
 
                 this.hittable = true;
                 this.seeThroughable = true;
                 this.passCost = 99999;
-                const height = Math.random()*0.3
+                const height = Math.random()*0.2
                 this.hitRateCost = parseFloat((50.0 - height * 50).toFixed(2));
 
-                this.meshScale = 3.3 + Math.random()*0.4;
+                this.meshScale = 2.3 + Math.random()*0.1;
                 this.offsetX = 0.1;
-                this.offsetYm = -0.50 - height;
+                this.offsetYm = -0.35 - height;
                 this.offsetZ = -0.2;
                 this.rotateX = -Math.PI/2+0.1;
                 this.rotateY = Math.random()*Math.PI*2;
@@ -139,10 +138,9 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE.Bush:
                 this.name = 'bush';
-                this.color = 0x043606;
                 this.offsetYm = 0;
 
-                this.meshScale = 1.1;  
+                this.meshScale = 0.7;  
                 this.seeThroughable = true;
                 this.ambushable = true;
                 this.hittable = true;
@@ -155,10 +153,9 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE.TumbleWeed:
                 this.name = 'TumbleWeed';
-                this.color = 0x8b7d6b;
-                this.offsetYm = 0.2;
+                this.offsetYm = 0.3;
 
-                this.meshScale = 0.003;  
+                this.meshScale = 0.0012;  
                 this.seeThroughable = true;
                 this.ambushable = true;
                 this.hittable = true;
@@ -171,14 +168,13 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE.Tree:
                 this.name = 'tree';
-                this.color = 0x083606;
 
                 this.seeThroughable = true;
                 this.hittable = true;
                 this.passCost = 1000.0;
                 this.hitRateCost = 80;
 
-                this.meshScale = 0.012;
+                this.meshScale = 0.01;
                 this.rotateY = Math.random()*Math.PI*2;
                 url = 'assets/tree/scene.gltf';
 
@@ -186,7 +182,6 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE.mangrove:
                 this.name = 'mangrove';
-                this.color = 0x615630;
                 this.offsetYt = 0.3;
 
                 this.seeThroughable = true;
@@ -203,7 +198,6 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE.Cactus:
                 this.name = 'cactus';
-                this.color = 0x8b7d6b;
                 this.offsetYm = 0;
 
                 this.seeThroughable = true;
@@ -211,7 +205,7 @@ export class TileProperties {
                 this.passCost = 1000.0;
                 this.hitRateCost = 55;
                 
-                this.meshScale = 0.012;
+                this.meshScale = 0.008;
                 this.rotateY = Math.random()*Math.PI*2;
                 url = 'assets/cactus_2/scene.gltf';
 
@@ -220,14 +214,13 @@ export class TileProperties {
 
             case TileProperties.TYPE.spookyTree:
                 this.name = 'spookyTree';
-                this.color = 0x343F61;
 
                 this.seeThroughable = true;
                 this.hittable = true;
                 this.passCost = 1000.0;
                 this.hitRateCost = 80;
 
-                this.meshScale = 0.7;
+                this.meshScale = 0.40;
                 this.offsetYm = -0.75;
                 this.rotateY = Math.random()*Math.PI*2;
                 url = 'assets/spooky_tree/scene.gltf';
@@ -236,10 +229,9 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE.Pumkin:
                 this.name = 'pumkin';
-                this.color = 0x343F61;
                 this.offsetYm = 0;
 
-                this.meshScale = 0.4;  
+                this.meshScale = 0.25;  
                 this.seeThroughable = true;
                 //this.ambushable = true;
                 this.hittable = true;
@@ -248,6 +240,7 @@ export class TileProperties {
 
                 this.strength = 1;
 
+                this.offsetYm = 0.1
                 this.rotateY = Math.random()*Math.PI*2;
                 url = 'assets/pumkin/scene.gltf';
                 break;
@@ -262,6 +255,7 @@ export class TileProperties {
                         transparent: true
                       });
                     const label = new THREE.Sprite(labelMaterial);
+                    label.scale.set(0.7, 0.7, 0.7);
                     this.tile.body.add(label);
                     this.mesh=label;
                 }
@@ -288,17 +282,14 @@ export class TileProperties {
                 break;
             case TileProperties.TYPE.DefaultDesert:
                 this.name = 'Desert'
-                this.color = 0x8b7d6b;
                 this.tileScaling = 0.006;
                 break;
             case TileProperties.TYPE.DefaultWetland:
                 this.name = 'Wetland'
-                this.color = 0x2D8766;
                 this.tileScaling = 0.002;
                 break;
             case TileProperties.TYPE.DefaultBlackForest:
                 this.name = 'BlackForest'
-                this.color = 0x343F61; //dark green
                 this.tileScaling = 0.002;
 
                 this.meshScale = 0.03;
@@ -313,7 +304,7 @@ export class TileProperties {
                     const gltfLoader = new GLTFLoader();
                     gltfLoader.load(url, (gltf) => {
                         var model = gltf.scene;
-                        model.scale.set(this.meshScale,this.meshScale,this.meshScale);
+                        model.scale.set(0.015, 0.015, 0.015);
                         model.traverse((child) => {
                             if (child.isMesh) {
                                 child.userData = this.tile;
@@ -343,6 +334,7 @@ export class TileProperties {
                         transparent: true
                       });
                     const label = new THREE.Sprite(labelMaterial);
+                    label.scale.set(0.7, 0.7, 0.7);
                     this.tile.body.add(label);
                     this.mesh=label;
                 }
@@ -430,6 +422,13 @@ TileProperties.TYPE = {
     spookyTree: 306,
     Pumkin:307,
     
+}
+
+TileProperties.THEMECOLOR = {
+    0: 0x054509,
+    1: 0x8b7d6b,
+    2: 0x2D8766,
+    3: 0x343F61,
 }
 
 // Make TileProperties.TYPE Bidirectional

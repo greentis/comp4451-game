@@ -375,7 +375,7 @@ export class Board {
                         return;
                     } 
                     
-                    console.log("do the expansion");
+                    //console.log("do the expansion");
                     var adjacent = this.findAdjacent(t.q, t.r, width, length);
                     adjacent.forEach((a)=>{
                         if (this.checkBoardBoundaries(a.q, a.r, width, length,this.temp)) return; //skip the tile if it is at the boundary of the board
@@ -1111,7 +1111,7 @@ export class Board {
                 var x = q * Math.cos(Math.PI / 6);
                 var y = 0;
                 var z = parseFloat(r) + q * Math.cos(Math.PI / 3);
-                var tile = new Tile(parseFloat(q), parseFloat(r), x, y, -z,this.game, this.temp[q][r]);
+                var tile = new Tile(parseFloat(q), parseFloat(r), x, y, -z,this.game, this.temp[q][r], this.theme);
                 //console.log('q', q, 'r', r, 'type', this.temp[q][r], 'x', x, 'y', y, 'z', z);
 
                 // Add tile to map
@@ -1285,7 +1285,7 @@ export class Board {
             var x = q * Math.cos(Math.PI / 6);
             var y = 0;
             var z = r + q * Math.cos(Math.PI / 3);
-            var tile = new Tile(q, r, x, y, z,this.game, TileProperties.TYPE.Default);
+            var tile = new Tile(q, r, x, y, z,this.game, TileProperties.TYPE.Default, this.theme);
             
             // Add tile to map
             this.body.add(tile.body);

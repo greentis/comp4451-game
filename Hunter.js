@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-import {Character} from './Character.js';
+import { Character } from './Character.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { Weapon } from './Weapon.js';
 import { WeaponProperties } from './WeaponProperties.js';
@@ -17,17 +17,23 @@ export class Hunter extends Character{
         this.weapon = new Weapon(this, weaponType);
 
         // Radar Display
+        const radar_radius = 1.2;
+        const radar_interior_radius = 1.12;
         const material = new THREE.MeshPhongMaterial({color:0x156815, opacity: 0.8, transparent: true,});
-        const radarGeometry = new THREE.RingGeometry(0.74, 0.80);
+        const radarGeometry = new THREE.RingGeometry(radar_interior_radius, radar_radius);
         this.radar = new THREE.Mesh(radarGeometry, material);
         const pointerGeometry = new THREE.RingGeometry(
-            0, 0.80, 32, 1, 0, Math.PI / 3);
+            0, radar_radius, 32, 1, 0, Math.PI / 3);
         this.radar.add(new THREE.Mesh(pointerGeometry, material));
         this.radar.rotateX(-Math.PI/2);
         this.radar.visible = false;
         this.game.board.body.add(this.radar);
-        this.sightRange = 12;
-        
+        this.sightRange = 10;
+        this.properties = {
+            hitRateCost: 100,
+            height: 1.5
+        }
+        this.action.render();
 
         this.setActionPoint(2);
         this.getTile().characterEnter(this);
@@ -36,7 +42,7 @@ export class Hunter extends Character{
         const url = 'assets/low_poly_kyle_crane/scene.gltf';
         gltfLoader.load(url, (gltf) => {
             var model = gltf.scene;
-            model.scale.set(1.2,1.2,1.2);
+            model.scale.set(0.85,0.85,0.85);
             model.userData = this;
             model.traverse((child) => {
                 if (child.isMesh) {
@@ -44,9 +50,9 @@ export class Hunter extends Character{
                 }
             });
             this.mesh = model;
-            this.light = new THREE.PointLight(0xd08a40, 40);
+            this.light = new THREE.PointLight(0x764715, 40);
             this.light.position.y = 2;
-            this.light.decay = 0.8;
+            this.light.decay = 0.2;
             this.light.distance = this.sightRange - 1;
             this.light.castShadow = true;
             this.mesh.add(this.light);
@@ -138,8 +144,10 @@ export class Hunter extends Character{
                 this.game.player.splice(index, 1);
             }
             console.log(this.game.player.length, " players remaining")
-            if (this.game.player.length == 0) this.game.missionFailed();
-            super.killed(damager);
+            
+            super.killed(damager).then(() => {
+                if (this.game.player.length == 0) this.game.missionFailed();
+            });
         }
 
         updateRadar(){
