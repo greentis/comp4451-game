@@ -141,6 +141,7 @@ AnimalProperties.TYPEID = {
     0: "Monkey",
     1: "Bear",
     2: "Rabbit",
+    3: "Pumpkin",
     100: "Boss",
 }
 

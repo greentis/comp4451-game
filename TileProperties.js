@@ -241,10 +241,10 @@ export class TileProperties {
 
                 this.meshScale = 0.4;  
                 this.seeThroughable = true;
-                this.ambushable = true;
+                //this.ambushable = true;
                 this.hittable = true;
-                this.passCost = 3.0;
-                this.hitRateCost = 30.0;
+                this.passCost = 1000.0;
+                this.hitRateCost = 20.0;
 
                 this.strength = 1;
 
