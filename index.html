@@ -98,7 +98,7 @@
 				transition-property: flex-grow, color;
 				transition: 0.5s;
 			}
-			.box:hover{
+			.box:not(.disableHover):hover{
 				flex-grow: 1.5;
 				color:rgb(235, 176, 37);
 			}
@@ -111,7 +111,7 @@
 				width:200px;
 				flex-grow: 2;
 			}
-			.box.largeBox:hover{
+			.box.largeBox:not(.disableHover):hover{
 				flex-grow: 3;
 			}
 
@@ -220,7 +220,7 @@
 				<div class="box" v-if="target">{{target.name}}: ❤️{{target.health}}</div>
 			</div>
 			<div v-if="format == 'HunterStateTrack'" class="container">
-				<div v-for="p in players" class="box">{{p.name}}<br> ❤️{{p.health}}</div>
+				<div v-for="p in players" class="box disableHover">{{p.name}}<br> ❤️{{p.health}}</div>
 			</div>
 			<div v-if="format == 'Gameover'" class="container panel">
 				<div class="box largeBox" id="gameover"><h1>Game Over!</h1></div>
