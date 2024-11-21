@@ -50,6 +50,9 @@ var EpTable = {
     [0] : 2.5,
     [1] : 4.0,
     [2] : 1.0,
+    [30]: 2.5,
+    [31]: 4.0,
+    [32]: 1.0,
 }
 
 export class Board {
@@ -771,7 +774,7 @@ export class Board {
             var j = 0;
             while(Ep < Egp){
                 var enemyType = Math.round(xxhash(this.seed * 4451, i, Ep) * 4451) % Object.keys(EpTable).length;
-                if (this.theme == 3 && enemyType == 2) enemyType = 3; 
+                if (this.theme == 3 && enemyType == 2) enemyType += 10*3; // enemyType = 32
                 //console.log('enemyType', enemyType);
                 Ep += EpTable[enemyType];
                 if (Ep > Egp) break;
