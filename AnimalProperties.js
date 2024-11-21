@@ -8,8 +8,10 @@ export class AnimalProperties {
     constructor(animal, typeID){
         this.id = typeID;
         this.animal = animal;
-        this.rotateY = 0;
-        this.y = 0;
+        let rotateY = 0;
+        let offsetX = 0;
+        let offsetZ = 0;
+        let offsetY = 0;
         //this.animal.name = 'Monkey';
 
         // Height Attribute must be before weapon creation
@@ -43,13 +45,13 @@ export class AnimalProperties {
                     escape:1
                 };
                 this.height = 0.9;
-                this.rotateY = Math.PI;
+                rotateY = Math.PI;
                 this.hitRateCost = 50;
                 this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Bomb, this.height);
                 break;
-            case AnimalProperties.TYPE.Rabbit:
-                url = 'assets/rabbit_rigged/scene.gltf';
-                this.meshScale = 0.025;
+            case AnimalProperties.TYPE.Deer:
+                url = 'assets/deer_polygonal/scene.gltf';
+                this.meshScale = 2;
                 //this.meshScaleZ = 0.025;
                 this.animal.health = 2;
                 this.animal.actionPriority = {
@@ -57,7 +59,10 @@ export class AnimalProperties {
                     attack:4, // default 4
                     escape:1
                 };
-                this.height = 0.5;
+                this.height = 1;
+                offsetX = 0.25;
+                offsetZ = -0.3;
+                offsetY = 0.6;
                 this.hitRateCost = 20;
                 this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Saw, this.height);
                 break;
@@ -71,7 +76,7 @@ export class AnimalProperties {
                         attack:4, // default 4
                         escape:1
                     };
-                    this.y = 0.2
+                    offsetY = 0.2;
                     this.height = 1.0;
                     this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
                     break;
@@ -113,8 +118,10 @@ export class AnimalProperties {
                 }
             });
             
-            model.rotateY(this.rotateY);
-            model.position.y = this.y;
+            model.position.x += offsetX;
+            model.position.z += offsetZ;
+            model.position.y += offsetY;
+            model.rotateY(rotateY);
 
             this.mesh = new THREE.Group();
             this.mesh.add(model);
@@ -137,7 +144,7 @@ export class AnimalProperties {
 AnimalProperties.TYPE = {
     Monkey: 0, 
     Bear: 1, 
-    Rabbit: 2,
+    Deer: 2,
     Pumpkin: 3,
     Boss: 100
 }
@@ -145,7 +152,7 @@ AnimalProperties.TYPE = {
 AnimalProperties.TYPEID = {
     0: "Monkey",
     1: "Bear",
-    2: "Rabbit",
+    2: "Deer",
     3: "Pumpkin",
     100: "Boss",
 }
