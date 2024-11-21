@@ -144,9 +144,10 @@ export class Board {
         //generat random map with hexagon grid
         //setting random this.seed
         // cover all the map with rock first
-        //this.seed = 44699;
         //this.missionNo = 1;
         this.seed = Math.round(Math.random()* 900000 + 100000);
+        //this.seed = 37221; //wetland problem
+        //19235;44699;26695; //rock problem
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
         //if(printable) 
         console.log('This board have seed ', this.seed);
@@ -173,19 +174,19 @@ export class Board {
         this.vegetationCoverage = themeTable[this.theme].vegetationCoverage; //0.1;//control the vegetation coverage of the map, tile with vegetation coverage below the value will be turned into vegetation tile
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
-        this.enemyDensity = 0.04 + 0.003*(Math.min(this.missionNo,1) - 1); //control the density of the enemy per tile in the map(suggested value: < 0.05)
-        this.averagePerGroup = 4; //control the average number of enemy per group
+        this.enemyDensity = 0.02 + 0.01*(this.missionNo); //control the density of the enemy per tile in the map(suggested value: < 0.05)
+        this.averagePerGroup = 3 + Math.floor(1.0*(this.missionNo)); //control the average number of enemy per group
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
         this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
         this.bossInterval = 100; //control the interval of the boss appearance
 
-        this.levelDifficulty = 1.0 + (this.missionNo)*0.5; //control the difficulty of the level, the higher the value, the harder the level
+        this.levelDifficulty = 1.0 + (this.missionNo)*1.0; //control the difficulty of the level, the higher the value, the harder the level
                                     //default value is 1.0
 
         // 1. set the size of the map by 3 radius
         if(this.theme == 1){//set a larger room size for desert theme
-            this.roomLength += 2;
-            this.roomWidth += 1;
+            //this.roomLength += 2;
+            //this.roomWidth += 1;
         }
         if (this.roomSizeRange == 0) {
             var width = this.roomWidth;
@@ -368,7 +369,7 @@ export class Board {
 
             while (expandedTile.size > 0 && defaultTile.size < (this.roomPercentage + (this.seed % 7)/100.0) * this.totalArea){ //bug1
                 
-                console.log('default tile', defaultTile.size, 'expanded tile', expandedTile.size);
+                //console.log('default tile', defaultTile.size, 'expanded tile', expandedTile.size);
                 expandedTile.forEach((t)=>{
                     if (defaultTile.size >= (this.roomPercentage + (this.seed % 67)/1000.0) * this.totalArea){
                         //console.log('default tile', defaultTile.size, 'expanded tile', expandedTile.size);
@@ -392,7 +393,7 @@ export class Board {
                         //to have a lenient check on the tile to be turned into default tile
                         //so that avoid too few default tile in the map
                         var checkingValues = (expandIteration - 1) / 250.0 + xxhash(this.seed, a.q, a.r);
-                        console.log('q', a.q, 'r', a.r, 'checkingValues', checkingValues);
+                        //console.log('q', a.q, 'r', a.r, 'checkingValues', checkingValues);
 
                         if (this.temp[a.q][a.r] != TileProperties.TYPE.Default && checkingValues > (1-this.roomPercentage)){
                             this.temp[a.q][a.r] = TileProperties.TYPE.Default;
@@ -665,9 +666,9 @@ export class Board {
                 this.playerSpawnPoints[0] = {q: startingTile.q, r: startingTile.r};
                 break;
             }
-            var q = Math.round(xxhash((this.seed +  iteration* 73) *163, this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r) * 2 * this.rmax - this.rmax + 1);
-            var r = Math.round(xxhash((this.seed + iteration * 73) * 163, this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r) * 2 * this.rmax - this.rmax + 1);
-
+            var q = Math.round(xxhash((this.seed +  iteration* 73) *163, this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r) * 2 * this.qmax - this.qmax );
+            var r = Math.round(xxhash((this.seed + iteration * 73) * 163, this.playerSpawnPoints[0].q, this.playerSpawnPoints[0].r) * 2 * this.rmax - this.rmax );
+            //console.log('q', q, 'r', r,'qmax', this.qmax, 'rmax', this.rmax);
 
             if (this.temp[q][r] == TileProperties.TYPE.Default){
                 this.playerSpawnPoints[0] = {q: q, r: r};
@@ -806,8 +807,8 @@ export class Board {
                     //last resort, set the leader spawn point to a unoccupied tile nearby
                     lastResort = true;
                 }
-                var q = Math.round(xxhash(this.seed * 731, i, iteration) * 2 * this.rmax - this.rmax + 1);
-                var r = Math.round(xxhash(this.seed * 731, i, iteration) * 2 * this.rmax - this.rmax + 1);
+                var q = Math.round(xxhash(this.seed * 731, i, iteration) * 2 * this.qmax - this.qmax );
+                var r = Math.round(xxhash(this.seed * 731, i, iteration) * 2 * this.rmax - this.rmax);
                 if (this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
                 
                 
@@ -848,9 +849,10 @@ export class Board {
                 for (let j = 0; j < 3; j++){
                     if (this.playerSpawnPoints[j].q == q && this.playerSpawnPoints[j].r == r){
                         occupiedByPlayer = true;
-                        break;
                     }
                 }
+                if (occupiedByPlayer) continue;
+
                 this.enemyGroup[i][0][1] = {q: q, r: r};
                 leaderFound = true;
             }
@@ -1101,7 +1103,24 @@ export class Board {
             }
         }
 
-        
+        //7.3 turn all the rock tile that dont have adjacent tile despit the void tile or rock tile to void tile
+        for (let q = -width - 1; q <= width + 1; q++){
+            for(let r = -length - 1; r <= length + 1; r++){
+                if (this.temp[q][r] != TileProperties.TYPE.Rock) continue;
+                var adjacent = this.findAdjacent(q, r, width + 1, length + 1);
+                var defaultAdjacent = false;
+                adjacent.forEach((a)=>{
+                    if (this.temp[a.q][a.r] == TileProperties.TYPE.Void || this.temp[a.q][a.r] == TileProperties.TYPE.Hold) return;
+                    if (this.temp[a.q][a.r] == TileProperties.TYPE.Rock) return;
+                    if (this.temp[a.q][a.r] == undefined) return;
+                    defaultAdjacent = true;
+                });
+                if (!defaultAdjacent){
+                    this.temp[q][r] = TileProperties.TYPE.Void;
+                }
+            }
+        }
+
         // 7.4 generate the tile based on the annotated map 
         this.createTiles();
     }
