@@ -107,8 +107,18 @@ export class Game{
 		this.scene.add(this.board.body);
 
 		this.movingPlayer = null;
+		this.isPlayerTurn = true;
+		this.gameOn = true;
 
-		console.log("board.generationFinished", this.board.generationFinished);
+		this.board.buildTiles().then(
+			()=>{
+				this.genearateCharacter();
+			}
+		)
+		
+		
+	}
+	genearateCharacter(){
 		// Players (Development phase)
 		var playerSpawnPoints = this.board.getPlayerSpawnPoint();
 		console.log("playerSpawnPoints", playerSpawnPoints);
@@ -117,10 +127,6 @@ export class Game{
 			new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 10, WeaponProperties.TYPE.Bomb, this, 'Player 2'),
 			new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 10, WeaponProperties.TYPE.Saw, this, 'Player 3')
 		];
-
-		
-		//this.camera.position.set(this.player[0].getTile().x, 5, this.player[0].getTile().z + 5);
-		//this.controls.target = new THREE.Vector3(this.player[0].getTile().x, 5, this.player[0].getTile().z + 5)
 		var enemySpawnPoints = this.board.getEnemySpawnPoint();
 		this.enemy = new Set([]);
 		for (let i = 0; i < Object.keys(enemySpawnPoints).length; i++){
@@ -134,29 +140,11 @@ export class Game{
 				}
 			}
 		}
-		//console.log(this.enemy);
-		//this.enemy.add(new Animal(-5, -5, 0, this, name, -1)); //-6, -9
 
 		infoBox.enemies = this.enemy;
 
 		this.aiAgent = new AIAgent(this);
-		//this.aiAgent.AIControl();
 		this.aiAgent.printWakeAll();
-
-		//this.aiAgent.printActionPoint(Array.from(this.enemy)[this.enemy.size - 1]);
-		//this.aiAgent.escape(Array.from(this.enemy)[this.enemy.size - 1]);
-		//this.aiAgent.printActionPoint(Array.from(this.enemy)[this.enemy.size - 1]);
-
-
-		// set the camera to the first player
-		//this.camera.position.set(0, 5, 5);
-		//this.camera.lookAt(0, 0, 0);
-
-
-		// turn iteration
-		// ---- Press 'f' key to skip turn
-		this.isPlayerTurn = true;
-		this.gameOn = true;
 	}
 
 	createScene(){
