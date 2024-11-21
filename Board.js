@@ -1122,7 +1122,7 @@ export class Board {
         }
 
         // 7.4 generate the tile based on the annotated map 
-        this.createTiles();
+        this.createTilesProcedually();
     }
 
     async createTilesProcedually(){
@@ -1131,6 +1131,8 @@ export class Board {
                 let q = t.q;
                 let r = t.r;
                 if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold) continue;
+                //if(this.temp[q] == undefined) continue;
+                //if(this.temp[q][r] == undefined) continue;
                 //console.log('tile', tile);
                 
                 var x = q * Math.cos(Math.PI / 6);
@@ -1147,7 +1149,7 @@ export class Board {
             }
             await new Promise(resolve => setTimeout(resolve, 50));
         }
-        for (let r = 0; r < Object.keys(this.temp).sort().reverse()[0]; r++){
+        for (let r = 0; r < this.rmax+1; r++){
             await generateTiles(this.ringTiles({q: 0, r: 0}, r));
         }
         console.log(Object.keys(this.temp).sort().reverse()[0]);
