@@ -145,7 +145,8 @@ AnimalProperties.TYPE = {
     Monkey: 0, 
     Bear: 1, 
     Deer: 2,
-    Pumpkin: 3,
+    Mushroom: 30,
+    Pumpkin: 32,
     Boss: 100
 }
 
@@ -153,7 +154,7 @@ AnimalProperties.TYPEID = {
     0: "Monkey",
     1: "Bear",
     2: "Deer",
-    3: "Pumpkin",
+    32: "Pumpkin",
     100: "Boss",
 }
 
