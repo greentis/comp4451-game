@@ -70,6 +70,7 @@ export class Game{
 
 	startNewMission(){
 		this.clearScene();
+		//this.generateMap();
 		this.generateMission();
 		this.gameOn = true;
 	}
@@ -87,7 +88,14 @@ export class Game{
 		this.camera.position.set(0, 3, 5);
 	}
 
-
+	generateMap(){
+		// Board & Tiles (Development phase)
+		infoBox.missionNo = this.missionNo;
+		this.board = new Board(this, this.missionNo);
+		this.board.body.rotation.x = Math.PI * 0;
+		this.board.body.rotation.y = 0;
+		this.scene.add(this.board.body);
+	}
 	
 
 	generateMission(){
@@ -113,6 +121,7 @@ export class Game{
 	genearateCharacter(){
 		// Players (Development phase)
 		var playerSpawnPoints = this.board.getPlayerSpawnPoint();
+		console.log("playerSpawnPoints", playerSpawnPoints);
 		this.player = [
 			new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 10, WeaponProperties.TYPE.Gun, this, 'Player 1'),
 			new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 10, WeaponProperties.TYPE.Bomb, this, 'Player 2'),
