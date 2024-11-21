@@ -74,10 +74,10 @@ export class Board {
         this.lightedGrid = new Array();
         this.adjacentTiles = [[1, 0], [0, 1], [-1, 1], [-1, 0], [0, -1], [1, -1]]; // pre-calculated adjacent tiles coordinates change
 
-        this.generatePolygonal();
+        this.prepareTiles();
     }
     
-    generatePolygonal(){
+    prepareTiles(){
         //theme
         var themeTable = {
             0: { //forest
@@ -148,7 +148,7 @@ export class Board {
         //setting random this.seed
         // cover all the map with rock first
         //this.missionNo = 1;
-        this.seed = 2685;Math.round(Math.random()* 900000 + 100000);
+        this.seed = Math.round(Math.random()* 900000 + 100000);
         //this.seed = 37221; //wetland problem
         //19235;44699;26695; //rock problem
         //64767; //enemy model cannot be loaded problem
@@ -1125,12 +1125,11 @@ export class Board {
             }
         }
 
-        // 7.4 generate the tile based on the annotated map 
-        this.createTilesProcedually();
+        
         
     }
 
-    async createTilesProcedually(){
+    async buildTiles(){
         const generateTiles = async (tiles)=>{
             for(let t of tiles){
                 let q = t.q;
