@@ -1,0 +1,8 @@
+Animal properties:
+    Strategy Design pattern: Called by Aiagent for control
+
+Aiagent:
+    Singleton Pattern
+
+Animal generation:
+    Simple Factory Design Pattern
