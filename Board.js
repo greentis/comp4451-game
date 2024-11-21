@@ -20,7 +20,7 @@ const distanceToBoundary = (q, r, width, length) => {
 const getHeights = (a) => {
     switch (a){
         case TileProperties.TYPE.Void:
-            return 10.0;
+            return 100.0;
         case TileProperties.TYPE.Rock:
             return 0.6;
         case TileProperties.TYPE.Default:
@@ -148,8 +148,8 @@ export class Board {
         //setting random this.seed
         // cover all the map with rock first
         //this.missionNo = 1;
-        this.seed = 37356;Math.round(Math.random()* 900000 + 100000);
-        //this.seed = 37221; //wetland problem
+        this.seed = Math.round(Math.random()* 900000 + 100000);
+        this.seed = 37221; //wetland problem
         //19235;44699;26695; //rock problem
         //64767; //enemy model cannot be loaded problem
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
@@ -514,8 +514,7 @@ export class Board {
         var waterTile = new Set();
         for (let q = -width; q <= width; q++){
             for (let r = -length; r <= length; r++){
-                
-
+                if(waterTileArea > this.maxRiverPercentage * this.totalArea) break;
 
                 if (this.heightMap[q][r] < this.rainFall){
                     this.temp[q][r] = TileProperties.TYPE.Water;
@@ -537,13 +536,16 @@ export class Board {
         var riverSource = new Set();
         for (let q = -width; q <= width; q++){
             for (let r = -length; r <= length; r++){
+                //if(waterTileArea > this.maxRiverPercentage * this.totalArea) break;
                 //avoid the void tile & boundary tile
                 if (this.temp[q][r] == TileProperties.TYPE.Void) continue;
                 if(this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
+                
                 if (this.heightMap[q][r] > this.riverSource){
                     this.temp[q][r] = TileProperties.TYPE.Water;
                     riverSource.add({q: q, r: r});
                     riverTile.add({q: q, r: r});
+                    waterTileArea += 5;
                 }
             }
         }
