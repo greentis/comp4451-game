@@ -148,12 +148,9 @@ export class Board {
         //setting random this.seed
         // cover all the map with rock first
         //this.missionNo = 1;
-        this.seed = Math.round(Math.random()* 900000 + 100000);
-        //this.seed = 37221; //wetland problem
-        this.seed = Math.round(Math.random()* 900000 + 100000);
-        this.seed = 37221; //wetland problem
-        //19235;44699;26695; //rock problem
-        //64767; //enemy model cannot be loaded problem
+        this.seed = 23249;Math.round(Math.random()* 900000 + 100000);
+        //this.seed =  //wetland problem
+        //37221;19235;44699;26695; //rock problem
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
         //if(printable) 
         console.log('This board have seed ', this.seed);
@@ -177,7 +174,7 @@ export class Board {
             if(this.coverThreshold >= this.wallThreshold) this.coverThreshold = this.wallThreshold;
         this.rainFall = themeTable[this.theme].rainFall; //0.1;//control the rain fall of the map, tile with height below rain fall will be turned into water tile
         this.riverSource = themeTable[this.theme].riverSource; //0.8;//control the river source of the map, tile with height above river source will be turned into water tile
-        this.maxRiverPercentage = 0.35; //control the maximum percentage of the river tile in the map
+        this.maxRiverPercentage = 0.55; //control the maximum percentage of the river tile in the map
         this.vegetationCoverage = themeTable[this.theme].vegetationCoverage; //0.1;//control the vegetation coverage of the map, tile with vegetation coverage below the value will be turned into vegetation tile
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
@@ -432,7 +429,7 @@ export class Board {
         if(printable){
             console.log('iteration at step 3.1', expandIteration);
             console.log('room percentage', this.roomPercentage, "total area", this.totalArea, "range", (this.seed % 67)/1000.0);
-            console.log('# of default tile', defaultTile.size);
+            console.log('# of default tile generated', defaultTile.size);
             console.log('target area', (this.roomPercentage + (this.seed % 67)/1000.0) * this.totalArea);
             //console.log('min area', (this.roomPercentage - (this.seed % 67)/1000.0) * this.totalArea);
             //console.log('wallTile size(before 4.1):', wallTile.size);
@@ -538,7 +535,7 @@ export class Board {
         var riverSource = new Set();
         for (let q = -width; q <= width; q++){
             for (let r = -length; r <= length; r++){
-                //if(waterTileArea > this.maxRiverPercentage * this.totalArea) break;
+                if(waterTileArea > this.maxRiverPercentage * this.totalArea) break;
                 //avoid the void tile & boundary tile
                 if (this.temp[q][r] == TileProperties.TYPE.Void) continue;
                 if(this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
@@ -547,7 +544,7 @@ export class Board {
                     this.temp[q][r] = TileProperties.TYPE.Water;
                     riverSource.add({q: q, r: r});
                     riverTile.add({q: q, r: r});
-                    waterTileArea += 5;
+                    waterTileArea += 3;
                 }
             }
         }
@@ -991,6 +988,27 @@ export class Board {
         }
         if(true || printable) console.log('enemy spawn points', this.enemyGroup);
         
+
+        //7.3 turn all the rock tile that dont have adjacent tile despit the void tile or rock tile to void tile
+        /*for (let q = -width - 1; q <= width + 1; q++){
+            for(let r = -length - 1; r <= length + 1; r++){
+                if (this.temp[q] == undefined) continue;
+                if (this.temp[q][r] == undefined) continue;
+                if (this.temp[q][r] != TileProperties.TYPE.Rock) continue;
+                var adjacent = this.findAdjacent(q, r, width + 1, length + 1);
+                var defaultAdjacent = false;
+                adjacent.forEach((a)=>{
+                    if (this.temp[a.q][a.r] == TileProperties.TYPE.Void || this.temp[a.q][a.r] == TileProperties.TYPE.Hold) return;
+                    if (this.temp[a.q][a.r] == TileProperties.TYPE.Rock) return;
+                    if (this.temp[a.q][a.r] == undefined) return;
+                    defaultAdjacent = true;
+                });
+                if (!defaultAdjacent){
+                    this.temp[q][r] = TileProperties.TYPE.Void;
+                }
+            }
+        }*/
+
         // 7.1 turn all void tile which adjacent to non-rock tile to rock tile
         // the void tile which adjacent to the non-rock tile will be turned into rock tile
         // so that the map will be more connected
@@ -1129,9 +1147,10 @@ export class Board {
             }
         }
 
-        //7.3 turn all the rock tile that dont have adjacent tile despit the void tile or rock tile to void tile
-        for (let q = -width - 1; q <= width + 1; q++){
+        /*for (let q = -width - 1; q <= width + 1; q++){
             for(let r = -length - 1; r <= length + 1; r++){
+                if (this.temp[q] == undefined) continue;
+                if (this.temp[q][r] == undefined) continue;
                 if (this.temp[q][r] != TileProperties.TYPE.Rock) continue;
                 var adjacent = this.findAdjacent(q, r, width + 1, length + 1);
                 var defaultAdjacent = false;
@@ -1145,7 +1164,7 @@ export class Board {
                     this.temp[q][r] = TileProperties.TYPE.Void;
                 }
             }
-        }
+        }*/
 
     }
 
