@@ -148,7 +148,7 @@ export class Board {
         //setting random this.seed
         // cover all the map with rock first
         //this.missionNo = 1;
-        this.seed = 2685;Math.round(Math.random()* 900000 + 100000);
+        this.seed = 37356;Math.round(Math.random()* 900000 + 100000);
         //this.seed = 37221; //wetland problem
         //19235;44699;26695; //rock problem
         //64767; //enemy model cannot be loaded problem
@@ -175,6 +175,7 @@ export class Board {
             if(this.coverThreshold >= this.wallThreshold) this.coverThreshold = this.wallThreshold;
         this.rainFall = themeTable[this.theme].rainFall; //0.1;//control the rain fall of the map, tile with height below rain fall will be turned into water tile
         this.riverSource = themeTable[this.theme].riverSource; //0.8;//control the river source of the map, tile with height above river source will be turned into water tile
+        this.maxRiverPercentage = 0.35; //control the maximum percentage of the river tile in the map
         this.vegetationCoverage = themeTable[this.theme].vegetationCoverage; //0.1;//control the vegetation coverage of the map, tile with vegetation coverage below the value will be turned into vegetation tile
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
@@ -509,12 +510,17 @@ export class Board {
         // 4.3.1 generate the water(pond) tile
         // the water tile is based on the height of the tile
         // if the height of the tile is below the rain fall, then it will be turned into water tile
+        var waterTileArea = 0;
         var waterTile = new Set();
         for (let q = -width; q <= width; q++){
             for (let r = -length; r <= length; r++){
+                
+
+
                 if (this.heightMap[q][r] < this.rainFall){
                     this.temp[q][r] = TileProperties.TYPE.Water;
                     waterTile.add({q: q, r: r});
+                    waterTileArea++;
                 }
             }
         }
@@ -985,6 +991,7 @@ export class Board {
         // the void tile which adjacent to the non-rock tile will be turned into rock tile
         // so that the map will be more connected
         var voidTile = new Set();
+        var outerTile = new Set();
         for (let q = -width; q <= width; q++){
             for (let r = -length; r <= length; r++){
                 //skip the tile if it is player spawn point or enemy spawn point
@@ -1017,8 +1024,16 @@ export class Board {
                 }
                 if (skip) continue;
 
+                //skip the tile if it is not void tile
+                if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold) continue;
+                if(this.checkBoardBoundaries(q, r, width, length, this.temp)){
+                    //this.temp[q][r] = TileProperties.TYPE.Default;
+                    outerTile.add({q: q, r: r});
+                    continue;
+                }
 
-                if (this.temp[q][r] == TileProperties.TYPE.Void){
+
+                /*if (this.temp[q][r] == TileProperties.TYPE.Void){
                     var adjacent = this.findAdjacent(q, r, width, length);
                     var defaultAdjacent = false;
                     adjacent.forEach((a)=>{
@@ -1031,8 +1046,11 @@ export class Board {
                     }else{
                         voidTile.add({q: q, r: r});
                     }
-                }
+                }*/
             }
+        }
+        for (let t of outerTile){
+            this.temp[t.q][t.r] = TileProperties.TYPE.Default;
         }
 
         //7.2 turn all the default tile into target default tile with suitable theme
@@ -1084,20 +1102,20 @@ export class Board {
 
         //7.3 add a outer layer to the temp map
         // the outer layer is used to avoid the out of boundary error
-        // the outer layer is the void tile, unless that tile have adjacent tile which is not void tile or rock tiles
+        // the outer layer is the void tile, unless that tile have adjacent tile which is not void tile or rock tiles       
         for (let q = -width - 1; q <= width + 1; q++){
             for(let r = -length - 1; r <= length + 1; r++){
                 if (this.temp[q] == undefined) this.temp[q] = {};
-                if (this.temp[q][r] != undefined) continue;
-                this.temp[q][r] = TileProperties.TYPE.Void;
+                if (this.temp[q][r] == undefined) this.temp[q][r] = TileProperties.TYPE.Void;
+                if(this.temp[q][r] != TileProperties.TYPE.Void) continue;
                 //console.log('outer: q', q, 'r', r, 'type', this.temp[q][r]);
 
                 var adjacent = this.findAdjacent(q, r, width + 1, length + 1);
                 var defaultAdjacent = false;
                 adjacent.forEach((a)=>{
+                    if (this.temp[a.q][a.r] == undefined) return;
                     if (this.temp[a.q][a.r] == TileProperties.TYPE.Void || this.temp[a.q][a.r] == TileProperties.TYPE.Hold) return;
                     if (this.temp[a.q][a.r] == TileProperties.TYPE.Rock) return;
-                    if (this.temp[a.q][a.r] == undefined) return;
                     defaultAdjacent = true;
                 });
                 if (defaultAdjacent){
@@ -1126,7 +1144,9 @@ export class Board {
         }
 
         // 7.4 generate the tile based on the annotated map 
+        this.generationFinished = false;
         this.createTilesProcedually();
+        this.generationFinished = true;
         
     }
 
