@@ -1192,7 +1192,7 @@ export class Board {
 
                 
             }
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 50));
         }
         //console.log('qmax', this.qmax, 'rmax', this.rmax);
         //console.log('temp', this.temp);

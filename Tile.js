@@ -57,9 +57,9 @@ export class Tile {
                 time++;
                 // ~ Animation ~
                 
-                this.body.position.y = this.y + this.properties.offsetY + 0.4*Math.sin(time/50*Math.PI);
+                this.body.position.y = this.y + this.properties.offsetY + 0.35*Math.sin(time/15*Math.PI);//Math.cos(time/50*Math.PI /2);
 
-                if (time < 50) { 
+                if (time < 15) { 
                     requestAnimationFrame(animate);
                 }
                 else{
