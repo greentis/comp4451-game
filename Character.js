@@ -29,7 +29,7 @@ export class Character{
         // This is an ABSTRACT CLASS now
         if (this.constructor == Character) throw new Error("Abstract classes can't be instantiated.");
         this.properties={
-            height:2
+            height:1.5
         }
         this.q = q; 
         this.r = r;
@@ -70,20 +70,22 @@ export class Character{
     }
 
     async moveTo(tile) {
-        this.playAnimation();
-
         var path = this.findValidPath(tile);
         if (path.length == 0) return false;
+        if (tile.character) return false;
         this.reduceActionPoint(1);
         let x,y,z;
         this.getTile().setState('default');
+
+        this.getTile().characterLeave(this);
+
+        
+        
         for (let t of path){
-            
-            // Before Updating coordinate
             this.body.position.x = x = this.getTile().body.position.x;
             this.body.position.y = y = this.getTile().body.position.y;
             this.body.position.z = z = this.getTile().body.position.z;
-            this.getTile().characterLeave();
+            // Before Updating coordinate
             this.game.scene.add(this.body);
             // Adjust the character facing
             this.facing(t.q, t.r);
@@ -99,13 +101,17 @@ export class Character{
                         // record the starting time
                         if (!start) start = timestamp;
 
+                        
+
                         // time represents time passed since start
                         const time = timestamp - start;
 
                         // ~ Animation ~
                         this.body.position.x = lerp(x, t.x, time/200);
                         this.body.position.z = lerp(z, t.z, time/200);
-                        this.body.position.y = y;
+                        this.body.position.y = t.body.position.y;
+
+
 
                         if (time < 200) { 
                             // Call another animation frame
@@ -128,13 +134,12 @@ export class Character{
             // The mother function is async to be able to await
             await waitForMoveAnimation();
 
-            // After Updating coordinate
-            this.body.position.x = 0;
-            this.body.position.y = 0;
-            this.body.position.z = 0;
-            this.getTile().characterEnter(this);
         }
-        
+        this.game.scene.remove(this.body);
+        this.body.position.x = 0;
+        this.body.position.z = 0;
+        this.body.position.y = 0;
+        this.getTile().characterEnter(this);
         return true;
     }
 
@@ -219,9 +224,9 @@ export class Character{
         }
     }
 
-    killed(damager){
+    async killed(damager){
         this.facing(damager.q, damager.r);
-        this.getTile().characterLeave();
+        this.getTile().characterLeave(this);
         this.getTile().body.add(this.body);
         let y = this.body.position.y;
         let vy = 0.08;
@@ -240,7 +245,7 @@ export class Character{
                     this.body.position.z += vz;
                     this.body.position.y = y;
     
-                    if (time < 100) { 
+                    if (time < 60) { 
                         requestAnimationFrame(animate);
                     }
                     else{
@@ -250,8 +255,7 @@ export class Character{
                 requestAnimationFrame(animate);
             })
         }
-        animate().then(()=>{
-            
+        await animate().then(()=>{
             this.body.visible = false;
             this.getTile().body.remove(this.body);
             console.log(this.name, " is dead");
@@ -307,7 +311,7 @@ export class Character{
                 if (!t.properties.seeThroughable && !canHit) return false;
                 path.add(t);
                 if (isSolid){
-                    if (t.character != null) break;
+                    //if (t.character != null) break;
                     if (!t.properties.seeThroughable && canHit) break;
                 }
                 else {
@@ -332,7 +336,6 @@ export class Character{
     // ** There are no path between the same tile
     findValidPath(tile, moveRange = this.moveRange){
         function weightedDist(t1, t2){
-            if (t2.character) return 100;
             return t2.properties.passCost;
         }
 
@@ -347,6 +350,9 @@ export class Character{
         var cost;
         var timeout = 0;
         var path = [];
+
+        if (tile.character) return [];
+
         while (choice.length > 0 && timeout < 300) {
             
             timeout++;
@@ -409,6 +415,10 @@ export class Character{
         if (!simulate) {
             tiles.forEach((t)=>{
                 hitRate *= (100.0-t.properties.hitRateCost)/100.0;
+                if (t.character
+                    && this.constructor != t.character.constructor
+                ) hitRate *= (100.0-t.character.properties.hitRateCost)/100.0;
+                
             })
             if (tile.properties.ambushable && tile.Character) hitRate *= Math.pow((100.0-tile.properties.hitRateCost)/100.0,2);
             return hitRate < 0 ? 0 : hitRate;
@@ -418,11 +428,12 @@ export class Character{
             infoBox.note = "Missed Hit!";
             for (t of tiles){
                 if (Math.random() * 100 < t.properties.hitRateCost) return t;
+                if (t.character 
+                    && this.constructor != t.character.constructor 
+                    && Math.random() * 100 < t.character.properties.hitRateCost) return t;
             }
             if (tile.properties.ambushable && tile.Character) {
-                for (let i = 0; i < 2; i++){
-                    if (Math.random() * 100 < tile.properties.hitRateCost) return t;
-                }
+                if (Math.random() * 10000 < Math.pow(tile.properties.hitRateCost,2)) return t;
             }
             infoBox.note = "Successful Hit!";
             return tile;

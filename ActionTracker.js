@@ -79,7 +79,7 @@ export class ActionTracker{
         if (color == "!"){
             this.ctx.clearRect(0, 0, 100, 100);
             this.ctx.fillStyle = "#ff0000";
-            this.ctx.font = "256px serif";
+            this.ctx.font = "128px serif";
             this.ctx.textAlign = "center";
             this.ctx.fillText("!", 50, 100);
         } else {

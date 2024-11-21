@@ -6,7 +6,6 @@ import { MapControls } from 'three/addons/controls/MapControls.js';
 import { Hunter } from './Hunter.js';
 import { Animal } from './Animal.js';
 import { AIAgent } from './Aiagent.js';
-import { Character } from './Character.js';
 import { Board } from './Board.js';
 import { TileProperties } from './TileProperties.js';
 import { WeaponProperties } from './WeaponProperties.js';

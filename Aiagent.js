@@ -34,7 +34,7 @@ export class AIAgent {
 
         console.log(this.enemy)
         //2.resource assignment algorithm
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 400));
         
         for (let e of this.enemy) {
             //e.playAnimation(1);
@@ -108,6 +108,7 @@ export class AIAgent {
             //console.log("position: ", e.getTile().q, e.getTile().r);
             
         }
+        await new Promise(resolve => setTimeout(resolve, 600));
         this.game.setToPlayerTurn(true);
     }
 

@@ -13,11 +13,11 @@ const distance = (t1, t2) => {return Math.max(Math.abs(t1.q - t2.q), Math.abs(t1
 const lerp = (a, b, t) => {return a + (b - a) * t;}
 
 export class Weapon{
-    constructor(character, typeID, height){
+    constructor(character, typeID, height = 1.5){
         this.character = character;
         this.body = new THREE.Group();
         this.character.body.add(this.body);
-        this.height = height ? height: 2;
+        this.height = height;
         this.setType(typeID);
         
         this.game = this.character.game;
@@ -56,15 +56,15 @@ export class Weapon{
             for (let i = 0; i < Math.random() * this.properties.Pvar + this.properties.Pmin; i++) {
                 let p
                 if (this.name === 'Gun') {
-                    p = new CanvasParticle(t.body, 0.1, 100);
+                    p = new CanvasParticle(t.body, 0.1, 40);
                     p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix));
                 }
                 else if (this.name === 'Bomb') {
-                    p = new SphereParticle(t.body, 2, 100);
+                    p = new SphereParticle(t.body, 1.5, 80);
                     p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix));
                 }
                 else if (this.name === 'Saw') {
-                    p = new CanvasParticle(t.body, 0.2, 20, "cross");
+                    p = new CanvasParticle(t.body, 0.25, 20, "cross");
                     p.setMatrix(Particle.addRandomVelocity(this.properties.particleMatrix,0.03,0.03,0.03));
                 }
             }

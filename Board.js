@@ -5,6 +5,7 @@ import {Game} from './main.js';
 import { cover } from 'three/src/extras/TextureUtils.js';
 import { noise } from './perlin.js';
 import { Hunter } from './Hunter.js';
+import { cond } from 'three/webgpu';
 //import { Character } from './Character.js';
 //import * as math from 'mathjs';
 
@@ -195,8 +196,8 @@ export class Board {
         }
         //var boundary = 20;
         //console.log('width', width, 'length', length);
-        this.qmin = -width, this.qmax = width;
-        this.rmin = -length, this.rmax = length;
+        this.qmax = width;
+        this.rmax = length;
         //this.smin = -length, this.smax = boundary;
 
 
@@ -375,7 +376,7 @@ export class Board {
                         return;
                     } 
                     
-                    console.log("do the expansion");
+                    //console.log("do the expansion");
                     var adjacent = this.findAdjacent(t.q, t.r, width, length);
                     adjacent.forEach((a)=>{
                         if (this.checkBoardBoundaries(a.q, a.r, width, length,this.temp)) return; //skip the tile if it is at the boundary of the board
@@ -1100,9 +1101,43 @@ export class Board {
             }
         }
 
-        // 7.4 generate the tile based on the annotated map   
-        for(let q of Object.keys(this.temp)){
-            for(let r of Object.keys(this.temp[q])){
+        
+        // 7.4 generate the tile based on the annotated map 
+        this.createTiles();
+    }
+
+    async createTilesProcedually(){
+        const generateTiles = async (tiles)=>{
+            for(let t of tiles){
+                let q = t.q;
+                let r = t.r;
+                if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold) continue;
+                //console.log('tile', tile);
+                
+                var x = q * Math.cos(Math.PI / 6);
+                var y = 0;
+                var z = parseFloat(r) + q * Math.cos(Math.PI / 3);
+                var tile = new Tile(parseFloat(q), parseFloat(r), x, y, -z,this.game, this.temp[q][r], this.theme);
+                //console.log('q', q, 'r', r, 'type', this.temp[q][r], 'x', x, 'y', y, 'z', z);
+
+                // Add tile to map
+                this.body.add(tile.body);
+                this.grids.set(q.toString()+r.toString(), tile);
+
+                
+            }
+            await new Promise(resolve => setTimeout(resolve, 50));
+        }
+        for (let r = 0; r < Object.keys(this.temp).sort().reverse()[0]; r++){
+            await generateTiles(this.ringTiles({q: 0, r: 0}, r));
+        }
+        console.log(Object.keys(this.temp).sort().reverse()[0]);
+    }
+
+    
+    createTiles(){
+        for(let q of Object.keys(this.temp).sort()){
+            for(let r of Object.keys(this.temp[q]).sort()){
                 //console.log('q', q, 'r', r, 'type', this.temp[q][r]);
                 //skip the tile if it is void tile
                 if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold) continue;
@@ -1111,18 +1146,15 @@ export class Board {
                 var x = q * Math.cos(Math.PI / 6);
                 var y = 0;
                 var z = parseFloat(r) + q * Math.cos(Math.PI / 3);
-                var tile = new Tile(parseFloat(q), parseFloat(r), x, y, -z,this.game, this.temp[q][r]);
+                var tile = new Tile(parseFloat(q), parseFloat(r), x, y, -z,this.game, this.temp[q][r], this.theme);
                 //console.log('q', q, 'r', r, 'type', this.temp[q][r], 'x', x, 'y', y, 'z', z);
 
                 // Add tile to map
                 this.body.add(tile.body);
                 this.grids.set(q.toString()+r.toString(), tile);
 
-
             }
         }
-        
-
     }
 
     getDefaultThemeTileID(){
@@ -1172,7 +1204,7 @@ export class Board {
         // if the radius is 1, then return the adjacent tiles of the center tile
         var ringTiles = new Array();
         if (radius == 0){
-            ringTiles.add(center);
+            ringTiles.push(center);
             return ringTiles;
         }
         var q = center.q;
@@ -1285,7 +1317,7 @@ export class Board {
             var x = q * Math.cos(Math.PI / 6);
             var y = 0;
             var z = r + q * Math.cos(Math.PI / 3);
-            var tile = new Tile(q, r, x, y, z,this.game, TileProperties.TYPE.Default);
+            var tile = new Tile(q, r, x, y, z,this.game, TileProperties.TYPE.Default, this.theme);
             
             // Add tile to map
             this.body.add(tile.body);

@@ -4,7 +4,7 @@ import { Hunter } from './Hunter.js';
 import { infoBox } from './infoBox.js';
 
 export class Tile {
-    constructor(q, r, x, y, z, game, typeID = TileProperties.TYPE.Default, terrainHeight = 0){
+    constructor(q, r, x, y, z, game, typeID = TileProperties.TYPE.Default, themeId = 0){
         // constructor
         this.q = q;
         this.r = r;
@@ -15,6 +15,7 @@ export class Tile {
         this.z = z;
         this.game = game;
         this.board = game.board;
+        this.themeId = themeId;
 
         // pointer
         this.character = null;
@@ -33,7 +34,7 @@ export class Tile {
         this.mesh.rotateY(Math.PI/6);
         this.mesh.userData = this;
 
-        this.properties = new TileProperties(this, typeID);
+        this.properties = new TileProperties(this, typeID, themeId);
         this.mesh.name = this.properties.name + ' Tile (' + this.q.toString() + ', ' + this.r.toString() + ')';
         
         // render
@@ -43,7 +44,7 @@ export class Tile {
 
     setType(typeID){
         this.properties.destroy();
-        this.properties = new TileProperties(this, typeID);
+        this.properties = new TileProperties(this, typeID, this.themeId);
         this.render();
     }
 
