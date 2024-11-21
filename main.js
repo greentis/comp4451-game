@@ -118,8 +118,10 @@ export class Game{
 		
 		
 	}
-	genearateCharacter(){
+	async genearateCharacter(){
 		// Players (Development phase)
+		await new Promise(resolve => setTimeout(resolve, 500));
+
 		var playerSpawnPoints = this.board.getPlayerSpawnPoint();
 		console.log("playerSpawnPoints", playerSpawnPoints);
 		this.player = [
@@ -127,6 +129,9 @@ export class Game{
 			new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 10, WeaponProperties.TYPE.Bomb, this, 'Player 2'),
 			new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 10, WeaponProperties.TYPE.Saw, this, 'Player 3')
 		];
+
+		await new Promise(resolve => setTimeout(resolve, 500));
+
 		var enemySpawnPoints = this.board.getEnemySpawnPoint();
 		this.enemy = new Set([]);
 		for (let i = 0; i < Object.keys(enemySpawnPoints).length; i++){

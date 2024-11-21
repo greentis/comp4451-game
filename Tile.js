@@ -23,6 +23,13 @@ export class Tile {
         // constant
         this.gap = 0.45;
 
+        this.typeID = typeID;
+        this.onCreate();
+    }
+        
+        
+        
+    onCreate(){
         // this.mesh constructed here
         this.body = new THREE.Object3D();
         this.geometry = new THREE.CylinderGeometry(5.8- this.gap, 5.8 - this.gap,100,6);
@@ -34,12 +41,37 @@ export class Tile {
         this.mesh.rotateY(Math.PI/6);
         this.mesh.userData = this;
 
-        this.properties = new TileProperties(this, typeID, themeId);
+        this.properties = new TileProperties(this, this.typeID, this.themeId);
         this.mesh.name = this.properties.name + ' Tile (' + this.q.toString() + ', ' + this.r.toString() + ')';
-        
+
         // render
         this.state = 'default';
         this.render();
+
+        
+
+        const waitForMoveAnimation = async ()=>{
+            let time = 0;
+        return new Promise((resolve)=>{
+            const animate = (timestamp)=>{
+                time++;
+                // ~ Animation ~
+                
+                this.body.position.y = this.y + this.properties.offsetY + 0.4*Math.sin(time/50*Math.PI);
+
+                if (time < 50) { 
+                    requestAnimationFrame(animate);
+                }
+                else{
+                    resolve();
+                }
+            }
+            requestAnimationFrame(animate);
+        })
+        }
+        waitForMoveAnimation().then(()=>{
+            this.properties.renderMesh();
+        });
     }
 
     setType(typeID){

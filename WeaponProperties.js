@@ -31,13 +31,13 @@ export class WeaponProperties {
                     , 0, 0.6, 0)
                 )
         ,0,0.2,0)
-        let url ="";
+        this.url ="";
         switch (typeID) {
             case WeaponProperties.TYPE.Bomb:
                 this.weapon.name = 'Bomb';
                 this.weapon.blastRadius = 2;
 
-                url="assets/grenade/scene.gltf";
+                this.url="assets/grenade/scene.gltf";
                 this.meshScale = 0.030;
                 this.weapon.body.position.y = this.weapon.height + 0.4;
                 this.weapon.body.rotation.y = Math.PI/2;
@@ -57,7 +57,7 @@ export class WeaponProperties {
             case WeaponProperties.TYPE.Gun:
                 this.weapon.name = 'Gun';
 
-                url="assets/gun/scene.gltf";
+                this.url="assets/gun/scene.gltf";
                 this.meshScale = 0.15;
                 this.weapon.body.position.y = this.weapon.height + 0.3;
                 this.weapon.body.rotation.y = Math.PI;
@@ -69,7 +69,7 @@ export class WeaponProperties {
             case WeaponProperties.TYPE.Saw:
                 this.weapon.name = 'Saw';
 
-                url="assets/saw/scene.gltf";
+                this.url="assets/saw/scene.gltf";
                 this.meshScale = 0.35;
                 this.weapon.body.position.y = this.weapon.height + 0.2;
                 this.weapon.body.rotation.y = Math.PI/2;
@@ -90,8 +90,15 @@ export class WeaponProperties {
             default:
                 break;
         }
+        
+        this.renderMesh();
+    }
+
+    async renderMesh(){
+        //await new Promise(resolve => setTimeout(resolve, 1000));
+
         const gltfLoader = new GLTFLoader();
-        gltfLoader.load(url, (gltf) => {
+        gltfLoader.load(this.url, (gltf) => {
             var model = gltf.scene;
             model.scale.set(this.meshScale,this.meshScale,this.meshScale);
             model.traverse((child) => {

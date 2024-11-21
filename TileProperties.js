@@ -34,7 +34,7 @@ export class TileProperties {
         this.strength = 2;           // The Damage required to destroy this tile
 
                                     // for starting bullet aim cost value: 100
-        var url;
+        this.url;
 
         this.meshScale = 0.8;
 
@@ -82,7 +82,7 @@ export class TileProperties {
                 this.strength = 6;
                 
                 this.meshScale = 0.55;
-                url = 'assets/high-rock/scene.gltf';
+                this.url = 'assets/high-rock/scene.gltf';
                 break;
             case TileProperties.TYPE.Rock:
                 this.name = 'Rock'
@@ -97,7 +97,7 @@ export class TileProperties {
 
                 this.strength = 99999;
                 
-                //url = 'assets/high-rock/scene.gltf';
+                //this.url = 'assets/high-rock/scene.gltf';
                 
                 break;
             case TileProperties.TYPE.Cover:
@@ -119,7 +119,7 @@ export class TileProperties {
                 this.rotateZ = -Math.PI/2+0.5;
 
                 this.strength = 4;
-                url = 'assets/rock/scene.gltf';
+                this.url = 'assets/rock/scene.gltf';
                 break;
             case TileProperties.TYPE.Water:
                 this.name = 'Water'
@@ -149,7 +149,7 @@ export class TileProperties {
 
                 this.strength = 3;
 
-                url = 'assets/bush/scene.gltf';
+                this.url = 'assets/bush/scene.gltf';
                 break;
             case TileProperties.TYPE.TumbleWeed:
                 this.name = 'TumbleWeed';
@@ -164,7 +164,7 @@ export class TileProperties {
 
                 this.strength = 3;
 
-                url = 'assets/tumbleweed/scene.gltf';
+                this.url = 'assets/tumbleweed/scene.gltf';
                 break;
             case TileProperties.TYPE.Tree:
                 this.name = 'tree';
@@ -176,7 +176,7 @@ export class TileProperties {
 
                 this.meshScale = 0.01;
                 this.rotateY = Math.random()*Math.PI*2;
-                url = 'assets/tree/scene.gltf';
+                this.url = 'assets/tree/scene.gltf';
 
                 this.strength = 8;
                 break;
@@ -192,7 +192,7 @@ export class TileProperties {
                 this.meshScale = 0.0025;
                 this.offsetYm = -1.0;
                 this.rotateY = Math.random()*Math.PI*2;
-                url = 'assets/red-mangrove-tree/scene.gltf';
+                this.url = 'assets/red-mangrove-tree/scene.gltf';
 
                 this.strength = 8;
                 break;
@@ -207,7 +207,7 @@ export class TileProperties {
                 
                 this.meshScale = 0.008;
                 this.rotateY = Math.random()*Math.PI*2;
-                url = 'assets/cactus_2/scene.gltf';
+                this.url = 'assets/cactus_2/scene.gltf';
 
                 this.strength = 6;
                 break;
@@ -223,7 +223,7 @@ export class TileProperties {
                 this.meshScale = 0.40;
                 this.offsetYm = -0.75;
                 this.rotateY = Math.random()*Math.PI*2;
-                url = 'assets/spooky_tree/scene.gltf';
+                this.url = 'assets/spooky_tree/scene.gltf';
 
                 this.strength = 8;
                 break;
@@ -242,7 +242,7 @@ export class TileProperties {
 
                 this.offsetYm = 0.1
                 this.rotateY = Math.random()*Math.PI*2;
-                url = 'assets/pumkin/scene.gltf';
+                this.url = 'assets/pumkin/scene.gltf';
                 break;
             case TileProperties.TYPE.Default:
                 if(Math.random()<0.1){
@@ -300,9 +300,9 @@ export class TileProperties {
                 this.offsetZ = (Math.random()-0.5)*0.25;
                 var random = Math.random();
                 if(random<0.2){
-                    url = 'assets/mushrooms/scene.gltf';
+                    this.url = 'assets/mushrooms/scene.gltf';
                     const gltfLoader = new GLTFLoader();
-                    gltfLoader.load(url, (gltf) => {
+                    gltfLoader.load(this.url, (gltf) => {
                         var model = gltf.scene;
                         model.scale.set(0.015, 0.015, 0.015);
                         model.traverse((child) => {
@@ -322,7 +322,7 @@ export class TileProperties {
                         this.tile.body.add(this.mesh);
                         
                     });
-                    url = null;
+                    this.url = null;
                 }
                 if(random > 0.9){
                     const loader = new THREE.TextureLoader();
@@ -343,9 +343,13 @@ export class TileProperties {
                 
                 break;
         }
-        if(!url)return;
+        
+    }
+    
+    renderMesh(){
+        if(!this.url)return;
         const gltfLoader = new GLTFLoader();
-        gltfLoader.load(url, (gltf) => {
+        gltfLoader.load(this.url, (gltf) => {
             var model = gltf.scene;
             model.scale.set(this.meshScale,this.meshScale,this.meshScale);
             model.traverse((child) => {
@@ -366,7 +370,7 @@ export class TileProperties {
             
         });
     }
-    
+
     destroy(){
         if (!this.mesh) {
             this.tile.body.remove(this.mesh);
