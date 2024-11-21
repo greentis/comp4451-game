@@ -151,6 +151,7 @@ export class Board {
         this.seed = Math.round(Math.random()* 900000 + 100000);
         //this.seed = 37221; //wetland problem
         //19235;44699;26695; //rock problem
+        //64767; //enemy model cannot be loaded problem
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
         //if(printable) 
         console.log('This board have seed ', this.seed);
@@ -178,7 +179,7 @@ export class Board {
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
         this.enemyDensity = 0.02 + 0.01*(this.missionNo); //control the density of the enemy per tile in the map(suggested value: < 0.05)
-        this.averagePerGroup = 3 + Math.floor(1.0*(this.missionNo)); //control the average number of enemy per group
+        this.averagePerGroup = 2 + Math.floor(1.0*(this.missionNo)); //control the average number of enemy per group
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
         this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
         this.bossInterval = 100; //control the interval of the boss appearance
@@ -773,7 +774,7 @@ export class Board {
             var Ep = 0.0;
             var j = 0;
             while(Ep < Egp){
-                var enemyType = Math.round(xxhash(this.seed * 4451, i, Ep) * 4451) % Object.keys(EpTable).length;
+                var enemyType = Math.round(xxhash(this.seed * 4451, i, Ep) * 4451) % 3; //Object.keys(EpTable).length;
                 if (this.theme == 3 && enemyType == 2) enemyType += 10*3; // enemyType = 32
                 //console.log('enemyType', enemyType);
                 Ep += EpTable[enemyType];
@@ -820,7 +821,7 @@ export class Board {
                 if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water 
                    && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
                 //condition 3d
-                if (!lastResort && distanceQR(this.playerSpawnPoints[0], {q: q, r: r}) < this.enemyToPlayer - 0.01*iteration) continue;
+                if (!lastResort && distanceQR(this.playerSpawnPoints[0], {q: q, r: r}) < this.enemyToPlayer - 0.001*iteration) continue;
                 
                 //condition 3b
                 var occupied = false;
