@@ -241,6 +241,10 @@ export class AIAgent {
             }
         }
         escapeModifier += (playerCount - enemyCount) / playerCount * 6.5;
+        if(enemyCount == 1){
+            escapeModifier = 0;
+            return 0;
+        }
         //console.log("escapeModifier 2: ", escapeModifier);
 
         //factor 3: if last action is escape, the escape modifier will be decreased
