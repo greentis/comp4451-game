@@ -1143,9 +1143,6 @@ export class Board {
             }
         }
 
-        // 7.4 generate the tile based on the annotated map 
-        this.createTilesProcedually();
-        
     }
 
     async buildTiles(){
