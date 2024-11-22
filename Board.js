@@ -1152,7 +1152,7 @@ export class Board {
             }
         }
 
-        /*for (let q = -width - 1; q <= width + 1; q++){
+        for (let q = -width - 1; q <= width + 1; q++){
             for(let r = -length - 1; r <= length + 1; r++){
                 if (this.temp[q] == undefined) continue;
                 if (this.temp[q][r] == undefined) continue;
@@ -1169,7 +1169,7 @@ export class Board {
                     this.temp[q][r] = TileProperties.TYPE.Void;
                 }
             }
-        }*/
+        }
 
     }
 
