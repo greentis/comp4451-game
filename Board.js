@@ -150,7 +150,7 @@ export class Board {
         //this.missionNo = 1;
         this.seed = 23249;Math.round(Math.random()* 900000 + 100000);
         //this.seed =  //wetland problem
-        //37221;19235;44699;26695; //rock problem
+        //37221;19235;44699;26695;23249; //rock problem
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
         //if(printable) 
         console.log('This board have seed ', this.seed);
@@ -178,8 +178,8 @@ export class Board {
         this.vegetationCoverage = themeTable[this.theme].vegetationCoverage; //0.1;//control the vegetation coverage of the map, tile with vegetation coverage below the value will be turned into vegetation tile
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
-        this.enemyDensity = 0.02 + 0.01*(this.missionNo); //control the density of the enemy per tile in the map(suggested value: < 0.05)
-        this.averagePerGroup = 2 + Math.floor(1.0*(this.missionNo)); //control the average number of enemy per group
+        this.enemyDensity = 0.02 + 0.008*(this.missionNo); //control the density of the enemy per tile in the map(suggested value: < 0.05)
+        this.averagePerGroup = 2 + Math.floor(0.08*(this.missionNo)); //control the average number of enemy per group
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
         this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
         this.bossInterval = 100; //control the interval of the boss appearance
@@ -355,11 +355,13 @@ export class Board {
         // or the expandedTile list is empty
         var expandIteration = 1.0;
         var lastWallTile = new Set([...wallTile]);
+        var debug31 = false;
         while( defaultTile.size < (this.roomPercentage - (this.seed % 67)/1000.0) * this.totalArea){ //bug1
             // keep the expandedTile list as defaultTile list
             // clear the wallTile list
-            //console.log('Iteration: ', expandIteration);
-            //console.log('default tile', defaultTile);
+            if(expandIteration >= 1000 && expandIteration <= 59) debug31 = true;
+            else debug31 = false;
+            if(debug31)console.log('Iteration: ', expandIteration, 'default tile size', defaultTile.size);
             if (expandIteration > 1000) break;
             
             expandedTile = new Set(defaultTile);
@@ -371,9 +373,9 @@ export class Board {
             wallTile = new Set();
 
 
-            while (expandedTile.size > 0 && defaultTile.size < (this.roomPercentage + (this.seed % 7)/100.0) * this.totalArea){ //bug1
+            //while (expandedTile.size > 0 && defaultTile.size < (this.roomPercentage - (this.seed % 67)/1000.0) * this.totalArea){ //bug1
                 
-                //console.log('default tile', defaultTile.size, 'expanded tile', expandedTile.size);
+                if(debug31)console.log('3.1 whileloop 2nd: ,default tile', defaultTile.size, 'expanded tile', expandedTile.size);
                 expandedTile.forEach((t)=>{
                     if (defaultTile.size >= (this.roomPercentage + (this.seed % 67)/1000.0) * this.totalArea){
                         //console.log('default tile', defaultTile.size, 'expanded tile', expandedTile.size);
@@ -381,23 +383,24 @@ export class Board {
                         return;
                     } 
                     
-                    //console.log("do the expansion");
+                    if(debug31)console.log("do the expansion");
                     var adjacent = this.findAdjacent(t.q, t.r, width, length);
                     adjacent.forEach((a)=>{
-                        if (this.checkBoardBoundaries(a.q, a.r, width, length,this.temp)) return; //skip the tile if it is at the boundary of the board
-                        //console.log('a1',a);
+                        //if (this.checkBoardBoundaries(a.q, a.r, width, length,this.temp)) return; //skip the tile if it is at the boundary of the board
+                        //if(debug31)console.log('a1',a);
+                        if(this.temp[a.q][a.r] == TileProperties.TYPE.Void) return;
                         if (this.temp[a.q][a.r] == TileProperties.TYPE.Wall) return;
-                        //console.log('a2',a,'type',this.temp[a.q][a.r]);
+                        if(debug31)console.log('a2',a,'type',this.temp[a.q][a.r]);
                         if (this.temp[a.q][a.r] == TileProperties.TYPE.Default) return;
-                        //console.log('a3',a);
+                        //if(debug31)console.log('a3',a);
 
                         //checkValues should based on the this.seed, but not math.random()
                         //so that the map is generated same every time if same this.seed
                         //checkValues will increase as the iteration increase
                         //to have a lenient check on the tile to be turned into default tile
                         //so that avoid too few default tile in the map
-                        var checkingValues = (expandIteration - 1) / 250.0 + xxhash(this.seed, a.q, a.r);
-                        //console.log('q', a.q, 'r', a.r, 'checkingValues', checkingValues);
+                        var checkingValues = (expandIteration - 1.0) / 250.0 + xxhash(this.seed, a.q, a.r);
+                        if(debug31)console.log('q', a.q, 'r', a.r, 'checkingValues', checkingValues,'expandIteration', expandIteration);
 
                         if (this.temp[a.q][a.r] != TileProperties.TYPE.Default && checkingValues > (1-this.roomPercentage)){
                             this.temp[a.q][a.r] = TileProperties.TYPE.Default;
@@ -412,7 +415,7 @@ export class Board {
                     });
                     expandedTile.delete(t);
                 });
-            }
+            //}
             expandIteration++;
         }
         if(lastWallTile.size != 0){
