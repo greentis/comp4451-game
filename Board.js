@@ -150,7 +150,11 @@ export class Board {
         //this.missionNo = 1;
         this.seed = Math.round(Math.random()* 900000 + 100000);
         //this.seed =  //wetland problem
-        //37221;19235;44699;26695;23249; //rock problem
+        //37221;19235;44699;26695;23249; //rock problem (fixed)
+        //56018; //enemy spawn problem
+        //53906;60059;44532; //enemy spawn problem, fail reason: 0
+        //54094; //enemy spawn problem, fail reason: 1
+        //49695;64378; //player spawn problem
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
         //if(printable) 
         console.log('This board have seed ', this.seed);
@@ -161,11 +165,12 @@ export class Board {
         var printable = true;
         //below variables are for polygonal generation only
         if(true || this.missionNo == 1){this.theme = parseInt(this.seed,10)%3;} //control the theme of the map
-        //else{this.theme = (this.theme + 1)%3;}
+        //if(this.missionNo == 1){this.theme = 0;}
+        //if(this.missionNo == 2){this.theme = 1;}
             if (this.theme == 2){ this.theme = 3;}
             console.log('Mission No:', this.missionNo, 'Theme:', this.theme);
-        this.roomLength = 7 + 1*(Math.min(this.missionNo,2)); //control the Length of the map
-        this.roomWidth = 7 + 1*(Math.min(this.missionNo,2)); //control the Width of the map
+        this.roomLength = 5 + 2*(Math.min(this.missionNo,3)); //control the Length of the map
+        this.roomWidth = 5 + 2*(Math.min(this.missionNo,3)); //control the Width of the map
         this.roomSizeRange = 0; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = themeTable[this.theme].roomPercentage; //0.75; //control the percentage of the default tile in the map
         this.wallThreshold = themeTable[this.theme].wallThreshold; //0.7; //control the threshold of the wall tile conversion from rock tile
@@ -179,13 +184,13 @@ export class Board {
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
         //this.enemyDensity = 0.02 + 0.008*(this.missionNo); //control the density of the enemy per tile in the map(suggested value: < 0.05)
-        this.enemyGroupAmount = 0 + 1*(Math.min(this.missionNo,3)); //control the number of enemy group in the map
-        this.averagePerGroup = 2 + Math.floor(0.08*(this.missionNo)); //control the average number of enemy per group
+        this.enemyGroupAmount = Math.ceil(0.5 + 0.55*(Math.min(this.missionNo,5) - 1)); //control the number of enemy group in the map
+        this.averagePerGroup = 2; //control the average number of enemy per group
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
-        this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
+        this.enemyToEnemy = 7; //control the minimum number of tile from enemy to the enemy allowed
         this.bossInterval = 100; //control the interval of the boss appearance
 
-        this.levelDifficulty = 1.0 + (this.missionNo)*1.0; //control the difficulty of the level, the higher the value, the harder the level
+        this.levelDifficulty = 0.0 + (this.missionNo)*1.0; //control the difficulty of the level, the higher the value, the harder the level
                                     //default value is 1.0
 
         // 1. set the size of the map by 3 radius
@@ -767,10 +772,11 @@ export class Board {
         // each type of enemy have different enemy point(Ep)
         // the sum up of the Ep of all of the enemy in the group should be less than the Egp
         // under above restriction, enemy type(and number) of each group will be selected according to this.seed
+        var debugTotalEp = 0.0;
         var enemyGroupNumber = this.enemyGroupAmount; 
                             //parseInt(Math.max(1, Math.round(this.enemyDensity / 4.4 * this.totalArea)),10);
         this.enemyGroup = {};
-        var Egp = (this.averagePerGroup) * 2.0 + (this.levelDifficulty - 1) * 2.5 + 0.5;
+        var Egp = (this.averagePerGroup) * EpTable[0] + (this.levelDifficulty - 1) * EpTable[0]; //EpTable[0] is the enemy point of the average enemy
 
         var bossNo = 0;
         if((this.missionNo % this.bossInterval) == 0){
@@ -785,21 +791,29 @@ export class Board {
             this.enemyGroup[i] = {};
             var Ep = 0.0;
             var j = 0;
+            var exceedcount = 0;
             while(Ep < Egp){
-                var enemyType = Math.round(xxhash(this.seed * 4451, i, Ep) * 4451) % 3; //Object.keys(EpTable).length;
+                var enemyType = Math.round(xxhash(this.seed * 4451, i**(Ep+j), (Ep*exceedcount)**(j + i)) * 123) % 3; //Object.keys(EpTable).length;
                 if (this.theme == 3 && enemyType == 2) enemyType += 10*3; // enemyType = 32
                 //console.log('enemyType', enemyType);
+                if (exceedcount > 100) break;
+                if (Ep + EpTable[enemyType]> Egp){ 
+                    exceedcount++;
+                    continue;
+                }
                 Ep += EpTable[enemyType];
-                if (Ep > Egp) break;
                 //console.log('Ep', Ep, 'Egp', Egp);
 
                 this.enemyGroup[i][j] = {};
                 this.enemyGroup[i][j][0] = enemyType;
                 j++;
+
+                debugTotalEp += EpTable[enemyType];
             }
         }
         
         //console.log('enemyGroup', this.enemyGroup);
+        if(printable) console.log('total Ep', debugTotalEp, 'enemyGroupNumber', enemyGroupNumber, 'average Ep', debugTotalEp / enemyGroupNumber, 'Egp', Egp);
         
         // 6.2 calculate the spawn point of leader of each group
         // for each group, choose a random tile as the spawn point based on below rules:
@@ -817,23 +831,33 @@ export class Board {
             var leaderFound = false;
             var iteration = 0;
             var lastResort = false;
+
+            var failReason = -1.0;
             while(!leaderFound){
-                iteration++;
+                iteration++; 
+                console.log('iteration', iteration, 'failReason', failReason);
                 if (iteration > 1000) {
                     //last resort, set the leader spawn point to a unoccupied tile nearby
                     lastResort = true;
                 }
-                var q = Math.round(xxhash(this.seed * 731, i, iteration) * 2 * this.qmax - this.qmax );
-                var r = Math.round(xxhash(this.seed * 731, i, iteration) * 2 * this.rmax - this.rmax);
-                if (this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
+                //var q = Math.round(xxhash(this.seed * 4731, i, iteration**i) * 2 * this.qmax - this.qmax );
+                //var r = Math.round(xxhash(this.seed * 7431, i + q**iteration, iteration**i) * 2 * this.rmax - this.rmax);
+                var q = parseInt(Math.random() * 2 * this.qmax - this.qmax, 10);
+                var r = parseInt(Math.random() * 2 * this.rmax - this.rmax, 10);
+                console.log('q', q, 'r', r);
+                
+                
+                if (!lastResort && this.checkBoardBoundaries(q, r, width, length, this.temp)){ failReason = 0.0; continue;}
                 
                 
                 
                 //condition 3a
-                if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water 
-                   && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
+                //skip if it is tree or bush
+                if(iteration < 1200 && (this.temp[q][r] == TileProperties.TYPE.Tree || this.temp[q][r] == TileProperties.TYPE.Bush)){ failReason = 1.0; continue;}
+                if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water
+                ) { failReason = 1.5; continue;}
                 //condition 3d
-                if (!lastResort && distanceQR(this.playerSpawnPoints[0], {q: q, r: r}) < this.enemyToPlayer - 0.001*iteration) continue;
+                if (distanceQR(this.playerSpawnPoints[0], {q: q, r: r}) < (this.enemyToPlayer - 0.01*iteration)){ failReason = 4.0; continue;}
                 
                 //condition 3b
                 var occupied = false;
@@ -843,7 +867,7 @@ export class Board {
                         break;
                     }
                 }
-                if (occupied) continue;
+                if (occupied) { failReason = 2.0; continue;}
 
                 //condition 3c
                 //var path = findValidPath({q: q, r: r}, this.playerSpawnPoints[0]);
@@ -853,21 +877,22 @@ export class Board {
                 //condition 3e
                 var tooClose = false;
                 for (let j = 0; j < i; j++){
-                    if (!lastResort && distanceQR(this.enemyGroup[j][0][1], {q: q, r: r}) < this.enemyToEnemy - 0.015*iteration){
+                    if (distanceQR(this.enemyGroup[j][0][1], {q: q, r: r}) < (this.enemyToEnemy - 0.02*iteration)){
                         tooClose = true;
                         break;
                     }
                 }
-                if (tooClose) continue;
+                if (tooClose){ failReason = 5.0; continue;}
 
                 //condition 3f
                 var occupiedByPlayer = false;
                 for (let j = 0; j < 3; j++){
                     if (this.playerSpawnPoints[j].q == q && this.playerSpawnPoints[j].r == r){
                         occupiedByPlayer = true;
+                        break;
                     }
                 }
-                if (occupiedByPlayer) continue;
+                if (occupiedByPlayer){ failReason = 6.0; continue;}
 
                 this.enemyGroup[i][0][1] = {q: q, r: r};
                 leaderFound = true;
@@ -876,6 +901,7 @@ export class Board {
                 this.temp[q][r] = TileProperties.TYPE.Default;
             }
         }
+        if(printable)console.log('finish leader spawn point');
 
         // 6.3 calculate the spawn point of the other enemy in the group
         // the spawn point of these enemies will be based on the leader spawn point
@@ -896,94 +922,95 @@ export class Board {
                 var enemyFound = false;
                 var iteration = 0;
                 var lastResort = false;
-                var ring = 1;
+                //var ring = 1;
                 while(!enemyFound){
                     iteration++;
-                    if (iteration > 100) {
-                        ring += 1;
-                    }
-                    if (ring > 3){
+                    if (iteration > 1000){
                         //last resort, set the enemy spawn point to a unoccupied tile nearby
                         lastResort = true;
                     }
-                    var ringTiles = this.ringTiles(leader, ring);
-                    
-                    
-                    for (let k = 0; k < ringTiles.length; k++){
-                        var q = ringTiles[k].q;
-                        var r = ringTiles[k].r;
-                        if (this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
 
-                        //condition 2a
-                        if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water
-                            && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
+                    for (let ring = 0; ring < 6; ring++){
+                        var ringTiles = this.ringTiles(leader, ring);
                         
-                        
-                        //condition 2b
-                        var occupied = false;
-                        //check the leader first
-                        for (let l = 0; l < enemyGroupNumber; l++){
-                            if (this.enemyGroup[l][0][1].q == q && this.enemyGroup[l][0][1].r == r){
-                                occupied = true;
-                                break;
-                            }
-                        }
-                        if (occupied) continue;
-                        //check the other enemy in the same group
-                        for (let l = 0; l < j; l++){
-                            if (this.enemyGroup[i][l][1].q == q && this.enemyGroup[i][l][1].r == r){
-                                occupied = true;
-                                break;
-                            }
-                        }
-                        if (occupied) continue;
-                        //check the other enemy in the previous group
-                        for (let l = 0; l < i; l++){
-                            for (let m = 1; m < Object.keys(this.enemyGroup[l]).length; m++){
-                                if (this.enemyGroup[l][m][1].q == q && this.enemyGroup[l][m][1].r == r){
+                        for (let k = 0; k < ringTiles.length; k++){
+                            var q = ringTiles[k].q;
+                            var r = ringTiles[k].r;
+                            if (!lastResort && this.checkBoardBoundaries(q, r, width, length, this.temp)) continue;
+
+                            //condition 2a
+                            if(this.temp[q][r] == TileProperties.TYPE.Tree || this.temp[q][r] == TileProperties.TYPE.Bush) continue;
+                            if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water
+                                && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
+                            
+                            
+                            //condition 2b
+                            var occupied = false;
+                            //check the leader first
+                            for (let l = 0; l < enemyGroupNumber; l++){
+                                if (this.enemyGroup[l][0][1].q == q && this.enemyGroup[l][0][1].r == r){
                                     occupied = true;
                                     break;
                                 }
                             }
-                        }
-                        if (occupied) continue;
-                       
-
-                        //condition 2c
-                        var occupiedByPlayer = false;
-                        for (let l = 0; l < 3; l++){
-                            if (this.playerSpawnPoints[l].q == q && this.playerSpawnPoints[l].r == r){
-                                occupiedByPlayer = true;
-                                break;
+                            if (occupied) continue;
+                            //check the other enemy in the same group
+                            for (let l = 0; l < j; l++){
+                                if (this.enemyGroup[i][l][1].q == q && this.enemyGroup[i][l][1].r == r){
+                                    occupied = true;
+                                    break;
+                                }
                             }
-                        }
-                        if (occupiedByPlayer) continue;
-                        
-
-                        //condition 2d
-                        if (!lastResort && distanceQR(this.playerSpawnPoints[0], {q: q, r: r}) < this.enemyToPlayer - 0.02*iteration) continue;
-                        
-                        //condition 2e
-                        var tooClose = false;
-                        for (let l = 0; l < enemyGroupNumber; l++){
-                            if (l == i) continue;
-                            if (!lastResort && distanceQR(this.enemyGroup[l][0][1], {q: q, r: r}) < this.enemyToEnemy - 0.03*iteration){
-                                tooClose = true;
-                                break;
+                            if (occupied) continue;
+                            //check the other enemy in the previous group
+                            for (let l = 0; l < i; l++){
+                                for (let m = 1; m < Object.keys(this.enemyGroup[l]).length; m++){
+                                    if (this.enemyGroup[l][m][1].q == q && this.enemyGroup[l][m][1].r == r){
+                                        occupied = true;
+                                        break;
+                                    }
+                                }
                             }
+                            if (occupied) continue;
+                        
+
+                            //condition 2c
+                            var occupiedByPlayer = false;
+                            for (let l = 0; l < 3; l++){
+                                if (this.playerSpawnPoints[l].q == q && this.playerSpawnPoints[l].r == r){
+                                    occupiedByPlayer = true;
+                                    break;
+                                }
+                            }
+                            if (occupiedByPlayer) continue;
+                            
+
+                            //condition 2d
+                            if (distanceQR(this.playerSpawnPoints[0], {q: q, r: r}) <= (this.enemyToPlayer - 0.01*iteration)) continue;
+                            
+                            //condition 2e
+                            var tooClose = false;
+                            for (let l = 0; l < enemyGroupNumber; l++){
+                                if (l == i) continue;
+                                if (!lastResort && distanceQR(this.enemyGroup[l][0][1], {q: q, r: r}) <= (this.enemyToEnemy - 0.02*iteration)){
+                                    tooClose = true;
+                                    break;
+                                }
+                            }
+                            if (tooClose) continue;
+                            
+
+                            //condition 2f
+                            //var path = findValidPath({q: q, r: r}, leader);
+                            //if (path.length == 0) continue;
+                            
+
+                            this.enemyGroup[i][j][1] = {q: q, r: r};
+                            //console.log('enemy group', this.enemyGroup[i][j][1]);
+                            enemyFound = true;
+                            break;
                         }
-                        if (tooClose) continue;
-                        
-
-                        //condition 2f
-                        //var path = findValidPath({q: q, r: r}, leader);
-                        //if (path.length == 0) continue;
-                        
-
-                        this.enemyGroup[i][j][1] = {q: q, r: r};
-                        //console.log('enemy group', this.enemyGroup[i][j][1]);
-                        enemyFound = true;
-                        break;
+                        if (enemyFound) break;
                     }
                 }
                 if (lastResort){
