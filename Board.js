@@ -148,7 +148,7 @@ export class Board {
         //setting random this.seed
         // cover all the map with rock first
         //this.missionNo = 1;
-        this.seed = 23249;Math.round(Math.random()* 900000 + 100000);
+        this.seed = Math.round(Math.random()* 900000 + 100000);
         //this.seed =  //wetland problem
         //37221;19235;44699;26695;23249; //rock problem
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
@@ -178,7 +178,8 @@ export class Board {
         this.vegetationCoverage = themeTable[this.theme].vegetationCoverage; //0.1;//control the vegetation coverage of the map, tile with vegetation coverage below the value will be turned into vegetation tile
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
-        this.enemyDensity = 0.02 + 0.008*(this.missionNo); //control the density of the enemy per tile in the map(suggested value: < 0.05)
+        //this.enemyDensity = 0.02 + 0.008*(this.missionNo); //control the density of the enemy per tile in the map(suggested value: < 0.05)
+        this.enemyGroupAmount = 0 + 1*(Math.min(this.missionNo,3)); //control the number of enemy group in the map
         this.averagePerGroup = 2 + Math.floor(0.08*(this.missionNo)); //control the average number of enemy per group
         this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
         this.enemyToEnemy = 5; //control the minimum number of tile from enemy to the enemy allowed
@@ -766,7 +767,8 @@ export class Board {
         // each type of enemy have different enemy point(Ep)
         // the sum up of the Ep of all of the enemy in the group should be less than the Egp
         // under above restriction, enemy type(and number) of each group will be selected according to this.seed
-        var enemyGroupNumber = parseInt(Math.max(1, Math.round(this.enemyDensity / 4.4 * this.totalArea)),10);
+        var enemyGroupNumber = this.enemyGroupAmount; 
+                            //parseInt(Math.max(1, Math.round(this.enemyDensity / 4.4 * this.totalArea)),10);
         this.enemyGroup = {};
         var Egp = (this.averagePerGroup) * 2.0 + (this.levelDifficulty - 1) * 2.5 + 0.5;
 
