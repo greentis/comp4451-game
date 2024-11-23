@@ -43,7 +43,21 @@ export class Hunter extends Character{
         this.getTile().characterEnter(this);
         // Hunter Model
         const gltfLoader = new GLTFLoader();
-        const url = 'assets/low_poly_kyle_crane/scene.gltf';
+        // choose the model url according to the weapon type
+        if (weaponType == WeaponProperties.TYPE.Saw){
+            var url = 'assets/lumberjack/scene.gltf';
+        }
+        else if (weaponType == WeaponProperties.TYPE.Gun){
+            var url = 'assets/low_poly_kyle_crane/scene.gltf';
+        }
+        else if (weaponType == WeaponProperties.TYPE.Bomb){
+            var url = 'assets/male_adventurer/scene.gltf';
+        }
+        else{
+            console.error("Invalid weapon type, setting to default");
+            var url = 'assets/low_poly_kyle_crane/scene.gltf';
+        }       
+        console.log("Hunter: loading model from ", url);
         gltfLoader.load(url, (gltf) => {
             var model = gltf.scene;
             model.scale.set(0.85,0.85,0.85);

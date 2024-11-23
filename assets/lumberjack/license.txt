@@ -1,0 +1,11 @@
+Model Information:
+* title:	Lumberjack
+* source:	https://sketchfab.com/3d-models/lumberjack-00b45680f31d47819cee2bab91643195
+* author:	metalmorag (https://sketchfab.com/metalmorag)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Lumberjack" (https://sketchfab.com/3d-models/lumberjack-00b45680f31d47819cee2bab91643195) by metalmorag (https://sketchfab.com/metalmorag) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
