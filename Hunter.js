@@ -116,16 +116,19 @@ export class Hunter extends Character{
                 case Hunter.ACTION.move:
                     this.getTile().setState('selected');
                     this.updateRadar();
+                    this.weapon.enlargeDisplay(false);
                     this.displayInfo();
                     break;
                 case Hunter.ACTION.attack:
                     this.getTile().setState('aggressive');
                     this.updateRadar();
+                    this.weapon.enlargeDisplay(true);
                     this.displayInfo();
                     break;
                 case Hunter.ACTION.selected:
                     this.getTile().setState('selected');
                     this.updateRadar();
+                    this.weapon.enlargeDisplay(false);
                     this.displayInfo();
                     this.game.movingPlayer = null;
                     break; 
@@ -134,6 +137,7 @@ export class Hunter extends Character{
                     super.deselect();
                     this.closeRadar();
                     this.board.clearMarkings();
+                    this.weapon.enlargeDisplay(false);
                     this.game.movingPlayer = null;
                     if(!this.game.gameOn) return;
                     infoBox.format = infoBox.FORMAT.MissionInfo;

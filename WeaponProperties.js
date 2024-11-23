@@ -16,6 +16,8 @@ export class WeaponProperties {
 
         this.obstacleDamageMultiplier = 1;
 
+
+        this.offsetY = 0;
         // The particle controller
         // Pmin: minimum number of particles
         // Pvar: varying range of number of particles
@@ -38,8 +40,8 @@ export class WeaponProperties {
                 this.weapon.blastRadius = 2;
 
                 this.url="assets/grenade/scene.gltf";
-                this.meshScale = 0.030;
-                this.weapon.body.position.y = this.weapon.height + 0.4;
+                this.meshScale = 0.025;
+                this.offsetY = this.weapon.height + 0.4;
                 this.weapon.body.rotation.y = Math.PI/2;
                 this.weapon.damage = 5;
                 this.weapon.range = 6;
@@ -58,8 +60,8 @@ export class WeaponProperties {
                 this.weapon.name = 'Gun';
 
                 this.url="assets/gun/scene.gltf";
-                this.meshScale = 0.15;
-                this.weapon.body.position.y = this.weapon.height + 0.3;
+                this.meshScale = 0.125;
+                this.offsetY = this.weapon.height + 0.3;
                 this.weapon.body.rotation.y = Math.PI;
                 this.weapon.body.rotation.x = Math.PI/13;
                 this.weapon.damage = 8;
@@ -70,8 +72,8 @@ export class WeaponProperties {
                 this.weapon.name = 'Saw';
 
                 this.url="assets/saw/scene.gltf";
-                this.meshScale = 0.35;
-                this.weapon.body.position.y = this.weapon.height + 0.2;
+                this.meshScale = 0.3;
+                this.offsetY = this.weapon.height + 0.2;
                 this.weapon.body.rotation.y = Math.PI/2;
                 this.weapon.body.rotation.x = 0;
                 this.weapon.damage = 5;
@@ -110,6 +112,7 @@ export class WeaponProperties {
             this.weapon.body.add(this.mesh);
             this.weapon.mesh=this.mesh;
             this.weapon.mesh.name=this.name;
+            this.weapon.body.position.y = this.offsetY;
         });
     }
 }

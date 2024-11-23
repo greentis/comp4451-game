@@ -37,6 +37,21 @@ export class Weapon{
         this.damage = damage;
     }
 
+    enlargeDisplay(doEnlarge){
+        if (doEnlarge){
+            this.body.position.y = this.properties.offsetY;
+            this.body.position.z = 0;
+            this.body.scale.set(2, 2, 2);
+            this.body.rotation.x;
+        }
+        else{
+            
+            this.body.position.y = this.properties.offsetY;
+            this.body.position.z = 0;
+            this.body.scale.set(1, 1, 1);
+        }
+    }
+
     convertToObstacleDamage(damage){
         let result = damage * this.properties.obstacleDamageMultiplier;
         return result == 0 ? 1 : result;
