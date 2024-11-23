@@ -16,6 +16,10 @@ export class Hunter extends Character{
 
         this.weapon = new Weapon(this, weaponType);
 
+        if (weaponType == WeaponProperties.TYPE.Saw){
+            this.moveRange = 10;
+        }
+
         // Radar Display
         const radar_radius = 1.2;
         const radar_interior_radius = 1.12;

@@ -88,15 +88,6 @@ export class Game{
 		this.camera.position.set(0, 3, 5);
 	}
 
-	generateMap(){
-		// Board & Tiles (Development phase)
-		infoBox.missionNo = this.missionNo;
-		this.board = new Board(this, this.missionNo);
-		this.board.body.rotation.x = Math.PI * 0;
-		this.board.body.rotation.y = 0;
-		this.scene.add(this.board.body);
-	}
-	
 
 	generateMission(){
 		// Board & Tiles (Development phase)
@@ -127,7 +118,7 @@ export class Game{
 		this.player = [
 			new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 10, WeaponProperties.TYPE.Gun, this, 'Player 1'),
 			new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 10, WeaponProperties.TYPE.Bomb, this, 'Player 2'),
-			new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 10, WeaponProperties.TYPE.Saw, this, 'Player 3')
+			new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 15, WeaponProperties.TYPE.Saw, this, 'Player 3')
 		];
 
 		await new Promise(resolve => setTimeout(resolve, 500));
@@ -151,6 +142,10 @@ export class Game{
 
 		this.aiAgent = new AIAgent(this);
 		this.aiAgent.printWakeAll();
+
+		var playerTile = this.board.getTile(this.player[0].q, this.player[0].r);
+		//this.camera.position.set(playerTile.x + 1, playerTile.y + 3, playerTile.z);
+		//this.camera.lookAt(playerTile.x, playerTile.y, playerTile.z);
 	}
 
 	createScene(){
