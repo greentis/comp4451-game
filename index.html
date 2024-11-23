@@ -42,7 +42,7 @@
 			.container {
 				color: rgb(215, 198, 176);
 				width:100%;
-				height: 40px;
+				height: 50px;
 				display: flex;
 				flex-direction: row;
 				position: relative;
@@ -90,8 +90,9 @@
 			.box{
 				border-radius: 0%;
 				position:relative;
+				font-size:x-large;
 				width:100px;
-				height:40px;
+				height:50px;
 				flex-grow: 1;
 				text-align: center;
 				align-content:center;
@@ -116,7 +117,7 @@
 			}
 
 			.box.tall{
-				height:80px;
+				height:100px;
 			}
 
 			.interactive{
@@ -178,6 +179,25 @@
 			.shrink{
 				height: 0px;
 			}
+
+
+			/* Sidebar */
+			.sidebar{
+				position: absolute;
+				top:50px;
+				width:20vw;
+				height:0px;
+				background-color: #000000;
+				opacity: 0.7;
+				overflow-y: hidden;
+				transition: inherit;
+			}
+
+			.interactive:hover > .sidebar{
+				height:80vh;
+				width:22.5vw;
+				opacity: 0.7;
+			}
 		</style>
 	</head>
 	<body>
@@ -199,6 +219,17 @@
 				</div>
 				<div v-on:click="passRound" class="box controller interactive">
 					<Strong>End Round</Strong>
+					<div class="sidebar">
+						<div v-for="p in players">
+							<p>
+								{{p.name}} : ❤️{{p.health}}
+							</p>
+							<p style="align-content: center;">
+								Action left: {{p.getActionPoint() == 2 ? '👣🎯': p.getActionPoint() == 1 ? '🎯' : ''}}
+							</p>
+							<!--	🪦		-->
+						</div>
+					</div>
 				</div>
 			</div>
 			<div v-if="format == 'CharacterStats'" class="container">
@@ -214,8 +245,8 @@
 				<div class="box" v-if="weapon == 'Gun'">🏹 Damage: {{damage}}</div>
 				<div class="box" v-if="weapon == 'Bomb'">💣 Damage: {{damage}}</div>
 				<div class="box" v-if="weapon == 'Saw'">🗡️ Damage: {{damage}}</div>
-				<div class="box" v-if="weapon == 'Bomb'">Blast Radius:{{blastRadius}}</div>
-				<div class="box" v-if="weapon != 'Bomb'">Aim Accuracy: {{hitRate}}</div>
+				<!--div class="box" v-if="weapon == 'Bomb'">Blast Radius:{{blastRadius}}</div-->
+				<div class="box">Aim Accuracy: {{hitRate}}</div>
 				
 				<div class="box" v-if="target">{{target.name}}: ❤️{{target.health}}</div>
 			</div>

@@ -146,6 +146,7 @@ export class Game{
 			}
 		}
 
+		infoBox.players = this.player;
 		infoBox.enemies = this.enemy;
 
 		this.aiAgent = new AIAgent(this);
