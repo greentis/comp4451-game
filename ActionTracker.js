@@ -70,7 +70,7 @@ export class ActionTracker{
     }
 
     render(){
-        this.mesh.position.y = this.character.properties.height + 0.05// + this.character.getTile().properties.offsetYt;
+        this.mesh.position.y = this.character.properties.height// + this.character.getTile().properties.offsetYt;
     }
 
     

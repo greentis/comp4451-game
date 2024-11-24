@@ -29,7 +29,7 @@ export class Character{
         // This is an ABSTRACT CLASS now
         if (this.constructor == Character) throw new Error("Abstract classes can't be instantiated.");
         this.properties={
-            height:1.5
+            height:1.3
         }
         this.q = q; 
         this.r = r;
@@ -54,6 +54,7 @@ export class Character{
     displayInfo(){
         //console.log(this.game.gameOn, "in displayinfo");
         if(!this.game.gameOn) return;
+        infoBox.name = this.name;
         infoBox.health = this.health;
         infoBox.movementSpeed = this.moveRange;
         infoBox.sightRange = this.sightRange;

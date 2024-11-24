@@ -162,7 +162,7 @@ export class TileProperties {
                 this.passCost = 3.0;
                 this.hitRateCost = 25.0;
 
-                this.strength = 3;
+                this.strength = 2;
 
                 this.url = 'assets/tumbleweed/scene.gltf';
                 break;
@@ -209,7 +209,7 @@ export class TileProperties {
                 this.rotateY = Math.random()*Math.PI*2;
                 this.url = 'assets/cactus_2/scene.gltf';
 
-                this.strength = 6;
+                this.strength = 4;
                 break;
 
             case TileProperties.TYPE.spookyTree:
@@ -258,6 +258,7 @@ export class TileProperties {
                     label.scale.set(0.7, 0.7, 0.7);
                     this.tile.body.add(label);
                     this.mesh=label;
+                    this.strength = 1;
                 }
                 else if (Math.random()<0.05){
                     const loader = new THREE.TextureLoader();
@@ -277,7 +278,7 @@ export class TileProperties {
                         this.tile.body.add(label);
                         this.mesh=label;
                       }
-                    
+                      this.strength = 1;
                 }
                 break;
             case TileProperties.TYPE.DefaultDesert:
@@ -320,7 +321,7 @@ export class TileProperties {
                         this.mesh.position.y=this.offsetYm;
                         this.mesh.rotateY(this.rotateY);
                         this.tile.body.add(this.mesh);
-                        
+                        this.strength = 1;
                     });
                     this.url = null;
                 }
@@ -337,6 +338,7 @@ export class TileProperties {
                     label.scale.set(0.7, 0.7, 0.7);
                     this.tile.body.add(label);
                     this.mesh=label;
+                    this.strength = 1;
                 }
                 break;
             default:

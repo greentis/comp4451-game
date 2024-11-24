@@ -18,6 +18,7 @@ export class WeaponProperties {
 
 
         this.offsetY = 0;
+        this.rotateY = 0;
         // The particle controller
         // Pmin: minimum number of particles
         // Pvar: varying range of number of particles
@@ -41,8 +42,8 @@ export class WeaponProperties {
 
                 this.url="assets/grenade/scene.gltf";
                 this.meshScale = 0.025;
-                this.offsetY = this.weapon.height + 0.4;
-                this.weapon.body.rotation.y = Math.PI/2;
+                this.offsetY = this.weapon.height + 0.2;
+                this.rotateY = Math.PI/2;
                 this.weapon.damage = 5;
                 this.weapon.range = 6;
                 
@@ -61,9 +62,8 @@ export class WeaponProperties {
 
                 this.url="assets/gun/scene.gltf";
                 this.meshScale = 0.125;
-                this.offsetY = this.weapon.height + 0.3;
-                this.weapon.body.rotation.y = Math.PI;
-                this.weapon.body.rotation.x = Math.PI/13;
+                this.offsetY = this.weapon.height + 0.15;
+                this.rotateY = Math.PI;
                 this.weapon.damage = 8;
                 this.weapon.range = 10;
                 this.obstacleDamageMultiplier = 0;
@@ -73,9 +73,8 @@ export class WeaponProperties {
 
                 this.url="assets/saw/scene.gltf";
                 this.meshScale = 0.3;
-                this.offsetY = this.weapon.height + 0.2;
-                this.weapon.body.rotation.y = Math.PI/2;
-                this.weapon.body.rotation.x = 0;
+                this.offsetY = this.weapon.height + 0.15;
+                this.rotateY = Math.PI/2;
                 this.weapon.damage = 5;
                 this.weapon.range = 3;
                 this.obstacleDamageMultiplier = 2;
@@ -103,6 +102,7 @@ export class WeaponProperties {
         gltfLoader.load(this.url, (gltf) => {
             var model = gltf.scene;
             model.scale.set(this.meshScale,this.meshScale,this.meshScale);
+            model.rotateY(this.rotateY);
             model.traverse((child) => {
                 if (child.isMesh) {
                     child.userData = this.weapon;

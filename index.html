@@ -194,9 +194,20 @@
 			}
 
 			.interactive:hover > .sidebar{
-				height:80vh;
 				width:22.5vw;
 				opacity: 0.7;
+				height: auto;
+			}
+
+			.interactive:hover::after{
+				content:"End Round";
+				transition: 0.1s;
+				background-color: #000000;
+				opacity:1;
+				font-size: x-large;
+				font-weight: bold;
+				align-content: center;
+				justify-content: center;
 			}
 		</style>
 	</head>
@@ -204,7 +215,8 @@
 		<div id='infoBox' :class="{'extended':format == 'UpgradePanel'}" class="sour-gummy">
 			<div :class="{'shrink':format == 'HunterStateTrack'}" class="container header" >
 				<div class="box">
-					<strong id="title" class="sour-gummy">Forest Hunter</strong> 
+					<strong v-if="format != 'CharacterStats' && format != 'AttackData'" id="title" class="sour-gummy">Forest Hunter</strong> 
+					<strong v-if="format == 'CharacterStats' || format == 'AttackData'" id="title" class="sour-gummy">{{name}}</strong>
 				</div>
 			</div>
 			<div v-if="format == 'MissionInfo'" class="container">
@@ -218,17 +230,31 @@
 					Animals left: {{enemies.size}}
 				</div>
 				<div v-on:click="passRound" class="box controller interactive">
-					<Strong>End Round</Strong>
+					<Strong v-if="players.reduce((accumulator, p) => accumulator + p.getActionPoint(),0) != 0" id="actionPlaceholder">Actions Remaining: {{players.reduce((accumulator, p) => accumulator + p.getActionPoint(), 0)}}</Strong>
+					<Strong v-else>End Round</Strong>
 					<div class="sidebar">
+						<h2>Player status:</h2>
 						<div v-for="p in players">
-							<p>
+							<p style="align-content: left;">
 								{{p.name}} : ❤️{{p.health}}
 							</p>
-							<p style="align-content: center;">
-								Action left: {{p.getActionPoint() == 2 ? '👣🎯': p.getActionPoint() == 1 ? '🎯' : ''}}
+							<p v-if="p.getActionPoint()>0">
+								Action left: 
+								<br >
+								{{p.getActionPoint() == 2 ? '👣 Move 👣' : ''}}
+								{{p.getActionPoint() == 0 ? 'None' : ''}}
+								<br v-if="p.getActionPoint() == 2">
+								{{p.getActionPoint() >= 1 ? '🎯 Attack 🎯' : ''}}
+								<br>
 							</p>
 							<!--	🪦		-->
 						</div>
+						<p>
+							<strong>
+								Total Actions Remaining: {{players.reduce((accumulator, p) => accumulator + p.getActionPoint(), 0)}}
+							</strong>
+						</p>
+						
 					</div>
 				</div>
 			</div>

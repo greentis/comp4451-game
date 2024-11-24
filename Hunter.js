@@ -35,7 +35,7 @@ export class Hunter extends Character{
         this.sightRange = 10;
         this.properties = {
             hitRateCost: 100,
-            height: 1.5
+            height: 1.3
         }
         this.action.render();
 
@@ -44,23 +44,27 @@ export class Hunter extends Character{
         // Hunter Model
         const gltfLoader = new GLTFLoader();
         // choose the model url according to the weapon type
+        let url, scale;
         if (weaponType == WeaponProperties.TYPE.Saw){
-            var url = 'assets/lumberjack/scene.gltf';
+            url = 'assets/low_poly_kyle_crane/scene.gltf';
+            scale = 0.8;
         }
         else if (weaponType == WeaponProperties.TYPE.Gun){
-            var url = 'assets/low_poly_kyle_crane/scene.gltf';
+            url = 'assets/hunter/scene.gltf';
+            scale = 0.2;
         }
         else if (weaponType == WeaponProperties.TYPE.Bomb){
-            var url = 'assets/male_adventurer/scene.gltf';
+            url = 'assets/mage_bomber/scene.gltf';
+            scale = 0.65;
         }
         else{
             console.error("Invalid weapon type, setting to default");
-            var url = 'assets/low_poly_kyle_crane/scene.gltf';
+            url = 'assets/low_poly_kyle_crane/scene.gltf';
         }       
         console.log("Hunter: loading model from ", url);
         gltfLoader.load(url, (gltf) => {
             var model = gltf.scene;
-            model.scale.set(0.85,0.85,0.85);
+            model.scale.set(scale, scale, scale);
             model.userData = this;
             model.traverse((child) => {
                 if (child.isMesh) {

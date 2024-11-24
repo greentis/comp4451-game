@@ -14,6 +14,7 @@ export var infoBox = {
     missionNo:1,
     note:"Find and kill all animals!",
 
+    name:undefined,
     health:undefined,
     sightRange:undefined,
     movementSpeed:undefined,

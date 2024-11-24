@@ -281,6 +281,9 @@ export class Tile {
 
                 this.state = 'aimed';
                 this.render();
+
+                // Hunter's weapon facing
+                this.game.movingPlayer.weapon.body.lookAt(this.body.position);
                 return;
             }
         }
