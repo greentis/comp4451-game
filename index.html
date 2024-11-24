@@ -233,7 +233,7 @@
 					<Strong v-if="players.reduce((accumulator, p) => accumulator + p.getActionPoint(),0) != 0" id="actionPlaceholder">Actions Remaining: {{players.reduce((accumulator, p) => accumulator + p.getActionPoint(), 0)}}</Strong>
 					<Strong v-else>End Round</Strong>
 					<div class="sidebar">
-						<h2>Player status:</h2>
+						<h3>Player status:</h3>
 						<div v-for="p in players">
 							<p style="align-content: left;">
 								{{p.name}} : ❤️{{p.health}}
@@ -280,7 +280,7 @@
 				<div v-for="p in players" class="box disableHover">{{p.name}}<br> ❤️{{p.health}}</div>
 			</div>
 			<div v-if="format == 'Gameover'" class="container panel">
-				<div class="box largeBox" id="gameover"><h1>Game Over!</h1></div>
+				<div class="box largeBox" id="gameover"><h2>Game Over!</h2></div>
 				<div class="container tall">
 					<div class="box largeBox tall"><h3>Survived to Mission {{missionNo}}</h3></div>
 					<div class="box largeBox tall"><h3>Animals left: {{enemies.size}}</h3></div>
