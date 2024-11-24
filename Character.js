@@ -163,10 +163,10 @@ export class Character{
                     const time = timestamp - start;
 
                     // ~ Animation ~
-                    this.body.position.x = lerp(x, 0, time/200);
-                    this.body.position.z = lerp(z, 0, time/200);
+                    this.body.position.x = lerp(x, 0, time/400);
+                    this.body.position.z = lerp(z, 0, time/400);
 
-                    if (time < 200) { 
+                    if (time < 400) { 
                         // Call another animation frame
                         requestAnimationFrame(animate);
                     }
