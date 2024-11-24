@@ -57,13 +57,14 @@ export class Game{
 	}
 
 	missionCompleted(){
+		if (!this.gameOn) return;
 		this.gameOn = false;
 		this.missionNo++;
 		infoBox.format = infoBox.FORMAT.UpgradePanel;
-		console.log(infoBox.FORMAT.UpgradePanel);
 	}
 
 	missionFailed(){
+		if (!this.gameOn) return;
 		this.gameOn = false;
 		infoBox.format = infoBox.FORMAT.Gameover;
 	}
