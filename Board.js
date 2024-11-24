@@ -162,9 +162,11 @@ export class Board {
 
         var printable = true;
         //below variables are for polygonal generation only
-        if(true || this.missionNo == 1){this.theme = parseInt(this.seed,10)%3;} //control the theme of the map
-        //if(this.missionNo == 1){this.theme = 0;}
-        //if(this.missionNo == 2){this.theme = 1;}
+        //if(true || this.missionNo == 1){this.theme = parseInt(this.seed,10)%3;} //control the theme of the map
+        if(this.missionNo == 1){this.theme = 0;}
+        else if(this.missionNo == 2){this.theme = 1;}
+        else if(this.missionNo == 3){this.theme = 2;}
+        else{this.theme = parseInt(this.seed,10)%3;}
             if (this.theme == 2){ this.theme = 3;}
             console.log('Mission No:', this.missionNo, 'Theme:', this.theme);
         this.roomLength = 5 + 2*(Math.min(this.missionNo,3)); //control the Length of the map
