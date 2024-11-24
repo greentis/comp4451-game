@@ -148,7 +148,7 @@ export class Board {
         //generat random map with hexagon grid
         //setting random this.seed
         // cover all the map with rock first
-        this.missionNo = 2;
+        this.missionNo = 1;
         this.seed = Math.round(Math.random()* 900000 + 100000);
         //this.seed = 37221; //wetland problem
         //19235;44699;26695; //rock problem

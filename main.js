@@ -134,19 +134,19 @@ export class Game{
 				let name;
 				console.log("enemySpawnPoints", enemySpawnPoints[i][j][0]);
 				switch (enemySpawnPoints[i][j][0]){
-					case AnimalProperties.TYPE.Monkey:
+					case AnimalProperties.TYPE.Monkey + 0:
 						name = '🐒Monkey';
 						break;
-					case AnimalProperties.TYPE.Bear:
+					case AnimalProperties.TYPE.Bear + 0:
 						name = '🐻Bear';
 						break;
-					case AnimalProperties.TYPE.Deer:
+					case AnimalProperties.TYPE.Deer + 0:
 						name = '🦌Deer';
 						break;
-					case AnimalProperties.TYPE.Pumpkin:
+					case AnimalProperties.TYPE.Pumpkin + 0:
 						name = '🎃Pumpkin';
 						break;
-					case AnimalProperties.TYPE.Boss:
+					case AnimalProperties.TYPE.Boss + 0:
 						name = '👹Boss';
 						break;
 					default:
