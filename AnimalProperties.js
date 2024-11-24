@@ -24,7 +24,7 @@ export class AnimalProperties {
                 url = 'assets/monkey/scene.gltf';
                 this.meshScale = 0.0055;
                 //this.meshScaleZ = 0.01;
-                this.animal.health = 3;
+                this.animal.health = 4;
                 this.hitRateCost = 70;
                 
                 this.animal.actionPriority = {
@@ -41,7 +41,7 @@ export class AnimalProperties {
                 //url = 'assets/raccoon/scene.gltf';
                 //this.meshScale = 0.65;
                 //this.offsetY = 0.3;
-                this.animal.health = 5;
+                this.animal.health = 9;
                 this.animal.actionPriority = {
                     cover:6,
                     attack:5, // default 4
@@ -75,7 +75,7 @@ export class AnimalProperties {
                     url = 'assets/pumkin/scene.gltf';
                     this.meshScale = 0.2;
                     //this.meshScaleZ = 0.025;
-                    this.animal.health = 2;
+                    this.animal.health = 1;
                     this.animal.actionPriority = {
                         cover:6,
                         attack:4, // default 4
@@ -83,7 +83,8 @@ export class AnimalProperties {
                     };
                     offsetY = 0.5;
                     this.height = 1.0;
-                    this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
+                    this.animal.moveRange = 10;
+                    this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Saw, this.height);
                     break;
             case AnimalProperties.TYPE.Boss:
                 //url = 'assets/bear_roooaaar/scene.gltf';

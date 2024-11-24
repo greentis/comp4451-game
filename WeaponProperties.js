@@ -75,7 +75,7 @@ export class WeaponProperties {
                 this.meshScale = 0.3;
                 this.offsetY = this.weapon.height + 0.15;
                 this.rotateY = Math.PI/2;
-                this.weapon.damage = 5;
+                this.weapon.damage = 6;
                 this.weapon.range = 3;
                 this.obstacleDamageMultiplier = 2;
 
