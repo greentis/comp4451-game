@@ -50,7 +50,7 @@ export const xxhash = (seed, x, y) => {
 var EpTable = {
     [0] : 2.5,
     [1] : 4.0,
-    [2] : 1.0,
+    [2] : 1.5,
     [30]: 2.5,
     [31]: 4.0,
     [32]: 1.0,
@@ -169,8 +169,8 @@ export class Board {
         else{this.theme = parseInt(this.seed,10)%3;}
             if (this.theme == 2){ this.theme = 3;}
             console.log('Mission No:', this.missionNo, 'Theme:', this.theme);
-        this.roomLength = 5 + 2*(Math.min(this.missionNo,3)); //control the Length of the map
-        this.roomWidth = 5 + 2*(Math.min(this.missionNo,3)); //control the Width of the map
+        this.roomLength = 5 + 1*(Math.min(this.missionNo,3)); //control the Length of the map
+        this.roomWidth = 5 + 1*(Math.min(this.missionNo,3)); //control the Width of the map
         this.roomSizeRange = 0; //control the variation of the size of the room(+/- roomSizeRange)
         this.roomPercentage = themeTable[this.theme].roomPercentage; //0.75; //control the percentage of the default tile in the map
         this.wallThreshold = themeTable[this.theme].wallThreshold; //0.7; //control the threshold of the wall tile conversion from rock tile
@@ -179,14 +179,14 @@ export class Board {
             if(this.coverThreshold >= this.wallThreshold) this.coverThreshold = this.wallThreshold;
         this.rainFall = themeTable[this.theme].rainFall; //0.1;//control the rain fall of the map, tile with height below rain fall will be turned into water tile
         this.riverSource = themeTable[this.theme].riverSource; //0.8;//control the river source of the map, tile with height above river source will be turned into water tile
-        this.maxRiverPercentage = 0.55; //control the maximum percentage of the river tile in the map
+        this.maxRiverPercentage = 0.60;//0.65 //control the maximum percentage of the river tile in the map
         this.vegetationCoverage = themeTable[this.theme].vegetationCoverage; //0.1;//control the vegetation coverage of the map, tile with vegetation coverage below the value will be turned into vegetation tile
         
         this.playerToBoard = 3; //control the maximum number of tile from player to the board boundary allowed
         //this.enemyDensity = 0.02 + 0.008*(this.missionNo); //control the density of the enemy per tile in the map(suggested value: < 0.05)
         this.enemyGroupAmount = Math.ceil(0.5 + 0.55*(Math.min(this.missionNo,5) - 1)); //control the number of enemy group in the map
         this.averagePerGroup = 2; //control the average number of enemy per group
-        this.enemyToPlayer = 5; //control the minimum number of tile from enemy to the player allowed
+        this.enemyToPlayer = 6; //control the minimum number of tile from enemy to the player allowed
         this.enemyToEnemy = 7; //control the minimum number of tile from enemy to the enemy allowed
         this.bossInterval = 100; //control the interval of the boss appearance
 
@@ -523,7 +523,7 @@ export class Board {
         for (let q = -width; q <= width; q++){
             for (let r = -length; r <= length; r++){
                 
-
+                if (this.waterTileArea > this.maxRiverPercentage * this.totalArea) break;
 
                 if (this.heightMap[q][r] < this.rainFall){
                     this.temp[q][r] = TileProperties.TYPE.Water;
@@ -553,7 +553,7 @@ export class Board {
                     this.temp[q][r] = TileProperties.TYPE.Water;
                     riverSource.add({q: q, r: r});
                     riverTile.add({q: q, r: r});
-                    waterTileArea += 3;
+                    waterTileArea += 1;
                 }
             }
         }
@@ -562,9 +562,13 @@ export class Board {
             var riverEnd = false;
             var lowestHeight = this.heightMap[s.q][s.r];
             var source = s;
+            if(waterTileArea > this.maxRiverPercentage * this.totalArea) return;
+
             while(!riverEnd){
                 var temp = source;
                 var adjacent = this.findAdjacent(source.q, source.r, width, length);
+                if (waterTileArea > this.maxRiverPercentage * this.totalArea) break;
+                
                 adjacent.forEach((a)=>{
                     if(this.checkBoardBoundaries(a.q, a.r, width, length, this.temp)) return;
 
@@ -581,6 +585,7 @@ export class Board {
                     this.temp[temp.q][temp.r] = TileProperties.TYPE.Water;
                     riverTile.add(temp);
                     source = temp;
+                    waterTileArea += 1;
                 }
             }
         });
@@ -896,6 +901,7 @@ export class Board {
 
                 this.enemyGroup[i][0][1] = {q: q, r: r};
                 leaderFound = true;
+                console.log('type of tile that enemy spawn', this.temp[q][r]);
             }
             if (lastResort){
                 this.temp[q][r] = TileProperties.TYPE.Default;
@@ -940,8 +946,7 @@ export class Board {
 
                             //condition 2a
                             if(this.temp[q][r] == TileProperties.TYPE.Tree || this.temp[q][r] == TileProperties.TYPE.Bush) continue;
-                            if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water
-                                && this.temp[q][r] != TileProperties.TYPE.Bush) continue;
+                            if (!lastResort && this.temp[q][r] != TileProperties.TYPE.Default && this.temp[q][r] != TileProperties.TYPE.Water) continue;
                             
                             
                             //condition 2b
@@ -1044,10 +1049,13 @@ export class Board {
         // 7.1 turn all void tile which adjacent to non-rock tile to rock tile
         // the void tile which adjacent to the non-rock tile will be turned into rock tile
         // so that the map will be more connected
+        // Also, turn the tile of the player and enemy spawn point to default tile
         var voidTile = new Set();
         var outerTile = new Set();
         for (let q = -width; q <= width; q++){
             for (let r = -length; r <= length; r++){
+                if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold) continue;
+
                 //skip the tile if it is player spawn point or enemy spawn point
                 var skip = false;
                 for (let i = 0; i < 3; i++){
@@ -1079,7 +1087,7 @@ export class Board {
                 if (skip) continue;
 
                 //skip the tile if it is not void tile
-                if (this.temp[q][r] == TileProperties.TYPE.Void || this.temp[q][r] == TileProperties.TYPE.Hold) continue;
+               
                 if(this.checkBoardBoundaries(q, r, width, length, this.temp)){
                     //this.temp[q][r] = TileProperties.TYPE.Default;
                     outerTile.add({q: q, r: r});

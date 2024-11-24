@@ -33,27 +33,29 @@ export class AnimalProperties {
                     escape:1
                 };
                 this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Gun, this.height);
+                this.animal.moveRange = 8;
                 break;
             case AnimalProperties.TYPE.Bear:
                 url = 'assets/bear_roooaaar/scene.gltf';
-                this.meshScale = 0.65;
+                this.meshScale = 0.7;
                 //url = 'assets/raccoon/scene.gltf';
                 //this.meshScale = 0.65;
                 //this.offsetY = 0.3;
                 this.animal.health = 5;
                 this.animal.actionPriority = {
                     cover:6,
-                    attack:4, // default 4
+                    attack:5, // default 4
                     escape:1
                 };
                 this.height = 0.9;
                 rotateY = Math.PI;
                 this.hitRateCost = 50;
                 this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Bomb, this.height);
+                this.animal.moveRange = 5;
                 break;
             case AnimalProperties.TYPE.Deer:
                 url = 'assets/deer_polygonal/scene.gltf';
-                this.meshScale = 2;
+                this.meshScale = 1.6;
                 //this.meshScaleZ = 0.025;
                 this.animal.health = 2;
                 this.animal.actionPriority = {
@@ -67,6 +69,7 @@ export class AnimalProperties {
                 offsetY = 0.5;
                 this.hitRateCost = 20;
                 this.animal.weapon = new Weapon(this.animal, WeaponProperties.TYPE.Saw, this.height);
+                this.animal.moveRange = 10;
                 break;
             case AnimalProperties.TYPE.Pumpkin:
                     url = 'assets/pumkin/scene.gltf';
