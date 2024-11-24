@@ -149,10 +149,12 @@ export class Board {
         //setting random this.seed
         // cover all the map with rock first
         this.missionNo = 1;
+        //this.missionNo = 2;
         this.seed = Math.round(Math.random()* 900000 + 100000);
         //this.seed = 37221; //wetland problem
         //19235;44699;26695; //rock problem
         //64767; //enemy model cannot be loaded problem
+        //19101; //hole
         this.seed = this.seed % 65536; //make sure the this.seed is within 0 - 65536, so that noise.this.seed() can accept it
         //if(printable) 
         console.log('This board have seed ', this.seed);
