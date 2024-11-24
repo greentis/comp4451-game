@@ -57,13 +57,14 @@ export class Game{
 	}
 
 	missionCompleted(){
+		if (!this.gameOn) return;
 		this.gameOn = false;
 		this.missionNo++;
 		infoBox.format = infoBox.FORMAT.UpgradePanel;
-		console.log(infoBox.FORMAT.UpgradePanel);
 	}
 
 	missionFailed(){
+		if (!this.gameOn) return;
 		this.gameOn = false;
 		infoBox.format = infoBox.FORMAT.Gameover;
 	}
@@ -117,7 +118,7 @@ export class Game{
 		console.log("playerSpawnPoints", playerSpawnPoints);
 		this.player = [
 			new Hunter(playerSpawnPoints[0].q, playerSpawnPoints[0].r, 10, WeaponProperties.TYPE.Gun, this, '🏹Hunter'),
-			new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 15, WeaponProperties.TYPE.Saw, this, '🗡️Lumberjack'),
+			new Hunter(playerSpawnPoints[2].q, playerSpawnPoints[2].r, 15, WeaponProperties.TYPE.Saw, this, '🪚Lumberjack'),
 			new Hunter(playerSpawnPoints[1].q, playerSpawnPoints[1].r, 10, WeaponProperties.TYPE.Bomb, this, '💣Bomb Mage'),
 			
 		];
@@ -130,7 +131,28 @@ export class Game{
 			for(let j = 0; j < Object.keys(enemySpawnPoints[i]).length; j++){
 				
 				//make a name according to [i][j]
-				var name = 'Enemy ' + i + j;
+				let name;
+				console.log("enemySpawnPoints", enemySpawnPoints[i][j][0]);
+				switch (enemySpawnPoints[i][j][0]){
+					case AnimalProperties.TYPE.Monkey:
+						name = '🐒Monkey';
+						break;
+					case AnimalProperties.TYPE.Bear:
+						name = '🐻Bear';
+						break;
+					case AnimalProperties.TYPE.Deer:
+						name = '🦌Deer';
+						break;
+					case AnimalProperties.TYPE.Pumpkin:
+						name = '🎃Pumpkin';
+						break;
+					case AnimalProperties.TYPE.Boss:
+						name = '👹Boss';
+						break;
+					default:
+						console.log("unknown type", enemySpawnPoints[i][j][0]);
+						name= '🎲unknown';
+				}
 				if (enemySpawnPoints[i] && enemySpawnPoints[i][j]) {
 					console.log("type", enemySpawnPoints[i][j][0], AnimalProperties.TYPEID[enemySpawnPoints[i][j][0]]);
 					this.enemy.add(new Animal(enemySpawnPoints[i][j][1].q, enemySpawnPoints[i][j][1].r, enemySpawnPoints[i][j][0], this, name, i));

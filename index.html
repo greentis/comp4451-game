@@ -244,7 +244,7 @@
 								{{p.getActionPoint() == 2 ? '👣 Move 👣' : ''}}
 								{{p.getActionPoint() == 0 ? 'None' : ''}}
 								<br v-if="p.getActionPoint() == 2">
-								{{p.getActionPoint() >= 1 ? '🎯 Attack 🎯' : ''}}
+								{{p.getActionPoint() >= 1 ? '💥 Attack 💥' : ''}}
 								<br>
 							</p>
 							<!--	🪦		-->
@@ -264,15 +264,15 @@
 				<div class="box">Dexterity: {{movementSpeed}}</div>
 				<div class="box" v-if="weapon == 'Gun'">🏹 Damage: {{damage}}</div>
 				<div class="box" v-if="weapon == 'Bomb'">💣 Damage: {{damage}}</div>
-				<div class="box" v-if="weapon == 'Saw'">🗡️ Damage: {{damage}}</div>
+				<div class="box" v-if="weapon == 'Saw'">🪚 Damage: {{damage}}</div>
 				<div class="box" v-if="weapon == 'Bomb'">Blast Radius:{{blastRadius}}</div>
 			</div>
 			<div v-if="format == 'AttackData'" class="container">
 				<div class="box" v-if="weapon == 'Gun'">🏹 Damage: {{damage}}</div>
 				<div class="box" v-if="weapon == 'Bomb'">💣 Damage: {{damage}}</div>
-				<div class="box" v-if="weapon == 'Saw'">🗡️ Damage: {{damage}}</div>
+				<div class="box" v-if="weapon == 'Saw'">🪚 Damage: {{damage}}</div>
 				<!--div class="box" v-if="weapon == 'Bomb'">Blast Radius:{{blastRadius}}</div-->
-				<div class="box">Aim Accuracy: {{hitRate}}</div>
+				<div class="box"><strong>🎯 Aim Accuracy: {{hitRate}} 🎯</strong></div>
 				
 				<div class="box" v-if="target">{{target.name}}: ❤️{{target.health}}</div>
 			</div>
