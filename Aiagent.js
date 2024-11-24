@@ -13,6 +13,9 @@ export class AIAgent {
         this.player = game.player;
 
         AIAgent.instance = this;
+
+        this.timeIntervalAction = 250;
+        this.timeIntervalEnemy = 1000;
     }
 
     //AIControl()
@@ -108,7 +111,7 @@ export class AIAgent {
             //console.log("position: ", e.getTile().q, e.getTile().r);
             
         }
-        await new Promise(resolve => setTimeout(resolve, 600));
+        await new Promise(resolve => setTimeout(resolve, this.timeIntervalEnemy));
         this.game.setToPlayerTurn(true);
     }
 
@@ -329,6 +332,7 @@ export class AIAgent {
         if (bestTile){
             //console.log("actionpoint: ", e.getActionPoint(), "bestTile: ", bestTile.q, bestTile.r);
             await e.moveTo(bestTile);
+            await new Promise(resolve => setTimeout(resolve, this.timeIntervalAction));
         }
         
     }
@@ -390,7 +394,9 @@ export class AIAgent {
         //console.log("maxIndex: ", maxIndex);
         if (maxIndex != -1) {
             await e.attack(attackablePlayer[maxIndex]);
+            await new Promise(resolve => setTimeout(resolve, this.timeIntervalAction));
         }
+        
     }
 
     async escape(e, seed = null) {
@@ -436,7 +442,9 @@ export class AIAgent {
         if (maxTile) {
             console.log("actionpoint: ", e.getActionPoint(), "maxTile: ", maxTile.q, maxTile.r);
             await e.moveTo(maxTile);
+            await new Promise(resolve => setTimeout(resolve, this.timeIntervalAction));
         }
+        
     }
 
     //debug function
