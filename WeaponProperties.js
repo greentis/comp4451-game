@@ -45,7 +45,7 @@ export class WeaponProperties {
                 this.offsetY = this.weapon.height + 0.2;
                 this.rotateY = Math.PI/2;
                 this.weapon.damage = 5;
-                this.weapon.range = 6;
+                this.weapon.range = 5;
                 
 
                 this.Pmin = 1;
@@ -65,7 +65,7 @@ export class WeaponProperties {
                 this.offsetY = this.weapon.height + 0.15;
                 this.rotateY = Math.PI;
                 this.weapon.damage = 8;
-                this.weapon.range = 10;
+                this.weapon.range = 8;
                 this.obstacleDamageMultiplier = 0;
                 break;
             case WeaponProperties.TYPE.Saw:
@@ -75,7 +75,7 @@ export class WeaponProperties {
                 this.meshScale = 0.3;
                 this.offsetY = this.weapon.height + 0.15;
                 this.rotateY = Math.PI/2;
-                this.weapon.damage = 6;
+                this.weapon.damage = 7;
                 this.weapon.range = 3;
                 this.obstacleDamageMultiplier = 2;
 
