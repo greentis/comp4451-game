@@ -41,7 +41,7 @@ export class AnimalProperties {
                 //url = 'assets/raccoon/scene.gltf';
                 //this.meshScale = 0.65;
                 //this.offsetY = 0.3;
-                this.animal.health = 9;
+                this.animal.health = 8;
                 this.animal.actionPriority = {
                     cover:6,
                     attack:5, // default 4
