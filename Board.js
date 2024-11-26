@@ -150,7 +150,7 @@ export class Board {
         // cover all the map with rock first
         //this.missionNo = 1;
         //this.missionNo = 2;
-        this.seed = 57598;Math.round(Math.random()* 900000 + 100000);
+        this.seed = Math.round(Math.random()* 900000 + 100000);
         //this.seed = 37221; //wetland problem
         //19235;44699;26695; //rock problem
         //64767; //enemy model cannot be loaded problem
